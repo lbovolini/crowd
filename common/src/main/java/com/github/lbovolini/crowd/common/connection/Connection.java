@@ -1,0 +1,183 @@
+package com.github.lbovolini.crowd.common.connection;
+
+import com.github.lbovolini.crowd.common.message.Message;
+import com.github.lbovolini.crowd.common.message.PartialMessage;
+import com.github.lbovolini.crowd.common.handler.ReadHandler;
+import com.github.lbovolini.crowd.common.handler.WriteHandler;
+
+import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.channels.AsynchronousSocketChannel;
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.ReentrantLock;
+
+import static com.github.lbovolini.crowd.common.configuration.Config.BUFFER_ARRAY_SIZE;
+import static com.github.lbovolini.crowd.common.configuration.Config.BUFFER_SIZE;
+import static com.github.lbovolini.crowd.common.configuration.Config.HEADER_SIZE;
+
+public class Connection {
+
+    private Message message;
+    private PartialMessage partialMessage;
+    private boolean closed;
+
+    private final AsynchronousSocketChannel channel;
+
+    private static final ByteBufferPool readerBufferPool = new ByteBufferPool();
+    private static final ByteBufferPool writerBufferPool = new ByteBufferPool();
+
+    private static final WriteHandler writeHandler = new WriteHandler();
+    private static final ReadHandler readHandler = new ReadHandler();
+
+    private final ReentrantLock writeLock;
+    private final ReentrantLock readLock;
+
+    private final Queue<ByteBuffer> writerBufferQueue;
+    private final Queue<ByteBuffer> readerBufferQueue;
+
+    private final ByteBuffer[] writerBufferArray;
+    private final ByteBuffer[] readerBufferArray;
+
+    public Connection(AsynchronousSocketChannel channel) {
+        this.channel = channel;
+        this.partialMessage = new PartialMessage();
+        this.writeLock = new ReentrantLock();
+        this.readLock = new ReentrantLock();
+        this.writerBufferQueue = new LinkedList<>();
+        this.readerBufferQueue = new LinkedList<>();
+        this.writerBufferArray = new ByteBuffer[BUFFER_ARRAY_SIZE];
+        this.readerBufferArray = new ByteBuffer[BUFFER_ARRAY_SIZE];
+    }
+
+    public Message getMessage() {
+        return message;
+    }
+
+    public void setMessage(Message message) {
+        this.message = message;
+    }
+
+    public boolean isClosed() {
+        return closed;
+    }
+
+    public void setClosed(boolean closed) {
+        this.closed = closed;
+    }
+
+    public AsynchronousSocketChannel getChannel() {
+        return channel;
+    }
+
+    public ByteBufferPool getReaderBufferPool() {
+        return readerBufferPool;
+    }
+
+    public ByteBufferPool getWriterBufferPool() {
+        return writerBufferPool;
+    }
+
+    public ReentrantLock getWriteLock() {
+        return writeLock;
+    }
+
+    public ReentrantLock getReadLock() {
+        return readLock;
+    }
+
+    public Queue<ByteBuffer> getWriterBufferQueue() {
+        return writerBufferQueue;
+    }
+
+    public Queue<ByteBuffer> getReaderBufferQueue() {
+        return readerBufferQueue;
+    }
+
+    public ByteBuffer[] getWriterBufferArray() {
+        return writerBufferArray;
+    }
+
+    public ByteBuffer[] getReaderBufferArray() {
+        return readerBufferArray;
+    }
+
+    public PartialMessage getPartialMessage() {
+        return partialMessage;
+    }
+
+    private boolean read() {
+
+        ByteBuffer byteBuffer = readerBufferPool.pool();
+
+        readLock.lock();
+
+        try {
+            if (closed) { return false; }
+
+            final boolean wasEmpty = readerBufferQueue.isEmpty();
+            readerBufferQueue.add(byteBuffer);
+
+            if (!wasEmpty) { return true; }
+        }
+        finally {
+            readLock.unlock();
+        }
+
+        readerBufferArray[0] = byteBuffer;
+        channel.read(readerBufferArray, 0, 1, 0, TimeUnit.SECONDS, this, readHandler);
+
+        return true;
+    }
+
+    private boolean write(ByteBuffer byteBuffer) {
+
+        writeLock.lock();
+
+        try {
+            if (closed) { return false; }
+
+            final boolean wasEmpty = writerBufferQueue.isEmpty();
+            writerBufferQueue.add(byteBuffer);
+
+            if (!wasEmpty) { return true; }
+        }
+        finally {
+            writeLock.unlock();
+        }
+
+        writerBufferArray[0] = byteBuffer;
+        channel.write(writerBufferArray, 0, 1, 0, TimeUnit.SECONDS, this, writeHandler );
+
+        return true;
+    }
+
+    public void send(Message message) {
+
+        if (message.getDataLength() > (BUFFER_SIZE - HEADER_SIZE)) {
+            System.out.println("Message too big");
+            System.exit(1);
+        }
+
+        ByteBuffer buffer = writerBufferPool.pool();
+        buffer.put(message.getType()).putShort(message.getDataLength()).put(message.getData());
+        buffer.flip();
+        write(buffer);
+    }
+
+
+    public void receive() {
+        read();
+    }
+
+    public void handle(Message message) {
+        throw new UnsupportedOperationException();
+    };
+
+    public void close() throws IOException {
+        setClosed(true);
+        channel.close();
+    }
+
+}
