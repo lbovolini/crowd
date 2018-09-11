@@ -32,6 +32,9 @@
                             <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
                             <addClasspath>true</addClasspath>
                         </manifest>
+                        <manifestEntries>
+                            <Class-Path>common-1.0-SNAPSHOT.jar</Class-Path>
+                        </manifestEntries>
                     </archive>
                 </configuration>
             </plugin>
@@ -74,6 +77,27 @@
                         <goals>
                             <goal>install-file</goal>
                         </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            
+             <!-- https://stackoverflow.com/questions/45502988/could-not-find-or-load-main-class-using-both-java-class-and-jar-files -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>2.3</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <keepDependenciesWithProvidedScope>false</keepDependenciesWithProvidedScope>
+                            <promoteTransitiveDependencies>false</promoteTransitiveDependencies>
+                            <createDependencyReducedPom>false</createDependencyReducedPom>
+                            <minimizeJar>false</minimizeJar>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>

@@ -32,11 +32,6 @@
                             <artifactItems>
                                 <artifactItem>
                                     <groupId>com.github.lbovolini.crowd</groupId>
-                                    <artifactId>common</artifactId>
-                                    <version>1.0-SNAPSHOT</version>
-                                </artifactItem>
-                                <artifactItem>
-                                    <groupId>com.github.lbovolini.crowd</groupId>
                                     <artifactId>server</artifactId>
                                     <version>1.0-SNAPSHOT</version>
                                 </artifactItem>
@@ -46,7 +41,7 @@
                                     <version>1.0-SNAPSHOT</version>
                                 </artifactItem>
                             </artifactItems>
-                            <outputDirectory>${user.home}/crowd</outputDirectory>
+                            <outputDirectory>${user.home}/app</outputDirectory>
                             <overWriteReleases>false</overWriteReleases>
                             <overWriteSnapshots>true</overWriteSnapshots>
                         </configuration>
@@ -65,7 +60,7 @@
                             <goal>copy-resources</goal>
                         </goals>
                         <configuration>
-                            <outputDirectory>${user.home}/crowd</outputDirectory>
+                            <outputDirectory>${user.home}/app</outputDirectory>
                             <resources>
                                 <resource>
                                     <directory>${basedir}/client/src/main/resources</directory>
