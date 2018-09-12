@@ -22,39 +22,12 @@
             
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-dependency-plugin</artifactId>
-                <version>2.10</version>
-                <executions>
-                    <execution>
-                        <id>copy</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>copy</goal>
-                        </goals>
-                        <configuration>
-                            <artifactItems>
-                                <artifactItem>
-                                    <groupId>com.github.lbovolini.crowd</groupId>
-                                    <artifactId>hello</artifactId>
-                                    <version>1.0-SNAPSHOT</version>
-                                </artifactItem>
-                            </artifactItems>
-                            <outputDirectory>${user.home}/app</outputDirectory>
-                            <overWriteReleases>false</overWriteReleases>
-                            <overWriteSnapshots>true</overWriteSnapshots>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
                 <version>3.1.0</version>
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>com.github.lbovolini.example.hello.Hello</mainClass>
+                            <mainClass>com.github.lbovolini.example.hello.Main</mainClass>
                             <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
                             <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
                             <addClasspath>true</addClasspath>
@@ -79,7 +52,7 @@
                 </executions>
                 <configuration>
                     <executable>java</executable>
-                    <mainClass>com.github.lbovolini.example.hello.Hello</mainClass>
+                    <mainClass>com.github.lbovolini.example.hello.Main</mainClass>
                 </configuration>
             </plugin>
 
@@ -107,6 +80,34 @@
                     </execution>
                 </executions>
             </plugin>
+            
+                        <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>2.10</version>
+                <executions>
+                    <execution>
+                        <id>copy</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>com.github.lbovolini.crowd</groupId>
+                                    <artifactId>hello</artifactId>
+                                    <version>1.0-SNAPSHOT</version>
+                                </artifactItem>
+                            </artifactItems>
+                            <outputDirectory>${user.home}/app</outputDirectory>
+                            <overWriteReleases>false</overWriteReleases>
+                            <overWriteSnapshots>true</overWriteSnapshots>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            
         </plugins>
     </build>
 
