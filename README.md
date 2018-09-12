@@ -1,7 +1,7 @@
 ## Build Projects
 
 ```
-./mvnw clean install
+mvn clean install
 ```
 
 ## Go to app folder
