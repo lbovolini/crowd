@@ -13,6 +13,7 @@
         <module>common</module>
         <module>server</module>
         <module>client</module>
+        <module>hello</module>
     </modules>
 
     <build>
@@ -38,6 +39,11 @@
                                 <artifactItem>
                                     <groupId>com.github.lbovolini.crowd</groupId>
                                     <artifactId>client</artifactId>
+                                    <version>1.0-SNAPSHOT</version>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>com.github.lbovolini.crowd</groupId>
+                                    <artifactId>hello</artifactId>
                                     <version>1.0-SNAPSHOT</version>
                                 </artifactItem>
                             </artifactItems>
