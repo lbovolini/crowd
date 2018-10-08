@@ -174,7 +174,20 @@ public class ReadHandler implements CompletionHandler<Long, Connection> {
                 return true;
             }
         } else {
-            partialMessage.read(buffer, partialMessage.getReadSize(), partialMessage.getSize() - partialMessage.getReadSize());
+
+            int remaining = partialMessage.getSize() - partialMessage.getReadSize();
+
+            if (remaining > buffer.remaining()) {
+                int read = partialMessage.getReadSize();
+
+                int inBufferSize = buffer.remaining();
+                partialMessage.read(buffer, partialMessage.getReadSize(), inBufferSize);
+                partialMessage.setReadSize(read + inBufferSize);
+
+                return false;
+            }
+
+            partialMessage.read(buffer, partialMessage.getReadSize(), remaining);
             flags.setHasMessage(true);
             flags.resetAll();
             return true;
