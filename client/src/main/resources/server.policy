@@ -1,6 +1,7 @@
 grant {
     //====================================================================
     permission java.io.FilePermission "-", "read";
+    permission java.io.FilePermission "/-", "read";
     //====================================================================
     permission java.net.SocketPermission "*", "listen, connect, accept, resolve";
     //====================================================================
