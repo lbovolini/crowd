@@ -27,7 +27,6 @@ public final class Client {
     private boolean running;
 
     private Scheduler scheduler;
-    private ExecutorService pool;
 
     AsynchronousSocketChannel channel = null;
     ExecutorService socketPool = Executors.newSingleThreadExecutor();
@@ -35,17 +34,12 @@ public final class Client {
 
     ClientInfo clientInfo = null;
 
-    public Client(String host, int port) {
+    public Client(String host, int port) throws IOException {
         this.host = host;
         this.port = port;
         this.id = host + String.valueOf(port);
         this.running = false;
-        this.pool = Executors.newSingleThreadExecutor();
-        try {
-            asynchronousChannelGroup = AsynchronousChannelGroup.withThreadPool(socketPool);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        asynchronousChannelGroup = AsynchronousChannelGroup.withThreadPool(socketPool);
     }
 
     public static String getId() {
@@ -64,49 +58,31 @@ public final class Client {
         running = true;
     }
 
-    public void start(CodebaseAndServerAddress csa) {
+    public void start(CodebaseAndServerAddress csa) throws IOException {
         start(csa.getCodebase(), csa.getServerAddress(), csa.getServerPort());
     }
 
-    public void start(String codebase, String serverAddress, int serverPort) {
+    public void start(String codebase, String serverAddress, int serverPort) throws IOException {
 
         InetSocketAddress hostAddress = new InetSocketAddress(serverAddress, serverPort);
         HostDetails hostDetails = new HostDetails(id, host, port, cores);
 
-        System.out.println(codebase);
-        System.out.println(serverAddress);
-        System.out.println(serverPort);
-
-        if(isRunning()) {
-            scheduler.stop();
-            this.pool.shutdownNow();
-            this.pool = Executors.newSingleThreadExecutor();
+        if (isRunning()) {
+            channel.close();
+            //scheduler.stop();
+        } else {
+            scheduler = new Scheduler(codebase);
+            setRunning();
         }
-        setRunning();
+        channel = AsynchronousSocketChannel.open(asynchronousChannelGroup);
+        channel.setOption(StandardSocketOptions.TCP_NODELAY, true);
+        channel.setOption(StandardSocketOptions.SO_KEEPALIVE, true);
+        channel.setOption(StandardSocketOptions.SO_REUSEADDR, true);
+        channel.bind(new InetSocketAddress(host, port));
 
-        this.pool.submit(() -> {
+        clientInfo = new ClientInfo(hostDetails, channel, scheduler, true);
 
-            try {
-
-                channel = AsynchronousSocketChannel.open(asynchronousChannelGroup);
-
-                scheduler = new Scheduler(codebase);
-                clientInfo = new ClientInfo(hostDetails, channel, scheduler, true);
-
-                //https://docs.oracle.com/javase/7/docs/api/java/net/StandardSocketOptions.html#SO_REUSEADDR
-                //http://blog.stephencleary.com/2009/05/detection-of-half-open-dropped.html
-                channel.setOption(StandardSocketOptions.TCP_NODELAY, true);
-                channel.setOption(StandardSocketOptions.SO_KEEPALIVE, true);
-                channel.setOption(StandardSocketOptions.SO_REUSEADDR, true);
-
-                channel.bind(new InetSocketAddress(host, port));
-            } catch (IOException e) {
-                System.out.println("Address already in use");
-            }
-            //
-            channel.connect(hostAddress, clientInfo, new ConnectionHandler());
-        });
-
+        channel.connect(hostAddress, clientInfo, new ConnectionHandler());
     }
 
     public static void main(String[] args) {
@@ -126,11 +102,13 @@ public final class Client {
         String host = Config.HOST_NAME;
         int port = Config.PORT;
 
-        Client client = new Client(host, port);
-
         Multicast multicast = new Multicast(true) {
             public void handle(CodebaseAndServerAddress csa) {
-                client.start(csa);
+                try {
+                    new Client(host, port).start(csa);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         };
 
