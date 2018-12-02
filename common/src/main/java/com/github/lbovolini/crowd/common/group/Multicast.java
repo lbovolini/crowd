@@ -32,7 +32,7 @@ public class Multicast {
         this.port = MULTICAST_PORT;
     }
 
-    private Multicast(boolean isClient) {
+    public Multicast(boolean isClient) {
         this.isClient = isClient;
         this.port = MULTICAST_CLIENT_PORT;
     }
