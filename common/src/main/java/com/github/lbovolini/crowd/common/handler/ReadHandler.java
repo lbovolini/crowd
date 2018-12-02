@@ -15,6 +15,7 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import static com.github.lbovolini.crowd.common.configuration.Config.BUFFER_SIZE;
 import static com.github.lbovolini.crowd.common.configuration.Config.HEADER_SIZE;
+import static com.github.lbovolini.crowd.common.configuration.Config.MAX_MESSAGE_SIZE;
 
 public class ReadHandler implements CompletionHandler<Long, Connection> {
 
@@ -157,9 +158,9 @@ public class ReadHandler implements CompletionHandler<Long, Connection> {
         Flags flags = partialMessage.getFlags();
 
         if (!flags.hasMessageChunk()) {
-            if (partialMessage.getSize() > (BUFFER_SIZE - HEADER_SIZE)) {
-                System.out.println("ERROR");
-                System.exit(1);
+            // !todo
+            if (partialMessage.getSize() > (MAX_MESSAGE_SIZE - HEADER_SIZE)) {
+                System.out.println("Message size limit exceeded");
             }
             partialMessage.allocate();
 
