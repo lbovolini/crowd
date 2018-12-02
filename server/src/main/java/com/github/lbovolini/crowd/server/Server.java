@@ -1,6 +1,7 @@
 package com.github.lbovolini.crowd.server;
 
 import com.github.lbovolini.crowd.common.configuration.Config;
+import com.github.lbovolini.crowd.common.group.Multicast;
 import com.github.lbovolini.crowd.server.connection.ServerScheduler;
 import com.github.lbovolini.crowd.server.node.NodeService;
 import com.github.lbovolini.crowd.server.connection.ServerInfo;
@@ -17,19 +18,29 @@ public class Server {
 
     private final NodeService nodeService;
     private static ServerScheduler scheduler;
+    private ExecutorService multicast = Executors.newSingleThreadExecutor();
 
     public Server(NodeService nodeService) {
         this.nodeService = nodeService;
     }
 
     public void start() throws IOException, InterruptedException {
+
+        multicast.execute(() -> {
+            try {
+                new Multicast().start();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+
         int threads = Runtime.getRuntime().availableProcessors();
         ExecutorService pool = Executors.newFixedThreadPool(threads);
 
         AsynchronousChannelGroup asynchronousChannelGroup = AsynchronousChannelGroup.withThreadPool(pool);
         AsynchronousServerSocketChannel server = AsynchronousServerSocketChannel.open(asynchronousChannelGroup);
 
-        InetSocketAddress inetSocketAddress = new InetSocketAddress(Config.SERVER_HOST, Config.SERVER_PORT);
+        InetSocketAddress inetSocketAddress = new InetSocketAddress(Config.HOST_NAME, Config.PORT);
         server.bind(inetSocketAddress);
 
         scheduler = new ServerScheduler(nodeService);

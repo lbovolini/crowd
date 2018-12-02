@@ -24,4 +24,65 @@ public interface Host {
         }
         return "";
     }
+
+    static String getHostAddressName() {
+
+        Enumeration<NetworkInterface> nets = null;
+        try {
+            nets = NetworkInterface.getNetworkInterfaces();
+        } catch (SocketException e) {
+            return "";
+        }
+
+        for (NetworkInterface netint : Collections.list(nets)) {
+            Enumeration<InetAddress> inetAddresses = netint.getInetAddresses();
+
+            for (InetAddress inetAddress : Collections.list(inetAddresses)) {
+                if (inetAddress instanceof Inet4Address && !inetAddress.isLoopbackAddress() && !inetAddress.isLinkLocalAddress()) {
+                    //System.out.println(inetAddress.getHostAddress());
+                    return inetAddress.getHostAddress();
+                }
+            }
+        }
+        return "";
+    }
+
+    static String getNetworkInterface() throws SocketException {
+
+        Enumeration<NetworkInterface> nets = NetworkInterface.getNetworkInterfaces();
+
+        for (NetworkInterface netint : Collections.list(nets)) {
+            Enumeration<InetAddress> inetAddresses = netint.getInetAddresses();
+
+            for (InetAddress inetAddress : Collections.list(inetAddresses)) {
+                if (inetAddress instanceof Inet4Address && !inetAddress.isLoopbackAddress() && !inetAddress.isLinkLocalAddress()) {
+                    //System.out.println(inetAddress.getHostAddress());
+                    return netint.getName();
+                }
+            }
+        }
+        return "";
+    }
+
+    static String getNetworkInterfaceName() {
+
+        Enumeration<NetworkInterface> nets = null;
+        try {
+            nets = NetworkInterface.getNetworkInterfaces();
+        } catch (SocketException e) {
+            return "";
+        }
+
+        for (NetworkInterface netint : Collections.list(nets)) {
+            Enumeration<InetAddress> inetAddresses = netint.getInetAddresses();
+
+            for (InetAddress inetAddress : Collections.list(inetAddresses)) {
+                if (inetAddress instanceof Inet4Address && !inetAddress.isLoopbackAddress() && !inetAddress.isLinkLocalAddress()) {
+                    //System.out.println(inetAddress.getHostAddress());
+                    return netint.getName();
+                }
+            }
+        }
+        return "";
+    }
 }

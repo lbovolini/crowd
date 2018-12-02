@@ -1,15 +1,45 @@
 package com.github.lbovolini.crowd.common.configuration;
 
+import com.github.lbovolini.crowd.common.host.Host;
+
 public class Config {
+    /**
+     * TCP connection
+     */
     public static final int BUFFER_SIZE = 1024;
     public static final int HEADER_SIZE = Byte.BYTES + Short.BYTES;
     public static final int BUFFER_ARRAY_SIZE = 16;
 
-    public static final String SERVER_HOST = System.getProperty("server.hostname", "localhost");
-    public static final int SERVER_PORT = Integer.parseInt(System.getProperty("server.port", String.valueOf(8080)));
+    public static final String HOST_NAME = System.getProperty("hostname", Host.getHostAddressName());
+    public static final int PORT = Integer.parseInt(System.getProperty("port", String.valueOf(8081)));
 
-    public static final String CLIENT_HOST = System.getProperty("client.hostname", "localhost");
-    public static final int CLIENT_PORT = Integer.parseInt(System.getProperty("client.port", String.valueOf(8081)));
+     /**
+     * MULTICAST connection
+     */
+    public static final String MULTICAST_IP = System.getProperty("multicast.ip", "225.4.5.6");
+    public static final int MULTICAST_PORT = Integer.parseInt(System.getProperty("multicast.port", String.valueOf(8000)));
 
-    public static final String CODEBASE = System.getProperty("server.codebase", "file:/home/lbovolini/Dev/quebra-pedra/qp-dist/target/classes/ file:/home/lbovolini/Dev/quebra-pedra/plugins/classes/ file:/home/lbovolini/Dev/quebra-pedra/qp/target/classes/");
+    public static final int MULTICAST_BUFFER_SIZE = 1024;
+    public static final String MULTICAST_INTERFACE_NAME = System.getProperty("multicast.interface", Host.getNetworkInterfaceName());
+    public static final int MULTICAST_CLIENT_PORT = Integer.parseInt(System.getProperty("multicast.client.port", String.valueOf(8011)));
+
+    /**
+     * MULTICAST messages
+     */
+    public static final Byte HEARTBEAT = (byte)-1;
+    public static final Byte DISCOVER = (byte)1;
+    //
+    public static final char SEPARATOR = ';';
+
+    /**
+     * HEARTBEAT
+     */
+    public static final int HEARTBEAT_INTERVAL = 5;
+    public static final int MAX_DOWNTIME = 6;
+
+    /**
+     * NON FINAL
+     */
+    public static String CODEBASE = System.getProperty("server.codebase", "file:qp-1.0-SNAPSHOT.jar file:qp-dist-1.0-SNAPSHOT.jar file:server-1.0-SNAPSHOT.jar file:plugins/classes/");
+
 }

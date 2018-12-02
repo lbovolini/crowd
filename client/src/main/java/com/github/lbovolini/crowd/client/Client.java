@@ -2,6 +2,8 @@ package com.github.lbovolini.crowd.client;
 
 import com.github.lbovolini.crowd.client.connection.ClientInfo;
 import com.github.lbovolini.crowd.client.handler.ConnectionHandler;
+import com.github.lbovolini.crowd.common.group.CodebaseAndServerAddress;
+import com.github.lbovolini.crowd.common.group.Multicast;
 import com.github.lbovolini.crowd.common.host.HostDetails;
 import com.github.lbovolini.crowd.common.configuration.Config;
 
@@ -13,7 +15,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 
-//!TODO server offline
 public final class Client {
 
     private static String id;
@@ -23,10 +24,28 @@ public final class Client {
 
     private static int cores = Runtime.getRuntime().availableProcessors();
 
+    private boolean running;
+
+    private Scheduler scheduler;
+    private ExecutorService pool;
+
+    AsynchronousSocketChannel channel = null;
+    ExecutorService socketPool = Executors.newSingleThreadExecutor();
+    AsynchronousChannelGroup asynchronousChannelGroup;
+
+    ClientInfo clientInfo = null;
+
     public Client(String host, int port) {
         this.host = host;
         this.port = port;
         this.id = host + String.valueOf(port);
+        this.running = false;
+        this.pool = Executors.newSingleThreadExecutor();
+        try {
+            asynchronousChannelGroup = AsynchronousChannelGroup.withThreadPool(socketPool);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public static String getId() {
@@ -37,31 +56,57 @@ public final class Client {
         return cores;
     }
 
-    public void start() throws IOException {
+    public boolean isRunning() {
+        return running;
+    }
 
-        InetSocketAddress hostAddress = new InetSocketAddress(Config.SERVER_HOST, Config.SERVER_PORT);
+    private void setRunning() {
+        running = true;
+    }
 
-        ExecutorService socketPool = Executors.newSingleThreadExecutor();
+    public void start(CodebaseAndServerAddress csa) {
+        start(csa.getCodebase(), csa.getServerAddress(), csa.getServerPort());
+    }
 
-        AsynchronousChannelGroup asynchronousChannelGroup = AsynchronousChannelGroup.withThreadPool(socketPool);
-        AsynchronousSocketChannel channel = AsynchronousSocketChannel.open(asynchronousChannelGroup);
+    public void start(String codebase, String serverAddress, int serverPort) {
 
+        InetSocketAddress hostAddress = new InetSocketAddress(serverAddress, serverPort);
         HostDetails hostDetails = new HostDetails(id, host, port, cores);
-        Scheduler scheduler = new Scheduler();
-        ClientInfo clientInfo = new ClientInfo(hostDetails, channel, scheduler, true);
 
-        try {
-            //https://docs.oracle.com/javase/7/docs/api/java/net/StandardSocketOptions.html#SO_REUSEADDR
-            //http://blog.stephencleary.com/2009/05/detection-of-half-open-dropped.html
-            channel.setOption(StandardSocketOptions.TCP_NODELAY, true);
-            channel.setOption(StandardSocketOptions.SO_KEEPALIVE, true);
-            channel.setOption(StandardSocketOptions.SO_REUSEADDR, true);
+        System.out.println(codebase);
+        System.out.println(serverAddress);
+        System.out.println(serverPort);
 
-            channel.bind(new InetSocketAddress(Config.CLIENT_HOST, Config.CLIENT_PORT));
-        } catch (BindException be) {
-            System.out.println("Address already in use");
+        if(isRunning()) {
+            scheduler.stop();
+            this.pool.shutdownNow();
+            this.pool = Executors.newSingleThreadExecutor();
         }
-        channel.connect(hostAddress, clientInfo, new ConnectionHandler());
+        setRunning();
+
+        this.pool.submit(() -> {
+
+            try {
+
+                channel = AsynchronousSocketChannel.open(asynchronousChannelGroup);
+
+                scheduler = new Scheduler(codebase);
+                clientInfo = new ClientInfo(hostDetails, channel, scheduler, true);
+
+                //https://docs.oracle.com/javase/7/docs/api/java/net/StandardSocketOptions.html#SO_REUSEADDR
+                //http://blog.stephencleary.com/2009/05/detection-of-half-open-dropped.html
+                channel.setOption(StandardSocketOptions.TCP_NODELAY, true);
+                channel.setOption(StandardSocketOptions.SO_KEEPALIVE, true);
+                channel.setOption(StandardSocketOptions.SO_REUSEADDR, true);
+
+                channel.bind(new InetSocketAddress(host, port));
+            } catch (IOException e) {
+                System.out.println("Address already in use");
+            }
+            //
+            channel.connect(hostAddress, clientInfo, new ConnectionHandler());
+        });
+
     }
 
     public static void main(String[] args) {
@@ -78,16 +123,22 @@ public final class Client {
 
         System.out.println("Using " + Client.cores + " cores");
 
-        String host = Config.CLIENT_HOST;
-        int port = Config.CLIENT_PORT;
+        String host = Config.HOST_NAME;
+        int port = Config.PORT;
 
         Client client = new Client(host, port);
 
+        Multicast multicast = new Multicast(true) {
+            public void handle(CodebaseAndServerAddress csa) {
+                client.start(csa);
+            }
+        };
+
         try {
-            client.start();
-            Thread.currentThread().join();
-        } catch (IOException | InterruptedException e) {
+            multicast.start();
+        } catch (IOException e) {
             e.printStackTrace();
         }
+
     }
 }

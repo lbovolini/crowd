@@ -17,8 +17,6 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.concurrent.*;
 
-import static com.github.lbovolini.crowd.common.configuration.Config.CODEBASE;
-
 public class Scheduler implements Proxy, Service {
 
     private Object object;
@@ -29,12 +27,18 @@ public class Scheduler implements Proxy, Service {
     private static BlockingDeque<Message> requests;
     private static ExecutorService pool;
 
-    private final URLClassLoader loader;
+    private static URLClassLoader loader = null;
+    private String codebase;
 
+    public void setCodebase(String codebase) {
+        this.codebase = codebase;
+    }
 
-    public Scheduler() {
+    public Scheduler(String codebase) {
+        setCodebase(codebase);
         requests = new LinkedBlockingDeque<>();
-        loader = RemoteClassLoader.newInstance(getCodeBase(), Thread.currentThread().getContextClassLoader());
+        if (loader == null)
+            loader = new RemoteClassLoader(getCodeBase(), Thread.currentThread().getContextClassLoader());
         thread = new Thread(() -> dispatch());
         thread.setContextClassLoader(loader);
         onClose();
@@ -106,7 +110,10 @@ public class Scheduler implements Proxy, Service {
     }
 
     private URL[] getCodeBase() {
-        String[] strURL = CODEBASE.split(" ");
+        if (codebase.equals("") || codebase == null) {
+            return null;
+        }
+        String[] strURL = codebase.split(" ");
         URL[] urls = new URL[strURL.length];
 
         for (int i = 0; i < strURL.length; i++) {

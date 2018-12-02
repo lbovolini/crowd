@@ -24,7 +24,9 @@ public class Message {
         JOIN((byte)1),
         LEAVE((byte)2),
         REPLY((byte)3),
-        INVOKE((byte)4);
+        INVOKE((byte)4),
+        SERVER((byte)5),
+        BEAT((byte)127);
 
         byte type;
 
