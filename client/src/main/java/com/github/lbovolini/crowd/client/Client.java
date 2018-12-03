@@ -2,7 +2,7 @@ package com.github.lbovolini.crowd.client;
 
 import com.github.lbovolini.crowd.client.connection.ClientInfo;
 import com.github.lbovolini.crowd.client.handler.ConnectionHandler;
-import com.github.lbovolini.crowd.common.group.CodebaseAndServerAddress;
+import com.github.lbovolini.crowd.common.group.ServerDetails;
 import com.github.lbovolini.crowd.common.group.Multicast;
 import com.github.lbovolini.crowd.common.host.HostDetails;
 import com.github.lbovolini.crowd.common.configuration.Config;
@@ -58,7 +58,7 @@ public final class Client {
         running = true;
     }
 
-    public void start(CodebaseAndServerAddress csa) throws IOException {
+    public void start(ServerDetails csa) throws IOException {
         start(csa.getCodebase(), csa.getServerAddress(), csa.getServerPort(), csa.getLibURL());
     }
 
@@ -111,7 +111,7 @@ public final class Client {
         int port = Config.PORT;
 
         Multicast multicast = new Multicast(true) {
-            public void handle(CodebaseAndServerAddress csa) {
+            public void handle(ServerDetails csa) {
                 try {
                     new Client(host, port).start(csa);
                 } catch (IOException e) {

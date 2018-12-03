@@ -21,7 +21,7 @@ public class Multicast {
 
     private final boolean isClient;
     private final int port;
-    private CodebaseAndServerAddress csa;
+    private ServerDetails csa;
 
     private final ScheduledExecutorService pool = Executors.newSingleThreadScheduledExecutor();
     private final Object lock = new Object();
@@ -60,7 +60,7 @@ public class Multicast {
         channel.register(selector, SelectionKey.OP_WRITE, attach);
     }
 
-    public void handle(CodebaseAndServerAddress csa) {
+    public void handle(ServerDetails csa) {
         throw new UnsupportedOperationException();
     }
 
@@ -93,13 +93,13 @@ public class Multicast {
         }
     }
 
-    private CodebaseAndServerAddress getCodebaseInfo(String response) {
+    private ServerDetails getCodebaseInfo(String response) {
         String[] info = response.split(";");
 
         if (info.length < 4) {
             throw new RuntimeException("Server response error");
         }
-        csa = new CodebaseAndServerAddress(info[0], info[1], info[2], info[3]);
+        csa = new ServerDetails(info[0], info[1], info[2], info[3]);
         return csa;
     }
 
