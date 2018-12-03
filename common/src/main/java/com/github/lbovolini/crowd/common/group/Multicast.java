@@ -68,6 +68,7 @@ public class Multicast {
 
         try {
             Object object = Message.deserialize(buffer);
+
             if (object instanceof String) {
                 String response = (String)object;
                 // CODEBASE
@@ -80,9 +81,8 @@ public class Multicast {
                     responseFromTo(channel, address, getCodebase());
                 }
                 // HEARTBEAT
-                else if (Objects.equals(response, HEARTBEAT)) {
-                    System.out.println("HEARTBEAT");
-                    if (!isMyself(address)) {
+                else if (!isClient) {
+                    if (Objects.equals(response, HEARTBEAT)) {
                         responseFromTo(channel, address, HEARTBEAT);
                     }
                 }
@@ -96,10 +96,10 @@ public class Multicast {
     private CodebaseAndServerAddress getCodebaseInfo(String response) {
         String[] info = response.split(";");
 
-        if (info.length < 3) {
+        if (info.length < 4) {
             throw new RuntimeException("Server response error");
         }
-        csa = new CodebaseAndServerAddress(info[0], info[1], info[2]);
+        csa = new CodebaseAndServerAddress(info[0], info[1], info[2], info[3]);
         return csa;
     }
 
@@ -181,7 +181,7 @@ public class Multicast {
 
 
     private String getCodebase() {
-        return CODEBASE + SEPARATOR + HOST_NAME + SEPARATOR + PORT;
+        return CODEBASE + SEPARATOR + HOST_NAME + SEPARATOR + PORT + SEPARATOR + LIBURL;
     }
 
     public void start() throws IOException {

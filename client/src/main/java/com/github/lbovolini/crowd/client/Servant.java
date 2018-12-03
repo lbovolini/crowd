@@ -16,8 +16,10 @@ public class Servant {
         Exception exception = null;
 
         try {
+            Object[] args = request.getArgs();
+            Class[] types = getTypes(args);
             result = object.getClass().getMethod(request.getName(),
-                    request.getTypes()).invoke(object, request.getArgs());
+                    types).invoke(object, request.getArgs());
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException ex) {
             exception = ex;
             ex.printStackTrace();
@@ -37,5 +39,14 @@ public class Servant {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private static Class[] getTypes(Object[] args) {
+        Class[] types = new Class[args.length];
+
+        for (int i = 0; i < types.length; i++) {
+            types[i] = args[i].getClass();
+        }
+        return types;
     }
 }

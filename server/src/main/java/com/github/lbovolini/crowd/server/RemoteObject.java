@@ -19,21 +19,21 @@ public class RemoteObject implements Service, InvocationHandler {
         this.node = node;
     }
 
-    private void create(String className, Class<?>[] parameterTypes, Object[] args) throws Exception {
-        Request request = new CreateObject(className, parameterTypes, args);
+    private void create(String className, Object[] args) throws Exception {
+        Request request = new CreateObject(className, args);
         send(request);
     }
 
     public static Object newInstance(String className, Node node) throws Exception {
-        return newInstance(className, null, null, node);
+        return newInstance(className, null, node);
     }
 
-    public static Object newInstance(String className, Class<?>[] parameterTypes, Object[] args, Node node) throws Exception {
-        RemoteObject sefl = new RemoteObject(node);
-        sefl.create(className, parameterTypes, args);
-        node.setRef(sefl);
+    public static Object newInstance(String className, Object[] args, Node node) throws Exception {
+        RemoteObject self = new RemoteObject(node);
+        self.create(className, args);
+        node.setRef(self);
         return java.lang.reflect.Proxy.newProxyInstance(
-                Class.forName(className).getClassLoader(), Class.forName(className).getInterfaces(), sefl);
+                Class.forName(className).getClassLoader(), Class.forName(className).getInterfaces(), self);
     }
 
     private void send(Request request) throws Exception {
@@ -50,7 +50,7 @@ public class RemoteObject implements Service, InvocationHandler {
             request = new ServiceRequest(method.getName());
         } else {
             UUID uuid = UUID.randomUUID();
-            request = new InvokeMethod(uuid, method.getName(), method.getParameterTypes(), args);
+            request = new InvokeMethod(uuid, method.getName(), args);
             methodResponse.put(uuid, result);
             result.thenRun(() -> methodResponse.remove(uuid));
         }

@@ -59,10 +59,12 @@ public final class Client {
     }
 
     public void start(CodebaseAndServerAddress csa) throws IOException {
-        start(csa.getCodebase(), csa.getServerAddress(), csa.getServerPort());
+        start(csa.getCodebase(), csa.getServerAddress(), csa.getServerPort(), csa.getLibURL());
     }
 
-    public void start(String codebase, String serverAddress, int serverPort) throws IOException {
+    public void start(String codebase, String serverAddress, int serverPort, String libURL) throws IOException {
+
+        setLibURL(libURL);
 
         InetSocketAddress hostAddress = new InetSocketAddress(serverAddress, serverPort);
         HostDetails hostDetails = new HostDetails(id, host, port, cores);
@@ -78,13 +80,19 @@ public final class Client {
         channel.setOption(StandardSocketOptions.TCP_NODELAY, true);
         channel.setOption(StandardSocketOptions.SO_KEEPALIVE, true);
         channel.setOption(StandardSocketOptions.SO_REUSEADDR, true);
-        channel.bind(new InetSocketAddress(host, port));
-
+        if (!running) {
+            channel.bind(new InetSocketAddress(host, port));
+        }
         clientInfo = new ClientInfo(hostDetails, channel, scheduler, true);
-
         channel.connect(hostAddress, clientInfo, new ConnectionHandler());
+
     }
 
+    private void setLibURL(String libURL) {
+        System.setProperty("lib.url", libURL);
+    }
+
+    //fix liburl
     public static void main(String[] args) {
 
         int cores;

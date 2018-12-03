@@ -69,7 +69,7 @@ public class Scheduler implements Proxy, Service {
                 // CreateObject
                 else if (request instanceof CreateObject) {
                     stop();
-                    object = newInstance(request.getName(), request.getTypes(), request.getArgs());
+                    object = newInstance(request.getName(), request.getArgs());
                 }
 
             } catch (Exception e) {
@@ -82,15 +82,23 @@ public class Scheduler implements Proxy, Service {
         requests.put(message);
     }
 
-    private Object newInstance(String className, Class<?>[] parameterTypes, Object[] args) throws Exception {
-        try {
-            Class classDefinition = loader.loadClass(className);
-            Constructor constructor = classDefinition.getConstructor(parameterTypes);
-            return constructor.newInstance(args);
-        } catch (Exception e) {
-            e.printStackTrace();
+    private Object newInstance(String className, Object[] args) throws Exception {
+        Class classDefinition = loader.loadClass(className);
+        Constructor constructor = classDefinition.getConstructor(getTypes(args));
+        return constructor.newInstance(args);
+    }
+
+    private static Class<?>[] getTypes(Object[] args) {
+
+        if (args == null || args.length == 0) {
+            return null;
         }
-        return null;
+        Class<?>[] types = new Class[args.length];
+
+        for (int i = 0; i < types.length; i++) {
+            types[i] = args[i].getClass();
+        }
+        return types;
     }
 
     public void stop() {

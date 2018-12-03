@@ -41,6 +41,6 @@ public class Config {
     /**
      * NON FINAL
      */
-    public static String CODEBASE = System.getProperty("server.codebase", "file:qp-1.0-SNAPSHOT.jar file:qp-dist-1.0-SNAPSHOT.jar file:server-1.0-SNAPSHOT.jar file:plugins/classes/");
-
+    public static String CODEBASE = System.getProperty("server.codebase", "");
+    public static String LIBURL = System.getProperty("lib.url");
 }

@@ -7,8 +7,8 @@ public class InvokeMethod extends Request implements Serializable {
 
     private final UUID uuid;
 
-    public InvokeMethod(UUID uuid, String method, Class<?>[] types, Object[] args) {
-        super(method, types, args);
+    public InvokeMethod(UUID uuid, String method, Object[] args) {
+        super(method, args);
         this.uuid   = uuid;
     }
 
