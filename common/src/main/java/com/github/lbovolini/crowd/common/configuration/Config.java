@@ -29,6 +29,7 @@ public class Config {
      */
     public static final Byte HEARTBEAT = (byte)-1;
     public static final Byte DISCOVER = (byte)1;
+    //public static final Byte MODIFIED = (byte)2;
     //
     public static final char SEPARATOR = ';';
 
@@ -36,11 +37,19 @@ public class Config {
      * HEARTBEAT
      */
     public static final int HEARTBEAT_INTERVAL = 5;
-    public static final int MAX_DOWNTIME = 6;
+    public static final int MAX_DOWNTIME = 15;
 
     /**
      * NON FINAL
      */
-    public static String CODEBASE = System.getProperty("server.codebase", "");
-    public static String LIBURL = System.getProperty("lib.url");
+    public static String CODEBASE = System.getProperty("server.codebase");
+    public static String LIB_URL = System.getProperty("lib.url");
+    public static String LIB_PATH = System.getProperty("lib.path", System.getProperty("java.io.tmpdir"));
+
+    /**
+     *
+     */
+    public static final String EXTENSIONS[] = {".class", ".jar"};
+    //public static final String CODEBASE_ROOT = System.getProperty("codebase.root", "/home/lbovolini/app");
+    //public static final String CODEBASE_URL = "";
 }

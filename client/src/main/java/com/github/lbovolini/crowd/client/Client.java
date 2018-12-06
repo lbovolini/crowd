@@ -14,6 +14,7 @@ import java.nio.channels.AsynchronousSocketChannel;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import static com.github.lbovolini.crowd.common.configuration.Config.*;
 
 public final class Client {
 
@@ -34,12 +35,16 @@ public final class Client {
 
     ClientInfo clientInfo = null;
 
-    public Client(String host, int port) throws IOException {
+    public Client(String host, int port) {
         this.host = host;
         this.port = port;
         this.id = host + String.valueOf(port);
         this.running = false;
-        asynchronousChannelGroup = AsynchronousChannelGroup.withThreadPool(socketPool);
+        try {
+            asynchronousChannelGroup = AsynchronousChannelGroup.withThreadPool(socketPool);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public static String getId() {
@@ -89,10 +94,9 @@ public final class Client {
     }
 
     private void setLibURL(String libURL) {
-        System.setProperty("lib.url", libURL);
+        LIB_URL = libURL;
     }
 
-    //fix liburl
     public static void main(String[] args) {
 
         int cores;
@@ -107,13 +111,15 @@ public final class Client {
 
         System.out.println("Using " + Client.cores + " cores");
 
-        String host = Config.HOST_NAME;
-        int port = Config.PORT;
+        String host = HOST_NAME;
+        int port = PORT;
 
+
+        Client client = new Client(host, port);
         Multicast multicast = new Multicast(true) {
             public void handle(ServerDetails csa) {
                 try {
-                    new Client(host, port).start(csa);
+                    client.start(csa);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

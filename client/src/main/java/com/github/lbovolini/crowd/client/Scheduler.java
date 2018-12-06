@@ -24,23 +24,18 @@ public class Scheduler implements Proxy, Service {
 
     private final Thread thread;
 
-    private static BlockingDeque<Message> requests;
-    private static ExecutorService pool;
+    private BlockingDeque<Message> requests;
+    private ExecutorService pool;
 
-    private static URLClassLoader loader = null;
-    private String codebase;
-
-    public void setCodebase(String codebase) {
-        this.codebase = codebase;
-    }
+    private final RemoteClassLoader loader;
+    private final ClassLoader contextClassLoader;
 
     public Scheduler(String codebase) {
-        setCodebase(codebase);
-        requests = new LinkedBlockingDeque<>();
-        if (loader == null)
-            loader = new RemoteClassLoader(getCodeBase(), Thread.currentThread().getContextClassLoader());
-        thread = new Thread(() -> dispatch());
-        thread.setContextClassLoader(loader);
+        this.requests = new LinkedBlockingDeque<>();
+        this.contextClassLoader = Thread.currentThread().getContextClassLoader();
+        this.loader = new RemoteClassLoader(codebase, contextClassLoader);
+        this.thread = new Thread(this::dispatch);
+        this.thread.setContextClassLoader(loader);
         onClose();
     }
 
@@ -117,21 +112,7 @@ public class Scheduler implements Proxy, Service {
 
     }
 
-    private URL[] getCodeBase() {
-        if (codebase.equals("") || codebase == null) {
-            return null;
-        }
-        String[] strURL = codebase.split(" ");
-        URL[] urls = new URL[strURL.length];
 
-        for (int i = 0; i < strURL.length; i++) {
-            try {
-                urls[i] = new URL(strURL[i]);
-            } catch (MalformedURLException e) { e.printStackTrace(); }
-        }
-
-        return urls;
-    }
 
     public void onClose() {
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {

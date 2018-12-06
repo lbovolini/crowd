@@ -9,6 +9,7 @@ import java.nio.channels.*;
 import java.util.Iterator;
 import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -26,6 +27,7 @@ public class Multicast {
     private final ScheduledExecutorService pool = Executors.newSingleThreadScheduledExecutor();
     private final Object lock = new Object();
     private long lastResponseTime = 0;
+    private final Set<String> hosts = ConcurrentHashMap.newKeySet();
 
     public Multicast() {
         this.isClient = false;
@@ -61,12 +63,13 @@ public class Multicast {
     }
 
     public void handle(ServerDetails csa) {
-        throw new UnsupportedOperationException();
     }
+
 
     private void handle(DatagramChannel channel, byte[] buffer, InetSocketAddress address) {
 
         try {
+            updateLastResponseTime();
             Object object = Message.deserialize(buffer);
 
             if (object instanceof String) {
@@ -75,19 +78,26 @@ public class Multicast {
                 handle(getCodebaseInfo(response));
             }
             else if (object instanceof Byte) {
+                if (isClient) {return; };
+
                 Byte response = (Byte) object;
                 // DISCOVER
                 if (Objects.equals(response, DISCOVER)) {
                     responseFromTo(channel, address, getCodebase());
+                    hosts.add(address.toString());
                 }
-                // HEARTBEAT
-                else if (!isClient) {
-                    if (Objects.equals(response, HEARTBEAT)) {
+                else if (Objects.equals(response, HEARTBEAT)) {
+                    // HEARTBEAT
+                    if (hosts.contains(address.toString())) {
                         responseFromTo(channel, address, HEARTBEAT);
+                    // DISCOVER
+                    } else {
+                        hosts.add(address.toString());
+                        responseFromTo(channel, address, getCodebase());
                     }
                 }
+
             }
-            updateLastResponseTime();
         } catch (ClassNotFoundException | IOException e) {
             e.printStackTrace();
         }
@@ -115,11 +125,7 @@ public class Multicast {
         }
 
         buffer.flip();
-        //int limits = buffer.limit();
-        //byte bytes[] = new byte[limits];
-        //buffer.get(bytes, 0, limits);
         handle(channel, buffer.array(), (InetSocketAddress)address);
-        //buffer.clear();
     }
 
     private void write(SelectionKey selectionKey) throws IOException {
@@ -163,6 +169,7 @@ public class Multicast {
         }, 0, HEARTBEAT_INTERVAL, TimeUnit.SECONDS);
     }
 
+
     private void updateLastResponseTime() {
         synchronized (lock) {
             lastResponseTime = System.nanoTime();
@@ -179,9 +186,8 @@ public class Multicast {
         return downTime > MAX_DOWNTIME;
     }
 
-
     private String getCodebase() {
-        return CODEBASE + SEPARATOR + HOST_NAME + SEPARATOR + PORT + SEPARATOR + LIBURL;
+        return CODEBASE + SEPARATOR + HOST_NAME + SEPARATOR + PORT + SEPARATOR + LIB_URL;
     }
 
     public void start() throws IOException {
