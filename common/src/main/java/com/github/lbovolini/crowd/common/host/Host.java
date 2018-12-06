@@ -27,24 +27,12 @@ public interface Host {
 
     static String getHostAddressName() {
 
-        Enumeration<NetworkInterface> nets = null;
+        String address = "";
+
         try {
-            nets = NetworkInterface.getNetworkInterfaces();
-        } catch (SocketException e) {
-            return "";
-        }
-
-        for (NetworkInterface netint : Collections.list(nets)) {
-            Enumeration<InetAddress> inetAddresses = netint.getInetAddresses();
-
-            for (InetAddress inetAddress : Collections.list(inetAddresses)) {
-                if (inetAddress instanceof Inet4Address && !inetAddress.isLoopbackAddress() && !inetAddress.isLinkLocalAddress()) {
-                    //System.out.println(inetAddress.getHostAddress());
-                    return inetAddress.getHostAddress();
-                }
-            }
-        }
-        return "";
+            address = getHostAddress();
+        } catch (SocketException e) { }
+        return address;
     }
 
     static String getNetworkInterface() throws SocketException {
@@ -65,24 +53,11 @@ public interface Host {
     }
 
     static String getNetworkInterfaceName() {
+        String netInt = "";
 
-        Enumeration<NetworkInterface> nets = null;
         try {
-            nets = NetworkInterface.getNetworkInterfaces();
-        } catch (SocketException e) {
-            return "";
-        }
-
-        for (NetworkInterface netint : Collections.list(nets)) {
-            Enumeration<InetAddress> inetAddresses = netint.getInetAddresses();
-
-            for (InetAddress inetAddress : Collections.list(inetAddresses)) {
-                if (inetAddress instanceof Inet4Address && !inetAddress.isLoopbackAddress() && !inetAddress.isLinkLocalAddress()) {
-                    //System.out.println(inetAddress.getHostAddress());
-                    return netint.getName();
-                }
-            }
-        }
-        return "";
+            netInt = getNetworkInterface();
+        } catch (SocketException e) {  }
+        return netInt;
     }
 }
