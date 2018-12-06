@@ -3,35 +3,42 @@ package com.github.lbovolini.example.hello;
 import com.github.lbovolini.crowd.server.node.NodeGroup;
 
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class Main {
 
-    static AtomicInteger cont = new AtomicInteger();
+    static int cont = 0;
+    static final Object lock = new Object();
 
     public static void solve(IHello<CompletableFuture> hello) {
 
-        int i = cont.incrementAndGet();
+        int i;
 
-        if (i > Short.MAX_VALUE) {
-            return;
+        synchronized (lock) {
+            if (cont > Short.MAX_VALUE) {
+                return;
+            }
+            i = cont++;
         }
 
-        CompletableFuture<Void> result = hello.say(i);
-        result.whenComplete((aVoid, ex) -> {
-           if (ex != null) {
-               ex.printStackTrace();
-           } else {
-               solve(hello);
-           }
-        });
+        try {
+            CompletableFuture<String> result = hello.say(i);
+
+            result.whenComplete((response, ex) -> {
+               if (ex != null) {
+                   ex.printStackTrace();
+               } else {
+                   System.out.println(response);
+                   solve(hello);
+               }
+            });
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
     }
 
-    public static void main(String[] args) {
-
+    public static void main(String[] args) throws Exception {
         NodeGroup nodeGroup = new NodeGroup(Hello.class.getName());
         nodeGroup.forAll((hello, time) -> solve((IHello)hello));
     }
-
 }

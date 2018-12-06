@@ -2,16 +2,10 @@ package com.github.lbovolini.example.hello;
 
 public class Hello implements IHello {
 
-    public Void say(Integer i) {
-
+    public String say(Integer i) throws InterruptedException {
         System.out.println(i + " Hello world");
-
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        return null;
+        Thread.sleep(1000);
+        String response = i + " done";
+        return response;
     }
 }
