@@ -7,7 +7,7 @@ public class Config {
      * TCP connection
      */
     public static final int BUFFER_SIZE = 1024;
-    public static final int MAX_MESSAGE_SIZE = 1024;
+    public static final int MAX_MESSAGE_SIZE = BUFFER_SIZE * 8;
     public static final int HEADER_SIZE = Byte.BYTES + Short.BYTES;
     public static final int BUFFER_ARRAY_SIZE = 16;
 
@@ -49,6 +49,6 @@ public class Config {
      *
      */
     public static final String EXTENSIONS[] = {".class", ".jar"};
-    //public static final String CODEBASE_ROOT = System.getProperty("codebase.root", "/home/lbovolini/app");
+    public static final String CODEBASE_ROOT = System.getProperty("codebase.root", "");
     //public static final String CODEBASE_URL = "";
 }
