@@ -7,9 +7,9 @@ public class Response implements Serializable {
     private final String from;
     private final UUID uuid;
     private final Object result;
-    private final Exception exception;
+    private final String exception;
 
-    public Response(String from, UUID uuid, Object result, Exception exception) {
+    public Response(String from, UUID uuid, Object result, String exception) {
         this.from = from;
         this.uuid = uuid;
         this.result = result;
@@ -29,7 +29,7 @@ public class Response implements Serializable {
     }
 
     public Exception getException() {
-        return exception;
+        return new Exception(exception);
     }
 
 

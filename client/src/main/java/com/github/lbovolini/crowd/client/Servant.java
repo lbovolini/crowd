@@ -12,7 +12,7 @@ public class Servant {
 
     public static void execute(final Object object, Request request, Connection connection) {
         Object result = null;
-        Exception exception = null;
+        String exception = null;
 
         try {
             Object[] args = request.getArgs();
@@ -20,7 +20,7 @@ public class Servant {
             result = object.getClass().getMethod(request.getName(),
                     types).invoke(object, request.getArgs());
         } catch (Exception ex) {
-            exception = ex;
+            exception = getException(object, request);
             //ex.printStackTrace();
         }
 
@@ -49,7 +49,9 @@ public class Servant {
         return types;
     }
 
-    private static void setClassLoader(final ClassLoader classLoader) {
-        Thread.currentThread().setContextClassLoader(classLoader);
+    private static String getException(Object object, Request request){
+        String className = object != null ? object.getClass().getName() : "null";
+        String methodName = request != null ? request.getName() : "null";
+        return  "Servant execute error on class: " + className + " method: " + methodName;
     }
 }
