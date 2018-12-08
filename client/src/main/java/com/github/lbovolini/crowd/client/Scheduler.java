@@ -131,8 +131,10 @@ public class Scheduler implements Proxy, Service {
     public void stop() {
         if (pool != null) {
             try {
-                pool.shutdownNow();
+                pool.shutdown();
                 pool.awaitTermination(1, TimeUnit.SECONDS);
+                //##################
+                //pool.shutdownNow();
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
