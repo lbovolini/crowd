@@ -154,11 +154,10 @@ public class Connection {
     }
 
     public void send(Message message) {
-
-        if (message.getDataLength() > (BUFFER_SIZE - HEADER_SIZE)) {
-            System.out.println("Message too big");
-            System.exit(1);
-        }
+        // !todo ?
+        //if (message.getDataLength() > (BUFFER_SIZE - HEADER_SIZE)) {
+        //    System.out.println("Message too big");
+        //}
 
         ByteBuffer buffer = writerBufferPool.pool();
         buffer.put(message.getType()).putShort(message.getDataLength()).put(message.getData());

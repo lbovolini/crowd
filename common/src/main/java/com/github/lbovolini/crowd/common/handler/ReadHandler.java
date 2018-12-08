@@ -158,10 +158,10 @@ public class ReadHandler implements CompletionHandler<Long, Connection> {
         Flags flags = partialMessage.getFlags();
 
         if (!flags.hasMessageChunk()) {
-            // !todo
-            if (partialMessage.getSize() > (MAX_MESSAGE_SIZE - HEADER_SIZE)) {
-                System.out.println("Message size limit exceeded");
-            }
+            // !todo ?
+            //if (partialMessage.getSize() > (MAX_MESSAGE_SIZE - HEADER_SIZE)) {
+            //    System.out.println("Message size limit exceeded");
+            //}
             partialMessage.allocate();
 
             int read = Math.min(buffer.remaining(), partialMessage.getSize());
