@@ -12,9 +12,6 @@ import com.github.lbovolini.crowd.common.connection.Connection;
 
 import java.io.IOException;
 import java.lang.reflect.Constructor;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.concurrent.*;
 
 public class Scheduler implements Proxy, Service {
@@ -24,19 +21,36 @@ public class Scheduler implements Proxy, Service {
 
     private final Thread thread;
 
-    private BlockingDeque<Message> requests;
+    private final BlockingDeque<Message> requests;
     private ExecutorService pool;
 
-    private final RemoteClassLoader loader;
-    private final ClassLoader contextClassLoader;
+    private String codebase;
+    private Message latestCreatedObject;
+    private final Object lock = new Object();
+
+    private RemoteClassLoader classLoader;
 
     public Scheduler(String codebase) {
         this.requests = new LinkedBlockingDeque<>();
-        this.contextClassLoader = Thread.currentThread().getContextClassLoader();
-        this.loader = new RemoteClassLoader(codebase, contextClassLoader);
         this.thread = new Thread(this::dispatch);
-        this.thread.setContextClassLoader(loader);
+        this.codebase = codebase;
+        reload(codebase);
         onClose();
+        classLoader = new RemoteClassLoader(codebase, Scheduler.class.getClassLoader());
+    }
+
+    public void reload(String codebase) {
+        synchronized (lock) {
+            this.codebase = codebase;
+        }
+        recreateObject();
+    }
+
+    public void addURL(String codebase) {
+        synchronized (lock) {
+            this.codebase = codebase;
+            classLoader.addURLs(codebase);
+        }
     }
 
     public void start(Connection connection) {
@@ -50,6 +64,8 @@ public class Scheduler implements Proxy, Service {
     private void dispatch() {
         while (true) {
             try {
+                Thread.currentThread().setContextClassLoader(classLoader);
+
                 Message message = requests.take();
                 Request request = (Request) Message.deserialize(message.getData());
 
@@ -63,6 +79,7 @@ public class Scheduler implements Proxy, Service {
                 }
                 // CreateObject
                 else if (request instanceof CreateObject) {
+                    latestCreatedObject = message;
                     stop();
                     object = newInstance(request.getName(), request.getArgs());
                 }
@@ -78,9 +95,18 @@ public class Scheduler implements Proxy, Service {
     }
 
     private Object newInstance(String className, Object[] args) throws Exception {
-        Class classDefinition = loader.loadClass(className);
+        String codebase = getCodebase();
+        classLoader = new RemoteClassLoader(codebase, Scheduler.class.getClassLoader());
+        Class classDefinition = classLoader.loadClass(className);
         Constructor constructor = classDefinition.getConstructor(getTypes(args));
+
         return constructor.newInstance(args);
+    }
+
+    private String getCodebase() {
+        synchronized (lock) {
+            return this.codebase;
+        }
     }
 
     private static Class<?>[] getTypes(Object[] args) {
@@ -96,16 +122,22 @@ public class Scheduler implements Proxy, Service {
         return types;
     }
 
+    private void recreateObject() {
+        if (latestCreatedObject != null) {
+            requests.offer(latestCreatedObject);
+        }
+    }
+
     public void stop() {
-        try {
-            if (pool != null) {
+        if (pool != null) {
+            try {
                 pool.shutdownNow();
                 pool.awaitTermination(1, TimeUnit.SECONDS);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
-            pool = Executors.newFixedThreadPool(Client.getCores());
-        } catch (InterruptedException e) {
-            e.printStackTrace();
         }
+        pool = Executors.newFixedThreadPool(Client.getCores());
     }
 
     public void kill() {

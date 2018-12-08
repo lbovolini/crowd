@@ -7,7 +7,6 @@ import com.github.lbovolini.crowd.common.message.response.Response;
 import com.github.lbovolini.crowd.common.connection.Connection;
 
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 
 public class Servant {
 
@@ -20,9 +19,9 @@ public class Servant {
             Class[] types = getTypes(args);
             result = object.getClass().getMethod(request.getName(),
                     types).invoke(object, request.getArgs());
-        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException ex) {
+        } catch (Exception ex) {
             exception = ex;
-            ex.printStackTrace();
+            //ex.printStackTrace();
         }
 
         if (request instanceof InvokeMethod) {
@@ -30,7 +29,7 @@ public class Servant {
         }
     }
 
-    public static void reply(Response response, Connection connection) {
+    private static void reply(Response response, Connection connection) {
         try {
             byte[] data = Message.serialize(response);
             Message message = Message.create((byte)3, data);
@@ -48,5 +47,9 @@ public class Servant {
             types[i] = args[i].getClass();
         }
         return types;
+    }
+
+    private static void setClassLoader(final ClassLoader classLoader) {
+        Thread.currentThread().setContextClassLoader(classLoader);
     }
 }

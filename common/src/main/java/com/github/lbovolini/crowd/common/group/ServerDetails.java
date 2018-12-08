@@ -5,19 +5,18 @@ public class ServerDetails {
     private final String serverAddress;
     private final int serverPort;
     private final String libURL;
+    private final boolean reconnect;
 
-    public ServerDetails(String codebase, String serverAddress, int serverPort, String libURL) {
+    public ServerDetails(String codebase, String serverAddress, int serverPort, String libURL, boolean reconnect) {
         this.codebase = codebase;
         this.serverAddress = serverAddress;
         this.serverPort = serverPort;
         this.libURL = libURL;
+        this.reconnect = reconnect;
     }
 
-    public ServerDetails(String codebase, String serverAddress, String serverPort, String libURL) {
-        this.codebase = codebase;
-        this.serverAddress = serverAddress;
-        this.serverPort = Integer.parseInt(serverPort);
-        this.libURL = libURL;
+    public ServerDetails(String codebase, String serverAddress, String serverPort, String libURL, String reconnect) {
+        this(codebase, serverAddress, Integer.parseInt(serverPort), libURL, Boolean.valueOf(reconnect));
     }
 
     public String getCodebase() {
@@ -34,5 +33,9 @@ public class ServerDetails {
 
     public String getLibURL() {
         return libURL;
+    }
+
+    public boolean isReconnect() {
+        return reconnect;
     }
 }

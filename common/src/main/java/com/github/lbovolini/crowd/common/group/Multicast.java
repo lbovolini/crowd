@@ -1,5 +1,6 @@
 package com.github.lbovolini.crowd.common.group;
 
+import com.github.lbovolini.crowd.common.classloader.Monitor;
 import com.github.lbovolini.crowd.common.message.Message;
 
 import java.io.IOException;
@@ -65,7 +66,6 @@ public class Multicast {
     public void handle(ServerDetails csa) {
     }
 
-
     private void handle(DatagramChannel channel, byte[] buffer, InetSocketAddress address) {
 
         try {
@@ -78,12 +78,13 @@ public class Multicast {
                 handle(getCodebaseInfo(response));
             }
             else if (object instanceof Byte) {
+                Byte response = (Byte) object;
+
                 if (isClient) {return; };
 
-                Byte response = (Byte) object;
                 // DISCOVER
                 if (Objects.equals(response, DISCOVER)) {
-                    responseFromTo(channel, address, getCodebase());
+                    responseFromTo(channel, address, getCodebase(true));
                     hosts.add(address.toString());
                 }
                 else if (Objects.equals(response, HEARTBEAT)) {
@@ -93,7 +94,7 @@ public class Multicast {
                     // DISCOVER
                     } else {
                         hosts.add(address.toString());
-                        responseFromTo(channel, address, getCodebase());
+                        responseFromTo(channel, address, getCodebase(true));
                     }
                 }
 
@@ -109,7 +110,7 @@ public class Multicast {
         if (info.length < 4) {
             throw new RuntimeException("Server response error");
         }
-        csa = new ServerDetails(info[0], info[1], info[2], info[3]);
+        csa = new ServerDetails(info[0], info[1], info[2], info[3], info[4]);
         return csa;
     }
 
@@ -169,6 +170,26 @@ public class Multicast {
         }, 0, HEARTBEAT_INTERVAL, TimeUnit.SECONDS);
     }
 
+    private void change(DatagramChannel channel) {
+        try {
+            Monitor monitor = new Monitor("/home/lbovolini/app") {
+                @Override
+                public void onChange() {
+                    InetSocketAddress address = new InetSocketAddress(MULTICAST_IP, MULTICAST_CLIENT_PORT);
+                    ResponseFrom responseFrom = new ResponseFrom(getCodebase(false), address);
+
+                    try {
+                        channel.register(selector, SelectionKey.OP_WRITE, responseFrom);
+                        selector.wakeup();
+                    } catch (ClosedChannelException e) { e.printStackTrace(); }
+                }
+            };
+            monitor.start();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 
     private void updateLastResponseTime() {
         synchronized (lock) {
@@ -186,8 +207,8 @@ public class Multicast {
         return downTime > MAX_DOWNTIME;
     }
 
-    private String getCodebase() {
-        return CODEBASE + SEPARATOR + HOST_NAME + SEPARATOR + PORT + SEPARATOR + LIB_URL;
+    private String getCodebase(boolean reconnect) {
+        return CODEBASE + SEPARATOR + HOST_NAME + SEPARATOR + PORT + SEPARATOR + LIB_URL + SEPARATOR + reconnect;
     }
 
     public void start() throws IOException {
@@ -206,6 +227,8 @@ public class Multicast {
 
             if (isClient) {
                 startHeartbeat(channel);
+            } else {
+                change(channel);
             }
 
             InetAddress group = InetAddress.getByName(MULTICAST_IP);

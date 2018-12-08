@@ -5,7 +5,6 @@ import com.github.lbovolini.crowd.client.handler.ConnectionHandler;
 import com.github.lbovolini.crowd.common.group.ServerDetails;
 import com.github.lbovolini.crowd.common.group.Multicast;
 import com.github.lbovolini.crowd.common.host.HostDetails;
-import com.github.lbovolini.crowd.common.configuration.Config;
 
 import java.io.IOException;
 import java.net.*;
@@ -67,6 +66,11 @@ public final class Client {
         start(csa.getCodebase(), csa.getServerAddress(), csa.getServerPort(), csa.getLibURL());
     }
 
+    public void reload(ServerDetails serverDetails) {
+        setLibURL(serverDetails.getLibURL());
+        scheduler.reload(serverDetails.getCodebase());
+    }
+
     public void start(String codebase, String serverAddress, int serverPort, String libURL) throws IOException {
 
         setLibURL(libURL);
@@ -76,7 +80,7 @@ public final class Client {
 
         if (isRunning()) {
             channel.close();
-            //scheduler.stop();
+            scheduler.addURL(codebase);
         } else {
             scheduler = new Scheduler(codebase);
             setRunning();
@@ -117,9 +121,13 @@ public final class Client {
 
         Client client = new Client(host, port);
         Multicast multicast = new Multicast(true) {
-            public void handle(ServerDetails csa) {
+            public void handle(ServerDetails serverDetails) {
                 try {
-                    client.start(csa);
+                    if (serverDetails.isReconnect()) {
+                        client.start(serverDetails);
+                    } else {
+                        client.reload(serverDetails);
+                    }
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

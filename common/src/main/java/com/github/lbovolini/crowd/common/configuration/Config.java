@@ -29,7 +29,6 @@ public class Config {
      */
     public static final Byte HEARTBEAT = (byte)-1;
     public static final Byte DISCOVER = (byte)1;
-    //public static final Byte MODIFIED = (byte)2;
     //
     public static final char SEPARATOR = ';';
 
