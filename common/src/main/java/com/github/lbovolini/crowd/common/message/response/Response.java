@@ -29,8 +29,6 @@ public class Response implements Serializable {
     }
 
     public Exception getException() {
-        return new Exception(exception);
+        return exception != null ? new Exception(exception) : null;
     }
-
-
 }
