@@ -24,6 +24,13 @@ public class Monitor {
     }
 
     public void start() {
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            try {
+                watchService.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }));
         pool.execute(() -> {
             try {
                 monitor();

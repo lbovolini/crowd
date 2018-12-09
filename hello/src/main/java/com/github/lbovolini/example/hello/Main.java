@@ -26,7 +26,6 @@ public class Main {
             result.whenComplete((response, ex) -> {
                if (ex != null) {
                    ex.printStackTrace();
-                   solve(hello);
                } else {
                    System.out.println(response);
                    solve(hello);

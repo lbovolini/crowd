@@ -1,5 +1,6 @@
 package com.github.lbovolini.crowd.common.group;
 
+import com.github.lbovolini.crowd.common.classloader.CodebaseUtils;
 import com.github.lbovolini.crowd.common.classloader.Monitor;
 import com.github.lbovolini.crowd.common.message.Message;
 
@@ -7,9 +8,7 @@ import java.io.IOException;
 import java.net.*;
 import java.nio.ByteBuffer;
 import java.nio.channels.*;
-import java.util.Iterator;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -107,7 +106,7 @@ public class Multicast {
     private ServerDetails getCodebaseInfo(String response) {
         String[] info = response.split(";");
 
-        if (info.length < 4) {
+        if (info.length < 5) {
             throw new RuntimeException("Server response error");
         }
         csa = new ServerDetails(info[0], info[1], info[2], info[3], info[4]);
@@ -172,7 +171,7 @@ public class Multicast {
 
     private void change(DatagramChannel channel) {
         try {
-            Monitor monitor = new Monitor("/home/lbovolini/app") {
+            Monitor monitor = new Monitor(CODEBASE_ROOT) {
                 @Override
                 public void onChange() {
                     InetSocketAddress address = new InetSocketAddress(MULTICAST_IP, MULTICAST_CLIENT_PORT);
@@ -208,7 +207,8 @@ public class Multicast {
     }
 
     private String getCodebase(boolean reconnect) {
-        return CODEBASE + SEPARATOR + HOST_NAME + SEPARATOR + PORT + SEPARATOR + LIB_URL + SEPARATOR + reconnect;
+        String codebase = CodebaseUtils.getCodebaseURLs();
+        return codebase + SEPARATOR + HOST_NAME + SEPARATOR + PORT + SEPARATOR + LIB_URL + SEPARATOR + reconnect;
     }
 
     public void start() throws IOException {
