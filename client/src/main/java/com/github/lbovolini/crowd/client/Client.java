@@ -128,6 +128,8 @@ public final class Client {
         Client client = new Client(host, port);
         Multicaster multicaster = new ClientMulticaster() {
             public void handle(ServerResponse serverDetails) {
+                super.handle(serverDetails);
+
                 try {
                     String type = serverDetails.getType();
 

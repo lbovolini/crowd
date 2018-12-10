@@ -16,26 +16,21 @@ public class ClientMulticaster extends Multicaster {
 
     @Override
     public void handle(ServerResponse serverResponse) {
-
+        setServerAddress(serverResponse);
     }
 
     @Override
     protected void handle(final DatagramChannel channel, String response, InetSocketAddress address) {
-        System.out.println(response);
         // !todo
         updateLastResponseTime();
-
         if (response.length() > 1) {
             ServerResponse serverResponse = ServerResponse.fromObject(response);
-            setServerAddress(serverResponse);
             handle(serverResponse);
         }
     }
 
     private void setServerAddress(ServerResponse serverResponse) {
-        if (this.serverAddress == null) {
-            this.serverAddress = serverResponse.getServerAddress();
-        }
+        this.serverAddress = serverResponse.getServerAddress();
     }
 
     @Override
