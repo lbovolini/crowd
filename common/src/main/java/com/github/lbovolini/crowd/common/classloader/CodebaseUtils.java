@@ -28,7 +28,11 @@ public class CodebaseUtils {
                 @Override
                 public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
                     if (!dir.toAbsolutePath().toString().contains("/.")) {
-                        list.add(dir.toString());
+                        String path = dir.toString();
+                        if (!path.equals("")) {
+                            path = path + "/";
+                        }
+                        list.add(path);
                     }
                     return super.preVisitDirectory(dir, attrs);
                 }

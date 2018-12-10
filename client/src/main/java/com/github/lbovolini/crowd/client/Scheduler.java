@@ -133,7 +133,7 @@ public class Scheduler implements Proxy, Service {
             try {
                 pool.shutdown();
                 pool.awaitTermination(1, TimeUnit.SECONDS);
-                pool.shutdownNow();
+                //pool.shutdownNow();
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

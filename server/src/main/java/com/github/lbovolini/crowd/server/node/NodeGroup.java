@@ -35,7 +35,7 @@ public class NodeGroup {
         server = new Server(nodeService);
         try {
             server.start();
-        } catch (IOException | InterruptedException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }

@@ -98,7 +98,7 @@ public class Message {
         return deserialize(data, Thread.currentThread().getContextClassLoader());
     }
 
-    public static Object deserialize(byte[] data,  ClassLoader loader) throws IOException, ClassNotFoundException {
+    public static Object deserialize(byte[] data, ClassLoader loader) throws IOException, ClassNotFoundException {
         ByteArrayInputStream in = new ByteArrayInputStream(data);
         RemoteObjectInputStream is = new RemoteObjectInputStream(in, loader);
         return is.readObject();

@@ -27,10 +27,14 @@ public class Config {
     /**
      * MULTICAST messages
      */
-    public static final Byte HEARTBEAT = (byte)-1;
-    public static final Byte DISCOVER = (byte)1;
+    public static final String HEARTBEAT = "0";
+    public static final String DISCOVER = "1";
+    public static final String CONNECT = "2";
+    public static final String UPDATE = "3";
+    public static final String RELOAD = "4";
+
     //
-    public static final char SEPARATOR = ';';
+    public static final String SEPARATOR = ";";
 
     /**
      * HEARTBEAT
@@ -50,4 +54,9 @@ public class Config {
     public static final String EXTENSIONS[] = {".class", ".jar"};
     public static final String CODEBASE_ROOT = System.getProperty("codebase.root", "");
     public static final String CODEBASE_URL = System.getProperty("codebase.url", "file:");
+
+    public static void main(String[] args) {
+        byte a = (byte)0;
+        System.out.println(String.valueOf(a));
+    }
 }

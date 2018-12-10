@@ -1,7 +1,8 @@
 package com.github.lbovolini.crowd.server;
 
 import com.github.lbovolini.crowd.common.configuration.Config;
-import com.github.lbovolini.crowd.common.group.Multicast;
+import com.github.lbovolini.crowd.common.group.Multicaster;
+import com.github.lbovolini.crowd.common.group.ServerMulticaster;
 import com.github.lbovolini.crowd.server.connection.ServerScheduler;
 import com.github.lbovolini.crowd.server.node.NodeService;
 import com.github.lbovolini.crowd.server.connection.ServerInfo;
@@ -24,16 +25,11 @@ public class Server {
         this.nodeService = nodeService;
     }
 
-    public void start() throws IOException, InterruptedException {
+    public void start() throws IOException {
 
         multicast.execute(() -> {
-            try {
-                new Multicast().start();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            new ServerMulticaster().start();
         });
-
         int threads = Runtime.getRuntime().availableProcessors();
         ExecutorService pool = Executors.newFixedThreadPool(threads);
 

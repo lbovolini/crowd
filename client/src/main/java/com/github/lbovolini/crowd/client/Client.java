@@ -2,8 +2,9 @@ package com.github.lbovolini.crowd.client;
 
 import com.github.lbovolini.crowd.client.connection.ClientInfo;
 import com.github.lbovolini.crowd.client.handler.ConnectionHandler;
-import com.github.lbovolini.crowd.common.group.ServerDetails;
-import com.github.lbovolini.crowd.common.group.Multicast;
+import com.github.lbovolini.crowd.common.group.ClientMulticaster;
+import com.github.lbovolini.crowd.common.group.ServerResponse;
+import com.github.lbovolini.crowd.common.group.Multicaster;
 import com.github.lbovolini.crowd.common.host.HostDetails;
 
 import java.io.IOException;
@@ -62,13 +63,18 @@ public final class Client {
         running = true;
     }
 
-    public void start(ServerDetails csa) throws IOException {
+    public void start(ServerResponse csa) throws IOException {
         start(csa.getCodebase(), csa.getServerAddress(), csa.getServerPort(), csa.getLibURL());
     }
 
-    public void reload(ServerDetails serverDetails) {
-        setLibURL(serverDetails.getLibURL());
-        scheduler.reload(serverDetails.getCodebase());
+    public void reload(ServerResponse serverResponse) {
+        setLibURL(serverResponse.getLibURL());
+        scheduler.reload(serverResponse.getCodebase());
+    }
+
+    public void update(ServerResponse serverResponse) {
+        setLibURL(serverResponse.getLibURL());
+        scheduler.addURL(serverResponse.getCodebase());
     }
 
     public void start(String codebase, String serverAddress, int serverPort, String libURL) throws IOException {
@@ -89,7 +95,7 @@ public final class Client {
         channel.setOption(StandardSocketOptions.TCP_NODELAY, true);
         channel.setOption(StandardSocketOptions.SO_KEEPALIVE, true);
         channel.setOption(StandardSocketOptions.SO_REUSEADDR, true);
-        if (!running) {
+        if (!isRunning()) {
             channel.bind(new InetSocketAddress(host, port));
         }
         clientInfo = new ClientInfo(hostDetails, channel, scheduler, true);
@@ -120,13 +126,21 @@ public final class Client {
 
 
         Client client = new Client(host, port);
-        Multicast multicast = new Multicast(true) {
-            public void handle(ServerDetails serverDetails) {
+        Multicaster multicaster = new ClientMulticaster() {
+            public void handle(ServerResponse serverDetails) {
                 try {
-                    if (serverDetails.isReconnect()) {
-                        client.start(serverDetails);
-                    } else {
-                        client.reload(serverDetails);
+                    String type = serverDetails.getType();
+
+                    switch (type) {
+                        case CONNECT:
+                            client.start(serverDetails);
+                            break;
+                        case UPDATE:
+                            client.update(serverDetails);
+                            break;
+                        case RELOAD:
+                            client.reload(serverDetails);
+                            break;
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -134,11 +148,7 @@ public final class Client {
             }
         };
 
-        try {
-            multicast.start();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        multicaster.start();
 
     }
 }
