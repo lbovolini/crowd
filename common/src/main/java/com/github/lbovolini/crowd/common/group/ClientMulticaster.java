@@ -26,7 +26,6 @@ public class ClientMulticaster extends Multicaster {
         updateLastResponseTime();
 
         if (response.length() > 1) {
-            System.out.println(response);
             ServerResponse serverResponse = ServerResponse.fromObject(response);
             setServerAddress(serverResponse);
             handle(serverResponse);

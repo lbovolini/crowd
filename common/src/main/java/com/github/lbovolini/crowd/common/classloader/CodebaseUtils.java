@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 
 import static com.github.lbovolini.crowd.common.configuration.Config.CODEBASE_ROOT;
 import static com.github.lbovolini.crowd.common.configuration.Config.CODEBASE_URL;
+import static com.github.lbovolini.crowd.common.configuration.Config.LIB_URL;
 
 public class CodebaseUtils {
 
@@ -48,8 +49,20 @@ public class CodebaseUtils {
 
     public static String getCodebaseURLs() {
         List<String> list = getCodebasePaths();
-        List codebasePaths = list.stream().map(e -> CODEBASE_URL + e).collect(Collectors.toList());
+        String url = validURL(CODEBASE_URL);
+        List codebasePaths = list.stream().map(e -> url + e).collect(Collectors.toList());
         String codebase = codebasePaths.toString().replace(",", "");
         return removeFLBrackets(codebase);
+    }
+
+    public static String getLibURL() {
+        return validURL(LIB_URL);
+    }
+
+    private static String validURL(String url) {
+        if (!url.equals("") && !url.endsWith("/")) {
+            url = url + "/";
+        }
+        return url;
     }
 }

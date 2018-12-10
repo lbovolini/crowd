@@ -26,6 +26,7 @@ public class ResponseFactory {
 
     private static String of(String TYPE) {
         String codebase = CodebaseUtils.getCodebaseURLs();
-        return codebase + SEPARATOR + HOST_NAME + SEPARATOR + PORT + SEPARATOR + LIB_URL + SEPARATOR + TYPE;
+        String libURL = CodebaseUtils.getLibURL();
+        return codebase + SEPARATOR + HOST_NAME + SEPARATOR + PORT + SEPARATOR + libURL + SEPARATOR + TYPE;
     }
 }
