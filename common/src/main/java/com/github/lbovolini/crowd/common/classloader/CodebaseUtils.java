@@ -1,6 +1,7 @@
 package com.github.lbovolini.crowd.common.classloader;
 
 import java.io.IOException;
+import java.net.URL;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
@@ -49,20 +50,23 @@ public class CodebaseUtils {
 
     public static String getCodebaseURLs() {
         List<String> list = getCodebasePaths();
-        String url = validURL(CODEBASE_URL);
-        List codebasePaths = list.stream().map(e -> url + e).collect(Collectors.toList());
+        List codebasePaths = list.stream().map(e -> validURL(CODEBASE_URL) + e).collect(Collectors.toList());
         String codebase = codebasePaths.toString().replace(",", "");
         return removeFLBrackets(codebase);
     }
 
-    public static String getLibURL() {
-        return validURL(LIB_URL);
-    }
-
     private static String validURL(String url) {
-        if (!url.endsWith(":") && !url.endsWith("/")) {
-            url = url + "/";
+        if (!url.endsWith("/") && !url.endsWith(":") && !url.equals("")) {
+            return url + "/";
         }
         return url;
+    }
+
+    public static void main(String[] args) {
+        System.out.println(getCodebasePaths());
+    }
+
+    public static String getLibURL() {
+        return validURL(LIB_URL);
     }
 }
