@@ -21,7 +21,7 @@ public class ClientMulticaster extends Multicaster {
 
     @Override
     protected void handle(final DatagramChannel channel, String response, InetSocketAddress address) {
-
+        System.out.println(response);
         // !todo
         updateLastResponseTime();
 

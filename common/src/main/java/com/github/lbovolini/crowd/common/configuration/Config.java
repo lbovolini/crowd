@@ -45,7 +45,7 @@ public class Config {
     /**
      * NON FINAL
      */
-    public static String LIB_URL = System.getProperty("lib.url");
+    public static String LIB_URL = System.getProperty("lib.url", "");
     public static String LIB_PATH = System.getProperty("lib.path", System.getProperty("java.io.tmpdir"));
 
     /**
@@ -54,9 +54,4 @@ public class Config {
     public static final String EXTENSIONS[] = {".class", ".jar"};
     public static final String CODEBASE_ROOT = System.getProperty("codebase.root", "");
     public static final String CODEBASE_URL = System.getProperty("codebase.url", "file:");
-
-    public static void main(String[] args) {
-        byte a = (byte)0;
-        System.out.println(String.valueOf(a));
-    }
 }

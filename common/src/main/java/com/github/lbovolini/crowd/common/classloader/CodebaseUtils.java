@@ -60,7 +60,7 @@ public class CodebaseUtils {
     }
 
     private static String validURL(String url) {
-        if (!url.equals("") && !url.endsWith("/")) {
+        if (!url.endsWith(":") && !url.endsWith("/")) {
             url = url + "/";
         }
         return url;
