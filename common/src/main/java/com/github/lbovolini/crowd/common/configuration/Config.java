@@ -45,13 +45,13 @@ public class Config {
     /**
      * NON FINAL
      */
-    public static String LIB_URL = System.getProperty("lib.url", "");
+    public static String LIB_URL = System.getProperty("lib.url", "file:");
     public static String LIB_PATH = System.getProperty("lib.path", System.getProperty("java.io.tmpdir"));
 
     /**
      *
      */
-    public static final String EXTENSIONS[] = {".class", ".jar"};
+    public static final String EXTENSIONS[] = {".class", ".jar", ".so", ".dll"};
     public static final String CODEBASE_ROOT = System.getProperty("codebase.root", "");
     public static final String CODEBASE_URL = System.getProperty("codebase.url", "file:");
 }
