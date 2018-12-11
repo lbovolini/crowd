@@ -1,8 +1,6 @@
 package com.github.lbovolini.crowd.server;
 
 import com.github.lbovolini.crowd.common.configuration.Config;
-import com.github.lbovolini.crowd.common.group.Multicaster;
-import com.github.lbovolini.crowd.common.group.ServerMulticaster;
 import com.github.lbovolini.crowd.server.connection.ServerScheduler;
 import com.github.lbovolini.crowd.server.node.NodeService;
 import com.github.lbovolini.crowd.server.connection.ServerInfo;
@@ -19,7 +17,6 @@ public class Server {
 
     private final NodeService nodeService;
     private static ServerScheduler scheduler;
-    private ExecutorService multicast = Executors.newSingleThreadExecutor();
 
     public Server(NodeService nodeService) {
         this.nodeService = nodeService;
@@ -27,9 +24,6 @@ public class Server {
 
     public void start() throws IOException {
 
-        multicast.execute(() -> {
-            new ServerMulticaster().start();
-        });
         int threads = Runtime.getRuntime().availableProcessors();
         ExecutorService pool = Executors.newFixedThreadPool(threads);
 

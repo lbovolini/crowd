@@ -1,5 +1,6 @@
 package com.github.lbovolini.crowd.server.node;
 
+import com.github.lbovolini.crowd.common.group.ServerMulticaster;
 import com.github.lbovolini.crowd.common.host.HostDetails;
 import com.github.lbovolini.crowd.common.message.response.Response;
 import com.github.lbovolini.crowd.common.connection.Connection;
@@ -12,12 +13,15 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.function.BiConsumer;
 import java.util.function.Predicate;
 
 public class NodeGroup {
 
     private final Server server;
+    private ExecutorService multicast = Executors.newSingleThreadExecutor();
 
     private final NodeService nodeService;
     private final Map<String, Node> ready;
@@ -35,11 +39,17 @@ public class NodeGroup {
         server = new Server(nodeService);
         try {
             server.start();
+            startMulticast();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
+    private void startMulticast() {
+        multicast.execute(() -> {
+            new ServerMulticaster().start();
+        });
+    }
 
     public void join(HostDetails hostDetails, Connection connection) {
         Node node = new Node(hostDetails, connection);
