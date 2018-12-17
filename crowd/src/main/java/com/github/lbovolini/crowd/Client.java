@@ -18,13 +18,17 @@ public final class Client {
 
     private final String host;
     private final int port;
-    private static int cores = Runtime.getRuntime().availableProcessors();
-    private boolean running = false;
-    private AsynchronousSocketChannel channel = null;
+    private final InetSocketAddress address;
+    private final int cores;
 
-    public Client(String host, int port) {
+    private AsynchronousSocketChannel channel;
+
+    public Client(String host, int port, int cores) {
         this.host = host;
         this.port = port;
+        this.cores = cores;
+        this.address = new InetSocketAddress(host, port);
+        this.channel = null;
     }
 
     public void startClient() {
@@ -57,7 +61,7 @@ public final class Client {
         channel.setOption(StandardSocketOptions.TCP_NODELAY, true);
         channel.setOption(StandardSocketOptions.SO_KEEPALIVE, true);
         channel.setOption(StandardSocketOptions.SO_REUSEADDR, true);
-        channel.bind(new InetSocketAddress(host, port));
+        channel.bind(address);
     }
 
     private void recreateChannel() {
@@ -81,39 +85,16 @@ public final class Client {
         channel.connect(hostAddress, clientInfo, new ClientConnectionHandler());
     }
 
-    public boolean isRunning() {
-        return running;
-    }
-
-    public void setRunning() {
-        this.running = true;
-    }
-
     private void setLibURL(String libURL) {
         LIB_URL = libURL;
     }
 
     public static void main(String[] args) {
 
-        int cores;
-        if (args.length > 0) {
-            cores = Integer.parseInt(args[0]);
-            if (cores < 1 || cores > Client.cores) {
-                System.out.println("Invalid core count");
-                return;
-            }
-            Client.cores = cores;
-        }
+        System.out.println("Using " + POOL_SIZE + " threads");
 
-        System.out.println("Using " + Client.cores + " cores");
-
-        String host = HOST_NAME;
-        int port = PORT;
-
-
-        Client client = new Client(host, port);
+        Client client = new Client(HOST_NAME, PORT, POOL_SIZE);
         client.startClient();
-
 
     }
 }

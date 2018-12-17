@@ -32,7 +32,6 @@ public class Connection {
     private boolean closed;
 
     private final AsynchronousSocketChannel channel;
-    private final AsynchronousServerSocketChannel serverChannel;
 
     private static final ByteBufferPool readerBufferPool = new ByteBufferPool();
     private static final ByteBufferPool writerBufferPool = new ByteBufferPool();
@@ -49,9 +48,8 @@ public class Connection {
     private final ByteBuffer[] writerBufferArray;
     private final ByteBuffer[] readerBufferArray;
 
-    public Connection(AsynchronousServerSocketChannel serverChannel, AsynchronousSocketChannel channel, Scheduler scheduler) {
+    public Connection(AsynchronousSocketChannel channel, Scheduler scheduler) {
         this.channel = channel;
-        this.serverChannel = serverChannel;
         this.scheduler = scheduler;
         setHostId();
         this.partialMessage = new PartialMessage();
@@ -61,10 +59,6 @@ public class Connection {
         this.readerBufferQueue = new LinkedList<>();
         this.writerBufferArray = new ByteBuffer[BUFFER_ARRAY_SIZE];
         this.readerBufferArray = new ByteBuffer[BUFFER_ARRAY_SIZE];
-    }
-
-    public Connection(AsynchronousSocketChannel channel, Scheduler scheduler) {
-        this(null, channel, scheduler);
     }
 
     private void setHostId() {

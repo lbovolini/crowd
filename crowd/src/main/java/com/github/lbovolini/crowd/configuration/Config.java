@@ -14,6 +14,8 @@ public class Config {
     public static final String HOST_NAME = System.getProperty("hostname", Host.getHostAddressName());
     public static final int PORT = Integer.parseInt(System.getProperty("port", String.valueOf(8081)));
 
+    public static int POOL_SIZE = Integer.parseInt(System.getProperty("pool.size",  String.valueOf(Runtime.getRuntime().availableProcessors())));
+
      /**
      * MULTICAST connection
      */
