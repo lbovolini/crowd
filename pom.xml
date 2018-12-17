@@ -10,9 +10,7 @@
     <packaging>pom</packaging>
  
     <modules>
-        <module>common</module>
-        <module>server</module>
-        <module>client</module>
+        <module>crowd</module>
         <module>hello</module>
     </modules>
 
@@ -33,7 +31,7 @@
                             <outputDirectory>${user.home}/app</outputDirectory>
                             <resources>
                                 <resource>
-                                    <directory>${basedir}/client/src/main/resources</directory>
+                                    <directory>${basedir}/crowd/src/main/resources</directory>
                                         <include>*.policy</include>-->
                                     <filtering>false</filtering>
                                 </resource>
