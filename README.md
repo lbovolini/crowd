@@ -1,4 +1,4 @@
-## Build Projects
+## Build Project
 
 ```
 mvn clean install
