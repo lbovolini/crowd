@@ -11,7 +11,7 @@ public class ServerConnectionHandler implements CompletionHandler<AsynchronousSo
 
         attachment.getServerChannel().accept(attachment, this);
 
-        Connection connection = new Connection(attachment.getServerChannel(), channel, attachment.getScheduler());
+        Connection connection = new Connection(channel, attachment.getScheduler());
         connection.receive();
     }
 

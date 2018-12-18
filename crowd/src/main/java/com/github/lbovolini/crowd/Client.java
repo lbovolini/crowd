@@ -40,6 +40,7 @@ public final class Client {
             public void handle(ServerResponse response) {
                 setLibURL(response.getLibURL());
                 String type = response.getType();
+
                 switch (type) {
                     case CONNECT:
                         scheduler.create(response.getCodebase());

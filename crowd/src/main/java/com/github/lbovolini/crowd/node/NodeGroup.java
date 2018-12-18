@@ -48,7 +48,8 @@ public class NodeGroup {
         Node node = new Node(cores, connection);
         running.put(connection.getHostId(), node);
 
-        CompletableFuture.runAsync(() -> onReady(node));
+        //CompletableFuture.runAsync(() -> onReady(node));
+        onReady(node);
     }
 
     public void leave(String id) {
