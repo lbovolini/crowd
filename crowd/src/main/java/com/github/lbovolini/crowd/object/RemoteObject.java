@@ -55,7 +55,7 @@ public class RemoteObject implements InvocationHandler {
         Message message = MessageFactory.invoke(requestId, method.getName(), args);
         this.node.send(message);
 
-        CompletableFuture<?> future = promiseTo(requestId);
+        CompletableFuture<?> future = new CompletableFuture<>();
         this.requests.put(requestId, future);
         return future;
     }
@@ -64,12 +64,8 @@ public class RemoteObject implements InvocationHandler {
         return requestIdCounter.incrementAndGet();
     }
 
-    private CompletableFuture promiseTo(int requestId) {
-        return new CompletableFuture<>().thenRun(() -> requests.remove(requestId));
-    }
-
     public CompletableFuture getFuture(int requestId) {
-        return requests.get(requestId);
+        return requests.remove(requestId);
     }
 
 

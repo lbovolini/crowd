@@ -104,10 +104,16 @@ public class Message {
     }
 
     public static byte[] serialize(Object obj) throws IOException {
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        RemoteObjectOutputStream os = new RemoteObjectOutputStream(out);
-        os.writeObject(obj);
-        return out.toByteArray();
+
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        RemoteObjectOutputStream remoteObjectOutputStream = new RemoteObjectOutputStream(byteArrayOutputStream);
+
+        remoteObjectOutputStream.writeObject(obj);
+
+        remoteObjectOutputStream.close();
+        byteArrayOutputStream.close();
+
+        return byteArrayOutputStream.toByteArray();
     }
 
     public static Object deserialize(byte[] data) throws IOException, ClassNotFoundException {
@@ -115,9 +121,14 @@ public class Message {
     }
 
     public static Object deserialize(byte[] data, ClassLoader loader) throws IOException, ClassNotFoundException {
-        ByteArrayInputStream in = new ByteArrayInputStream(data);
-        RemoteObjectInputStream is = new RemoteObjectInputStream(in, loader);
-        return is.readObject();
+
+        ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(data);
+        RemoteObjectInputStream remoteObjectInputStream = new RemoteObjectInputStream(byteArrayInputStream, loader);
+
+        remoteObjectInputStream.close();
+        byteArrayInputStream.close();
+
+        return remoteObjectInputStream.readObject();
     }
 
 
