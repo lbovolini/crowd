@@ -6,7 +6,7 @@ public class Hello implements IHello {
         System.out.println("Hello world");
     }
 
-    public void say(Integer i) {
+    public void say(int i) {
         System.out.println(i);
     }
 

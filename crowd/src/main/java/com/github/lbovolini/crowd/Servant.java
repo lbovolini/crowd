@@ -46,37 +46,4 @@ public class Servant {
         return  "Servant execute error on class: " + className + " method: " + methodName;
     }
 
-//    private static Map<Class, Class> PRIMITIVE_MAP;
-//
-//    static {
-//        Map<Class, Class> map = new ConcurrentHashMap<>();
-//
-//        map.put(byte.class, Byte.TYPE);
-//        map.put(char.class, Character.TYPE);
-//        map.put(short.class, Short.TYPE);
-//        map.put(int.class, Integer.TYPE);
-//        map.put(long.class, Long.TYPE);
-//        map.put(float.class, Float.TYPE);
-//        map.put(double.class, Double.TYPE);
-//        map.put(boolean.class, Boolean.TYPE);
-//
-//        PRIMITIVE_MAP = Collections.unmodifiableMap(map);
-//    }
-//
-//    private static Class<?>[] resolvePrimitiveTypes(Class<?>[] parameterTypes) {
-//        Class<?>[] p = new Class[parameterTypes.length];
-//
-//        for (int i = 0; i < parameterTypes.length; i++) {
-//            Class<?> type = PRIMITIVE_MAP.get(parameterTypes[i]);
-//            System.out.println("TYPE " + type);
-//            if (type != null) {
-//                p[i] = type;
-//            } else {
-//                p[i] = parameterTypes[i];
-//            }
-//        }
-//
-//        return p;
-//    }
-
 }

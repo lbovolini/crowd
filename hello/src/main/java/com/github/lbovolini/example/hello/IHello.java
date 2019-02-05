@@ -4,5 +4,5 @@ public interface IHello<T> {
 
     void say();
 
-    void say(Integer i);
+    void say(int i);
 }
