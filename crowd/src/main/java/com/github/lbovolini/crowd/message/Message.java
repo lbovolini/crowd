@@ -1,7 +1,7 @@
 package com.github.lbovolini.crowd.message;
 
-import com.github.lbovolini.crowd.classloader.RemoteObjectInputStream;
-import com.github.lbovolini.crowd.classloader.RemoteObjectOutputStream;
+import com.github.lbovolini.crowd.object.RemoteObjectInputStream;
+import com.github.lbovolini.crowd.object.RemoteObjectOutputStream;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;

@@ -1,4 +1,4 @@
-package com.github.lbovolini.crowd.classloader;
+package com.github.lbovolini.crowd.object;
 
 import java.io.IOException;
 import java.io.ObjectOutputStream;
