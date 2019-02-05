@@ -1,44 +1,26 @@
 package com.github.lbovolini.example.hello;
 
+
 import com.github.lbovolini.crowd.node.NodeGroup;
 
 import java.util.concurrent.CompletableFuture;
 
 public class Main {
 
-    static int cont = 0;
-    static final Object lock = new Object();
+    static int repeats = 1_000_000;
 
     public static void solve(IHello<CompletableFuture> hello) {
 
-        int i;
-
-        synchronized (lock) {
-            if (cont > Short.MAX_VALUE) {
-                return;
-            }
-            i = cont++;
+        long start = System.nanoTime();
+        for(int i = 0; i < repeats; i++) {
+            hello.say(i);
         }
 
-        try {
-            CompletableFuture<String> result = hello.say(i);
-
-            result.whenComplete((response, ex) -> {
-               if (ex != null) {
-                   ex.printStackTrace();
-               } else {
-                   System.out.println(response);
-                   solve(hello);
-               }
-            });
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
+        System.out.println("TPS : " + repeats / ((System.nanoTime() - start) / 1_000_000_000.0));
     }
 
     public static void main(String[] args) throws Exception {
-        NodeGroup nodeGroup = new NodeGroup(Hello.class.getName());
-        nodeGroup.forAll((hello, time) -> solve((IHello)hello));
+        NodeGroup<IHello> nodeGroup = new NodeGroup<>(Hello.class.getName());
+        nodeGroup.forOne(hello -> solve(hello));
     }
 }

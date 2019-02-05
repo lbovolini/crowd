@@ -28,7 +28,7 @@ public class ClientRequestHandler implements RequestHandler {
         setLatestCreatedObject(messageFrom);
         stop();
         CreateObject createObject = (CreateObject)getObject(messageFrom.getMessage());
-        object = newObject(createObject.getName(), createObject.getArgs());
+        object = newObject(createObject.getName(), createObject.getParameterTypes(), createObject.getArgs());
     }
 
 
@@ -63,21 +63,21 @@ public class ClientRequestHandler implements RequestHandler {
         }
     }
 
-    public Object newObject(String className, Object[] args) throws Exception {
+    public Object newObject(String className, Class<?>[] parameterTypes, Object[] args) throws Exception {
         Class classDefinition = Thread.currentThread().getContextClassLoader().loadClass(className);
-        Constructor constructor = classDefinition.getConstructor(getTypes(args));
+        Constructor constructor = classDefinition.getConstructor(parameterTypes);
         return constructor.newInstance(args);
     }
 
-    private static Class<?>[] getTypes(Object[] args) {
-        if (args == null || args.length == 0) { return null; }
-        Class<?>[] types = new Class[args.length];
-
-        for (int i = 0; i < types.length; i++) {
-            types[i] = args[i].getClass();
-        }
-        return types;
-    }
+//    private static Class<?>[] getTypes(Object[] args) {
+//        if (args == null || args.length == 0) { return null; }
+//        Class<?>[] types = new Class[args.length];
+//
+//        for (int i = 0; i < types.length; i++) {
+//            types[i] = args[i].getClass();
+//        }
+//        return types;
+//    }
 
     public void stop() {
         if (pool != null) {

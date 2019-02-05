@@ -9,13 +9,13 @@ import java.io.IOException;
 
 public class MessageFactory {
 
-    public static Message create(String className, Object[] args) throws IOException {
-        CreateObject createObject = new CreateObject(className, args);
+    public static Message create(String className, Class<?>[] types, Object[] args) throws IOException {
+        CreateObject createObject = new CreateObject(className, types, args);
         return Message.create(Message.Type.CREATE, createObject);
     }
 
-    public static Message invoke(int requestId, String method, Object[] args) throws IOException {
-        InvokeMethod invokeMethod = new InvokeMethod(requestId, method, args);
+    public static Message invoke(int requestId, String method, Class<?>[] types, Object[] args) throws IOException {
+        InvokeMethod invokeMethod = new InvokeMethod(requestId, method, types, args);
         return Message.create(Message.Type.INVOKE, invokeMethod);
     }
 

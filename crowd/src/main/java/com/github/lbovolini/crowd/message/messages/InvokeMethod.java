@@ -6,11 +6,13 @@ public class InvokeMethod implements Serializable {
 
     private final int requestId;
     private final String method;
+    private final Class<?>[] parameterTypes;
     private final Object[] args;
 
-    public InvokeMethod(int requestId, String method, Object[] args) {
+    public InvokeMethod(int requestId, String method, Class<?>[] parameterTypes, Object[] args) {
         this.requestId = requestId;
         this.method = method;
+        this.parameterTypes = parameterTypes;
         this.args = args;
     }
 
@@ -20,6 +22,10 @@ public class InvokeMethod implements Serializable {
 
     public String getMethod() {
         return method;
+    }
+
+    public Class<?>[] getParameterTypes() {
+        return parameterTypes;
     }
 
     public Object[] getArgs() {

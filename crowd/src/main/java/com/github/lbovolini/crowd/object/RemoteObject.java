@@ -27,14 +27,13 @@ public class RemoteObject implements InvocationHandler {
     }
 
     public static Object newInstance(String className, Node node) throws Exception {
-        return newInstance(className, null, node);
+        return newInstance(className, null, null, node);
     }
-    
 
-    public static Object newInstance(String className, Object[] args, Node node) throws Exception {
+    public static Object newInstance(String className, Object[] args, Class<?>[] parameterTypes, Node node) throws Exception {
 
         RemoteObject remoteObject = new RemoteObject(node);
-        remoteObject.create(className, args);
+        remoteObject.create(className, parameterTypes, args);
 
         return Proxy.newProxyInstance(
                 Class.forName(className).getClassLoader(),
@@ -42,18 +41,24 @@ public class RemoteObject implements InvocationHandler {
                 remoteObject);
     }
 
-    private void create(String className, Object[] args) throws IOException {
-        Message message = MessageFactory.create(className, args);
+    private void create(String className, Class<?>[] parameterTypes, Object[] args) throws IOException {
+        Message message = MessageFactory.create(className, parameterTypes, args);
         this.node.setRemoteObject(this);
         this.node.send(message);
     }
 
 
     public Object invoke(Object o, Method method, Object[] args) throws Exception {
-        int requestId = getRequestId();
 
-        Message message = MessageFactory.invoke(requestId, method.getName(), args);
+        boolean isPrimitiveVoid = Void.TYPE.equals(method.getReturnType());
+        int requestId = 0;
+
+        if (!isPrimitiveVoid) { requestId = getRequestId(); }
+
+        Message message = MessageFactory.invoke(requestId, method.getName(), method.getParameterTypes(), args);
         this.node.send(message);
+
+        if (isPrimitiveVoid) { return null; }
 
         CompletableFuture<?> future = new CompletableFuture<>();
         this.requests.put(requestId, future);
@@ -67,6 +72,5 @@ public class RemoteObject implements InvocationHandler {
     public CompletableFuture getFuture(int requestId) {
         return requests.remove(requestId);
     }
-
 
 }
