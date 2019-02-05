@@ -1,7 +1,7 @@
 package com.github.lbovolini.crowd.group;
 
-import com.github.lbovolini.crowd.classloader.Watcher;
-import com.github.lbovolini.crowd.classloader.WatcherHandler;
+import com.github.lbovolini.crowd.monitor.Watcher;
+import com.github.lbovolini.crowd.monitor.WatcherHandler;
 
 import java.net.InetSocketAddress;
 import java.nio.channels.DatagramChannel;
