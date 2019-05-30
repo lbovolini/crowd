@@ -69,16 +69,6 @@ public class ClientRequestHandler implements RequestHandler {
         return constructor.newInstance(args);
     }
 
-//    private static Class<?>[] getTypes(Object[] args) {
-//        if (args == null || args.length == 0) { return null; }
-//        Class<?>[] types = new Class[args.length];
-//
-//        for (int i = 0; i < types.length; i++) {
-//            types[i] = args[i].getClass();
-//        }
-//        return types;
-//    }
-
     public void stop() {
         if (pool != null) {
             try {

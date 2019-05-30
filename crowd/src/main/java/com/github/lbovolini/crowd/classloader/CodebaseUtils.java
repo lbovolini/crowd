@@ -17,7 +17,7 @@ public class CodebaseUtils {
     public static List<String> getCodebasePaths() {
         List<String> list = new ArrayList<>();
         try {
-            Files.walkFileTree(Paths.get(CODEBASE_ROOT), new SimpleFileVisitor<>() {
+            Files.walkFileTree(Paths.get(CODEBASE_ROOT), new SimpleFileVisitor<Path>() {
                 @Override
                 public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
                     if (file.toString().endsWith(".jar")) {

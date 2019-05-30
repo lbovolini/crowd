@@ -4,19 +4,29 @@ package com.github.lbovolini.example.hello;
 import com.github.lbovolini.crowd.node.NodeGroup;
 
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 public class Main {
 
-    static int repeats = 1_000_000;
+    static int i;
 
     public static void solve(IHello<CompletableFuture> hello) {
 
-        long start = System.nanoTime();
-        for(int i = 0; i < repeats; i++) {
-            hello.say(i);
-        }
+        i++;
 
-        System.out.println("TPS : " + repeats / ((System.nanoTime() - start) / 1_000_000_000.0));
+        try {
+            CompletableFuture<Integer> res = hello.say(i);
+            res
+                .whenComplete((e, ex) -> {
+                    if (ex != null) {
+                        ex.printStackTrace();
+                        return;
+                    }
+                    System.out.println("Servidor recebeu " + e);
+                });
+        }
+        catch (InterruptedException e) { e.printStackTrace(); }
     }
 
     public static void main(String[] args) throws Exception {

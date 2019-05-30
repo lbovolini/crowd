@@ -2,21 +2,27 @@ package com.github.lbovolini.crowd.scheduler;
 
 import com.github.lbovolini.crowd.classloader.ThreadRemoteClassLoaderService;
 
+import java.net.URL;
 import java.util.concurrent.BlockingDeque;
 import java.util.concurrent.LinkedBlockingDeque;
 
 public class Scheduler implements Runnable {
 
-    private final BlockingDeque<MessageFrom> messages;
-    private final RequestHandler handler;
     private final Thread thread;
     private final ThreadRemoteClassLoaderService loaderService;
 
+    private final BlockingDeque<MessageFrom> messages;
+    private final RequestHandler handler;
+
     public Scheduler(RequestHandler requestHandler) {
+        this(requestHandler, "", "");
+    }
+
+    public Scheduler(RequestHandler requestHandler, String classPath, String libPath) {
         this.handler = requestHandler;
         this.messages = new LinkedBlockingDeque<>();
         this.thread = new Thread(this);
-        this.loaderService = new ThreadRemoteClassLoaderService(thread);
+        this.loaderService = new ThreadRemoteClassLoaderService(thread, classPath, libPath);
     }
 
     @Override
@@ -39,16 +45,16 @@ public class Scheduler implements Runnable {
         }
     }
 
-    public void create(String codebase) {
-        loaderService.newClassLoader(codebase);
+    public void create(URL[] classURLs, URL libURL) {
+        loaderService.create(classURLs, libURL);
     }
 
-    public void update(String codebase) {
-        loaderService.updateCodebaseURLs(codebase);
+    public void update(URL[] classURLs, String libURL) {
+        //loaderService.updateCodebaseURLs(codebase);
     }
 
-    public void reload(String codebase) {
-        loaderService.reload(codebase);
+    public void reload(URL[] classURLs, String libURL) {
+        //loaderService.reload(classURLs, libURL);
         MessageFrom messageFrom = ((ClientRequestHandler)handler).getLatestCreatedObject();
         enqueue(messageFrom);
     }

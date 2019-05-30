@@ -103,7 +103,6 @@ public abstract class Multicaster {
 
         byte[] response = responseFrom.getResponse().getBytes(StandardCharsets.UTF_8);
         ByteBuffer buffer = ByteBuffer.wrap(response);
-
         while (buffer.hasRemaining()) {
             channel.send(buffer, address);
         }
@@ -188,14 +187,14 @@ public abstract class Multicaster {
 
     private void initChannel(final DatagramChannel channel, final Selector selector) throws IOException {
         channel.setOption(StandardSocketOptions.SO_REUSEADDR, true);
-        channel.bind(new InetSocketAddress(this.port));
+        // !TODO
+        channel.bind(new InetSocketAddress("0.0.0.0", this.port));
         channel.setOption(StandardSocketOptions.IP_MULTICAST_IF, this.networkInterface);
         //channel.setOption(StandardSocketOptions.IP_MULTICAST_LOOP, false);
         channel.configureBlocking(false);
         channel.join(this.group, this.networkInterface);
         channel.register(selector, SelectionKey.OP_READ);
     }
-
 
 
 }

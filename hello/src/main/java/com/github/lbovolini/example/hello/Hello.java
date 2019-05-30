@@ -2,12 +2,16 @@ package com.github.lbovolini.example.hello;
 
 public class Hello implements IHello {
 
+    int cont;
+
     public void say() {
         System.out.println("Hello world");
     }
 
-    public void say(int i) {
-        System.out.println(i);
+    public Integer say(int i) throws InterruptedException {
+        System.out.println("Cliente recebeu " + i);
+        Thread.sleep(2000);
+        return cont++;
     }
 
 }

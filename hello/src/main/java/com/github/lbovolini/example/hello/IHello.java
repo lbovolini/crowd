@@ -4,5 +4,5 @@ public interface IHello<T> {
 
     void say();
 
-    void say(int i);
+    T say(int i) throws InterruptedException;
 }

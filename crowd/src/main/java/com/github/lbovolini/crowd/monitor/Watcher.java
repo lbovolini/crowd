@@ -1,5 +1,7 @@
 package com.github.lbovolini.crowd.monitor;
 
+import com.github.lbovolini.crowd.configuration.Config;
+
 import java.io.IOException;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
@@ -7,9 +9,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
-import static com.github.lbovolini.crowd.configuration.Config.EXTENSIONS;
-import static java.nio.file.StandardWatchEventKinds.*;
 
 public class Watcher {
 
@@ -52,16 +51,16 @@ public class Watcher {
         for (WatchEvent<?> event : key.pollEvents()) {
             WatchEvent.Kind<?> kind = event.kind();
 
-            if (kind == OVERFLOW) { continue; }
+            if (kind == StandardWatchEventKinds.OVERFLOW) { continue; }
 
             String filename = (event.context()).toString();
             Path path = keys.get(key).resolve(filename);
 
-            if (kind == ENTRY_CREATE) {
+            if (kind == StandardWatchEventKinds.ENTRY_CREATE) {
                 onCreate(path, filename);
-            } else if (kind == ENTRY_MODIFY) {
+            } else if (kind == StandardWatchEventKinds.ENTRY_MODIFY) {
                 onModify(path, filename);
-            } else if (kind == ENTRY_DELETE) {
+            } else if (kind == StandardWatchEventKinds.ENTRY_DELETE) {
                 onDelete(path, filename);
             }
         }
@@ -69,12 +68,15 @@ public class Watcher {
     }
 
     private void register(final Path path) throws IOException {
-        WatchKey watchKey = path.register(watchService, ENTRY_CREATE, ENTRY_DELETE, ENTRY_MODIFY);
+        WatchKey watchKey = path.register(watchService,
+                StandardWatchEventKinds.ENTRY_CREATE,
+                StandardWatchEventKinds.ENTRY_DELETE,
+                StandardWatchEventKinds.ENTRY_MODIFY);
         keys.put(watchKey, path);
     }
 
     private void registerRecursive(final Path root) throws IOException {
-        Files.walkFileTree(root, new SimpleFileVisitor<>() {
+        Files.walkFileTree(root, new SimpleFileVisitor<Path>() {
             @Override
             public FileVisitResult preVisitDirectory(Path path, BasicFileAttributes attrs) throws IOException {
                 register(path);
@@ -104,7 +106,7 @@ public class Watcher {
     }
 
     public boolean isMonitoredExtension(String filename) {
-        for (String extension : EXTENSIONS) {
+        for (String extension : Config.EXTENSIONS) {
             if (filename.toLowerCase().endsWith(extension.toLowerCase())) { return true; }
         }
         return false;
