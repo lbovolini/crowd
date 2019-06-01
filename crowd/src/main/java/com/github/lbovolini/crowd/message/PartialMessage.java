@@ -3,6 +3,7 @@ package com.github.lbovolini.crowd.message;
 import java.nio.ByteBuffer;
 
 public class PartialMessage {
+
     private byte type;
     private short size;
     private byte[] sizeByte;
@@ -12,7 +13,7 @@ public class PartialMessage {
     private int position;
 
     public PartialMessage() {
-        sizeByte = new byte[2];
+        sizeByte = new byte[Short.BYTES];
         flags = new Flags();
         position = 1;
     }

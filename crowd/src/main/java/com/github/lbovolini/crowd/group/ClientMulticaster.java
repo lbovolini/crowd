@@ -1,17 +1,14 @@
 package com.github.lbovolini.crowd.group;
 
-import com.github.lbovolini.crowd.message.Message;
-
 import java.net.InetSocketAddress;
 import java.nio.channels.DatagramChannel;
-import java.nio.charset.StandardCharsets;
 import java.util.concurrent.TimeUnit;
 
 import static com.github.lbovolini.crowd.configuration.Config.*;
 
 public class ClientMulticaster extends Multicaster {
 
-    private String serverAddress;
+    private InetSocketAddress serverAddress;
 
     public ClientMulticaster() {
         super(MULTICAST_CLIENT_PORT);
@@ -45,7 +42,7 @@ public class ClientMulticaster extends Multicaster {
             if (isDownTimeExceeded()) {
                 responseFromTo(ResponseFactory.get(DISCOVER), channel, new InetSocketAddress(MULTICAST_IP, MULTICAST_PORT));
             } else {
-                responseFromTo(ResponseFactory.get(HEARTBEAT), channel, new InetSocketAddress(serverAddress, MULTICAST_PORT));
+                responseFromTo(ResponseFactory.get(HEARTBEAT), channel, new InetSocketAddress(serverAddress.getAddress(), MULTICAST_PORT));
             }
             wakeUp();
         }, 0, HEARTBEAT_INTERVAL, TimeUnit.SECONDS);

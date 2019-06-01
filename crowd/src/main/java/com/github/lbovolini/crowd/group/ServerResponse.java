@@ -1,48 +1,61 @@
 package com.github.lbovolini.crowd.group;
 
+import com.github.lbovolini.crowd.utils.URLUtils;
+
+import java.net.InetSocketAddress;
+import java.net.MalformedURLException;
+import java.net.URL;
+
 import static com.github.lbovolini.crowd.configuration.Config.SEPARATOR;
 
 public class ServerResponse {
-    private final String codebase;
-    private final String serverAddress;
-    private final int serverPort;
-    private final String libURL;
+
+    private final URL[] codebase;
+    private final InetSocketAddress serverAddress;
+    private final URL libURL;
     private final String type;
 
-    public ServerResponse(String codebase, String serverAddress, int serverPort, String libURL, String type) {
+
+    public ServerResponse(URL[] codebase, InetSocketAddress serverAddress, URL libURL, String type) {
         this.codebase = codebase;
         this.serverAddress = serverAddress;
-        this.serverPort = serverPort;
         this.libURL = libURL;
         this.type = type;
     }
 
-    public ServerResponse(String codebase, String serverAddress, String serverPort, String libURL, String type) {
-        this(codebase, serverAddress, Integer.parseInt(serverPort), libURL, type);
-    }
-
     public static ServerResponse fromObject(Object response) {
+
         String[] info = response.toString().split(SEPARATOR);
 
         if (info.length < 5) {
             throw new RuntimeException("Server response error");
         }
-        return new ServerResponse(info[0], info[1], info[2], info[3], info[4]);
+
+        URL[] codebase = URLUtils.split(info[0]);
+        String address = info[1];
+        int port = Integer.parseInt(info[2]);
+        InetSocketAddress serverAddress = new InetSocketAddress(address, port);
+        URL nativeLibURL = null;
+
+        try {
+            nativeLibURL = new URL(info[3]);
+        } catch (MalformedURLException e) { e.printStackTrace(); }
+
+        String type = info[4];
+
+        return new ServerResponse(codebase, serverAddress, nativeLibURL, type);
+
     }
 
-    public String getCodebase() {
+    public URL[] getCodebase() {
         return codebase;
     }
 
-    public String getServerAddress() {
+    public InetSocketAddress getServerAddress() {
         return serverAddress;
     }
 
-    public int getServerPort() {
-        return serverPort;
-    }
-
-    public String getLibURL() {
+    public URL getLibURL() {
         return libURL;
     }
 

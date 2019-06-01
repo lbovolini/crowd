@@ -13,7 +13,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class Message {
 
-    public static final int HEADER_SIZE = Byte.BYTES + Short.BYTES;
+    private static final int HEADER_SIZE = Byte.BYTES + Short.BYTES;
 
     private final byte type;
     private final int size;

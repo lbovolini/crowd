@@ -49,11 +49,11 @@ public class Scheduler implements Runnable {
         loaderService.create(classURLs, libURL);
     }
 
-    public void update(URL[] classURLs, String libURL) {
+    public void update(URL[] classURLs, URL libURL) {
         //loaderService.updateCodebaseURLs(codebase);
     }
 
-    public void reload(URL[] classURLs, String libURL) {
+    public void reload(URL[] classURLs, URL libURL) {
         //loaderService.reload(classURLs, libURL);
         MessageFrom messageFrom = ((ClientRequestHandler)handler).getLatestCreatedObject();
         enqueue(messageFrom);

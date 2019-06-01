@@ -56,4 +56,5 @@ public class Config {
     public static final String EXTENSIONS[] = {".class", ".jar", ".so", ".dll"};
     public static final String CODEBASE_ROOT = System.getProperty("codebase.root", "");
     public static final String CODEBASE_URL = System.getProperty("codebase.url", "file:");
+    public static final String CODEBASE_URL_SEPARATOR = System.getProperty("codebase.url", " ");
 }

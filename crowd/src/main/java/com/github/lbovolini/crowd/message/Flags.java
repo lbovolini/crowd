@@ -1,6 +1,7 @@
 package com.github.lbovolini.crowd.message;
 
 public class Flags {
+
     private boolean hasType;
     private boolean hasSize;
     private boolean hasSizeChunk;

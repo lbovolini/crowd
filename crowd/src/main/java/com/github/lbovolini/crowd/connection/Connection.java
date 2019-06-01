@@ -18,9 +18,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 
 import static com.github.lbovolini.crowd.configuration.Config.BUFFER_ARRAY_SIZE;
-import static com.github.lbovolini.crowd.configuration.Config.BUFFER_SIZE;
-import static com.github.lbovolini.crowd.configuration.Config.HEADER_SIZE;
-
 public class Connection {
 
     private long hostId;

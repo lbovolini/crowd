@@ -9,7 +9,6 @@ import com.github.lbovolini.crowd.scheduler.Scheduler;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
-import java.net.MalformedURLException;
 import java.net.StandardSocketOptions;
 import java.net.URL;
 import java.nio.channels.AsynchronousSocketChannel;
@@ -36,7 +35,7 @@ public final class Client {
         this.channel = null;
     }
 
-    public void startClient() {
+    public void start() {
         Scheduler scheduler = new Scheduler(new ClientRequestHandler(), this.classPath, this.libPath);
         scheduler.start();
 
@@ -44,21 +43,19 @@ public final class Client {
             @Override
             public void handle(ServerResponse response) {
                 String type = response.getType();
+                URL[] codebase = response.getCodebase();
+                URL libURL = response.getLibURL();
 
                 switch (type) {
                     case CONNECT:
-                        try {
-                            scheduler.create(toURLArray(response.getCodebase()), new URL(response.getLibURL()));
-                        } catch (MalformedURLException e) {
-                            e.printStackTrace();
-                        }
-                        connect(response, scheduler);
+                        scheduler.create(codebase, libURL);
+                        connect(response.getServerAddress(), scheduler);
                         break;
                     case UPDATE:
-                        scheduler.update(toURLArray(response.getCodebase()), response.getLibURL());
+                        scheduler.update(codebase, libURL);
                         break;
                     case RELOAD:
-                        scheduler.reload(toURLArray(response.getCodebase()), response.getLibURL());
+                        scheduler.reload(codebase, libURL);
                         break;
                 }
             }
@@ -66,7 +63,7 @@ public final class Client {
         clientMulticaster.start();
     }
 
-    public void initChannel() throws IOException {
+    private void initChannel() throws IOException {
         channel.setOption(StandardSocketOptions.TCP_NODELAY, true);
         channel.setOption(StandardSocketOptions.SO_KEEPALIVE, true);
         channel.setOption(StandardSocketOptions.SO_REUSEADDR, true);
@@ -83,13 +80,9 @@ public final class Client {
         } catch (IOException e) { e.printStackTrace(); }
     }
 
-    public void connect(ServerResponse response, Scheduler scheduler) {
-        recreateChannel();
-        InetSocketAddress hostAddress = new InetSocketAddress(response.getServerAddress(), response.getServerPort());
-        connect(hostAddress, scheduler);
-    }
 
-    public void connect(InetSocketAddress hostAddress, Scheduler scheduler) {
+    private void connect(InetSocketAddress hostAddress, Scheduler scheduler) {
+        recreateChannel();
         ClientAttachment clientInfo = new ClientAttachment(channel, scheduler, cores);
         ClientConnectionHandler handler = new ClientConnectionHandler();
         channel.connect(hostAddress, clientInfo, handler);
@@ -104,19 +97,4 @@ public final class Client {
 //
     }
 
-    private static URL[] toURLArray(String codebase) {
-        if (codebase == null || codebase.equals("")) {
-            return null;
-        }
-        String[] strURL = codebase.split(" ");
-        URL[] urls = new URL[strURL.length];
-
-        for (int i = 0; i < strURL.length; i++) {
-            try {
-                urls[i] = new URL(strURL[i]);
-            } catch (MalformedURLException e) { e.printStackTrace(); }
-        }
-
-        return urls;
-    }
 }
