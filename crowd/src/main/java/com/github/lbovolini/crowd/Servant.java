@@ -11,6 +11,7 @@ import java.lang.reflect.Method;
 public class Servant {
 
     public static void execute(final Object object, InvokeMethod request, Connection connection) {
+        System.out.println("EXECUTE");
         Object result = null;
         String exception = null;
         boolean isPrimitiveVoid = true;

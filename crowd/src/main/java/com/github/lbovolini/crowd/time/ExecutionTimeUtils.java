@@ -1,4 +1,4 @@
-package com.github.lbovolini.crowd.utils;
+package com.github.lbovolini.crowd.time;
 
 import java.util.Map;
 import java.util.UUID;

@@ -1,4 +1,4 @@
-package com.github.lbovolini.crowd.handler;
+package com.github.lbovolini.crowd.connection;
 
 import com.github.lbovolini.crowd.message.Message;
 import com.github.lbovolini.crowd.message.PartialMessage;
@@ -12,10 +12,6 @@ import java.nio.channels.CompletionHandler;
 import java.util.Queue;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
-
-import static com.github.lbovolini.crowd.configuration.Config.BUFFER_SIZE;
-import static com.github.lbovolini.crowd.configuration.Config.HEADER_SIZE;
-import static com.github.lbovolini.crowd.configuration.Config.MAX_MESSAGE_SIZE;
 
 public class ReadHandler implements CompletionHandler<Long, Connection> {
 
@@ -137,20 +133,20 @@ public class ReadHandler implements CompletionHandler<Long, Connection> {
 
         Flags flags = partialMessage.getFlags();
 
-            if (!flags.hasSizeChunk()) {
-                flags.setHasSizeChunk(true);
-                if (byteBuffer.remaining() < Short.BYTES) {
-                    partialMessage.setSizeFirstByte(byteBuffer.get());
-                } else {
-                    short size = byteBuffer.getShort();
-                    partialMessage.setSize(size);
-                    return true;
-                }
+        if (!flags.hasSizeChunk()) {
+            flags.setHasSizeChunk(true);
+            if (byteBuffer.remaining() < Short.BYTES) {
+                partialMessage.setSizeFirstByte(byteBuffer.get());
             } else {
-                partialMessage.setSizeLastByte(byteBuffer.get());
+                short size = byteBuffer.getShort();
+                partialMessage.setSize(size);
                 return true;
             }
-            return false;
+        } else {
+            partialMessage.setSizeLastByte(byteBuffer.get());
+            return true;
+        }
+        return false;
     }
 
     public static boolean readDataFromBuffer(ByteBuffer buffer, PartialMessage partialMessage) {

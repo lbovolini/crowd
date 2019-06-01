@@ -33,11 +33,14 @@ public class RemoteObjectInputStream extends ObjectInputStream {
     }
 
     protected Class resolveClass(ObjectStreamClass classDesc) throws ClassNotFoundException {
+
         String className = classDesc.getName();
         Class primitive = PRIMITIVE_MAP.get(className);
+
         if (primitive != null) {
             return primitive;
         }
+
         return Class.forName(className , false , this.classLoader);
     }
 

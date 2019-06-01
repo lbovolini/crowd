@@ -15,7 +15,7 @@ public class Scheduler implements Runnable {
     private final RequestHandler handler;
 
     public Scheduler(RequestHandler requestHandler) {
-        this(requestHandler, "", "");
+        this(requestHandler, System.getProperty("java.class.path"), System.getProperty("java.library.path"));
     }
 
     public Scheduler(RequestHandler requestHandler, String classPath, String libPath) {

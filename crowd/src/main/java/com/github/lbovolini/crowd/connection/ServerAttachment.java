@@ -1,10 +1,11 @@
-package com.github.lbovolini.crowd.handler;
+package com.github.lbovolini.crowd.connection;
 
 import com.github.lbovolini.crowd.scheduler.Scheduler;
 
 import java.nio.channels.AsynchronousServerSocketChannel;
 
 public class ServerAttachment {
+
     private final AsynchronousServerSocketChannel serverChannel;
     private final Scheduler scheduler;
 

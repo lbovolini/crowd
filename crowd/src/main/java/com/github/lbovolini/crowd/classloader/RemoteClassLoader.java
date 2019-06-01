@@ -1,12 +1,16 @@
 package com.github.lbovolini.crowd.classloader;
 
+import java.io.IOException;
 import java.net.URL;
 import java.net.URLClassLoader;
 
 public class RemoteClassLoader extends URLClassLoader {
 
-    public RemoteClassLoader(URL[] urls, ClassLoader parent) {
-        super(urls, parent);
+    private final RemoteNativeLibrary remoteNativeLibrary;
+
+    public RemoteClassLoader(URL[] classURLs, URL libURL, String classPath, String libPath, ClassLoader parent) {
+        super(classURLs, parent);
+        this.remoteNativeLibrary = new RemoteNativeLibrary(libURL, libPath);
     }
 
     @Override
@@ -20,10 +24,13 @@ public class RemoteClassLoader extends URLClassLoader {
     }
 
     @Override
-    protected String findLibrary(String libname) {
-        return NativeLibrary.loadLib(libname, true);
+    protected String findLibrary(String libraryName) {
+        try {
+            return remoteNativeLibrary.download(libraryName);
+        } catch (IOException e) {
+            return "";
+        }
     }
-
 
     public void addURLs(URL[] urls) {
         for (URL url : urls) {

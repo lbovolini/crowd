@@ -1,6 +1,5 @@
-package com.github.lbovolini.crowd.handler;
+package com.github.lbovolini.crowd.connection;
 
-import com.github.lbovolini.crowd.connection.Connection;
 import com.github.lbovolini.crowd.message.Message;
 import com.github.lbovolini.crowd.message.MessageFactory;
 
@@ -10,7 +9,6 @@ import java.nio.channels.CompletionHandler;
 public class ClientConnectionHandler implements CompletionHandler<Void, ClientAttachment> {
 
     public void completed(Void aVoid, ClientAttachment attachment) {
-
 
         Message message = null;
         try {

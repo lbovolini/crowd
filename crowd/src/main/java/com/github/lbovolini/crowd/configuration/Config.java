@@ -14,7 +14,7 @@ public class Config {
     public static final String HOST_NAME = System.getProperty("hostname", Host.getHostAddressName());
     public static final int PORT = Integer.parseInt(System.getProperty("port", String.valueOf(8081)));
 
-    public static int POOL_SIZE = Integer.parseInt(System.getProperty("pool.size",  String.valueOf(Runtime.getRuntime().availableProcessors())));
+    public static final int POOL_SIZE = Integer.parseInt(System.getProperty("pool.size",  String.valueOf(Runtime.getRuntime().availableProcessors())));
 
      /**
      * MULTICAST connection
@@ -47,8 +47,8 @@ public class Config {
     /**
      * NON FINAL
      */
-    public static String LIB_URL = System.getProperty("lib.url", "file:");
-    public static String LIB_PATH = System.getProperty("lib.path", System.getProperty("java.io.tmpdir"));
+    public static final String LIB_URL = System.getProperty("lib.url", "file:");
+    public static final String LIB_PATH = System.getProperty("lib.path", System.getProperty("java.io.tmpdir"));
 
     /**
      *
@@ -56,5 +56,5 @@ public class Config {
     public static final String EXTENSIONS[] = {".class", ".jar", ".so", ".dll"};
     public static final String CODEBASE_ROOT = System.getProperty("codebase.root", "");
     public static final String CODEBASE_URL = System.getProperty("codebase.url", "file:");
-    public static final String CODEBASE_URL_SEPARATOR = System.getProperty("codebase.url", " ");
+    public static final String URL_SEPARATOR = System.getProperty("codebase.url", " ");
 }

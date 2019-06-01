@@ -1,8 +1,8 @@
 package com.github.lbovolini.crowd;
 
 import com.github.lbovolini.crowd.configuration.Config;
-import com.github.lbovolini.crowd.handler.ServerAttachment;
-import com.github.lbovolini.crowd.handler.ServerConnectionHandler;
+import com.github.lbovolini.crowd.connection.ServerAttachment;
+import com.github.lbovolini.crowd.connection.ServerConnectionHandler;
 import com.github.lbovolini.crowd.node.NodeGroup;
 import com.github.lbovolini.crowd.scheduler.RequestHandler;
 import com.github.lbovolini.crowd.scheduler.Scheduler;

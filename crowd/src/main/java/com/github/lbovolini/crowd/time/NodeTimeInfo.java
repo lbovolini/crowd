@@ -1,4 +1,4 @@
-package com.github.lbovolini.crowd.utils;
+package com.github.lbovolini.crowd.time;
 
 
 import java.util.concurrent.atomic.AtomicInteger;

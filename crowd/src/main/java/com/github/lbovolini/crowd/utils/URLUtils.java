@@ -12,7 +12,7 @@ public class URLUtils {
         StringBuilder urlsString = new StringBuilder();
 
         for (URL url : urls) {
-            urlsString.append(url.toString());
+            urlsString = urlsString.append(url.toString());
         }
 
         return urlsString.toString();
@@ -24,7 +24,7 @@ public class URLUtils {
             return null;
         }
 
-        String[] strURL = urlsString.split(Config.CODEBASE_URL_SEPARATOR);
+        String[] strURL = urlsString.split(Config.URL_SEPARATOR);
         URL[] urls = new URL[strURL.length];
 
         for (int i = 0; i < strURL.length; i++) {

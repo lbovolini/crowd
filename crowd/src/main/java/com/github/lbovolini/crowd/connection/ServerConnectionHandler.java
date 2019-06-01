@@ -1,6 +1,4 @@
-package com.github.lbovolini.crowd.handler;
-
-import com.github.lbovolini.crowd.connection.Connection;
+package com.github.lbovolini.crowd.connection;
 
 import java.nio.channels.AsynchronousSocketChannel;
 import java.nio.channels.CompletionHandler;

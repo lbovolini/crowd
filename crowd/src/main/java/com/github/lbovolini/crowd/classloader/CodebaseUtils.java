@@ -1,7 +1,6 @@
 package com.github.lbovolini.crowd.classloader;
 
 import java.io.IOException;
-import java.net.URL;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;

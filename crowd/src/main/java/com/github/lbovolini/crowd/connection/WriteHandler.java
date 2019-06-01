@@ -1,4 +1,4 @@
-package com.github.lbovolini.crowd.handler;
+package com.github.lbovolini.crowd.connection;
 
 import com.github.lbovolini.crowd.connection.ByteBufferPool;
 import com.github.lbovolini.crowd.connection.Connection;

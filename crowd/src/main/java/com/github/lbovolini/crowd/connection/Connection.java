@@ -2,15 +2,12 @@ package com.github.lbovolini.crowd.connection;
 
 import com.github.lbovolini.crowd.message.Message;
 import com.github.lbovolini.crowd.message.PartialMessage;
-import com.github.lbovolini.crowd.handler.ReadHandler;
-import com.github.lbovolini.crowd.handler.WriteHandler;
 import com.github.lbovolini.crowd.scheduler.MessageFrom;
 import com.github.lbovolini.crowd.scheduler.Scheduler;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
-import java.nio.channels.AsynchronousServerSocketChannel;
 import java.nio.channels.AsynchronousSocketChannel;
 import java.util.LinkedList;
 import java.util.Queue;
@@ -18,6 +15,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 
 import static com.github.lbovolini.crowd.configuration.Config.BUFFER_ARRAY_SIZE;
+
 public class Connection {
 
     private long hostId;

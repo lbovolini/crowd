@@ -96,6 +96,4 @@ public class NodeGroup<T> {
         this.useAllCores = true;
     }
 
-
-
 }

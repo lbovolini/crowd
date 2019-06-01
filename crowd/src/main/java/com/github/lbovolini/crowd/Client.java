@@ -2,8 +2,8 @@ package com.github.lbovolini.crowd;
 
 import com.github.lbovolini.crowd.group.ClientMulticaster;
 import com.github.lbovolini.crowd.group.ServerResponse;
-import com.github.lbovolini.crowd.handler.ClientAttachment;
-import com.github.lbovolini.crowd.handler.ClientConnectionHandler;
+import com.github.lbovolini.crowd.connection.ClientAttachment;
+import com.github.lbovolini.crowd.connection.ClientConnectionHandler;
 import com.github.lbovolini.crowd.scheduler.ClientRequestHandler;
 import com.github.lbovolini.crowd.scheduler.Scheduler;
 
@@ -84,8 +84,7 @@ public final class Client {
     private void connect(InetSocketAddress hostAddress, Scheduler scheduler) {
         recreateChannel();
         ClientAttachment clientInfo = new ClientAttachment(channel, scheduler, cores);
-        ClientConnectionHandler handler = new ClientConnectionHandler();
-        channel.connect(hostAddress, clientInfo, handler);
+        channel.connect(hostAddress, clientInfo, new ClientConnectionHandler());
     }
 
     public static void main(String[] args) {
@@ -95,6 +94,8 @@ public final class Client {
 //        Client client = new Client("192.168.0.100", PORT, POOL_SIZE);
 //        client.startClient();
 //
+        Client client = new Client(HOST_NAME, PORT, POOL_SIZE, null, LIB_PATH);
+        client.start();
     }
 
 }

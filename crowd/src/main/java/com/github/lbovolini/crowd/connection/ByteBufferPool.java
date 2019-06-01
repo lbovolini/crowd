@@ -6,6 +6,7 @@ import java.nio.ByteBuffer;
 import java.util.concurrent.ConcurrentLinkedDeque;
 
 public class ByteBufferPool {
+
     private final ConcurrentLinkedDeque<ByteBuffer> byteBufferDeque;
 
     public ByteBufferPool() {
@@ -13,6 +14,7 @@ public class ByteBufferPool {
     }
 
     public ByteBuffer pool() {
+
         ByteBuffer buffer = byteBufferDeque.poll();
 
         if (buffer == null) {
