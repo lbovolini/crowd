@@ -18,7 +18,7 @@
                     <source>1.8</source>
                     <target>1.8</target>
                     <excludes>
-                        <exclude>**/MultiDexClassLoader.java</exclude>
+                        <exclude>**/AndroidRemoteClassLoader.java</exclude>
                     </excludes>
                 </configuration>
             </plugin>

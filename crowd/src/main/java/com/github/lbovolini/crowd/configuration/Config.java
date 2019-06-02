@@ -57,4 +57,6 @@ public class Config {
     public static final String CODEBASE_ROOT = System.getProperty("codebase.root", "");
     public static final String CODEBASE_URL = System.getProperty("codebase.url", "file:");
     public static final String URL_SEPARATOR = System.getProperty("codebase.url", " ");
+
+    public static final String CLASSLOADER = System.getProperty("classloader", "com.github.lbovolini.crowd.classloader.RemoteClassLoader");
 }

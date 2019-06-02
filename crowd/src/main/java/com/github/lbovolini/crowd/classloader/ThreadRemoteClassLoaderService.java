@@ -1,6 +1,9 @@
 package com.github.lbovolini.crowd.classloader;
 
+import java.lang.reflect.Constructor;
 import java.net.URL;
+
+import static com.github.lbovolini.crowd.configuration.Config.CLASSLOADER;
 
 public class ThreadRemoteClassLoaderService {
 
@@ -20,7 +23,14 @@ public class ThreadRemoteClassLoaderService {
     }
 
     public void create(URL[] classURLs, URL libURL) {
-        classLoader = new RemoteClassLoader(classURLs, libURL, this.classPath, this.libPath, this.parent);
-        thread.setContextClassLoader(classLoader);
+        try {
+            Class classDefinition = Class.forName(CLASSLOADER);
+            Constructor constructor = classDefinition.getConstructor(URL[].class, URL.class, String.class, String.class, ClassLoader.class);
+            classLoader = (ClassLoader) constructor.newInstance(classURLs, libURL, this.classPath, this.libPath, this.parent);
+            //classLoader = new RemoteClassLoader(classURLs, libURL, this.classPath, this.libPath, this.parent);
+            thread.setContextClassLoader(classLoader);
+        } catch (Exception e) {
+            throw new UnsupportedOperationException(e.getMessage());
+        }
     }
 }
