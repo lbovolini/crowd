@@ -46,6 +46,8 @@ public final class Client {
                 URL[] codebase = response.getCodebase();
                 URL libURL = response.getLibURL();
 
+                System.out.println(response.toString());
+
                 switch (type) {
                     case CONNECT:
                         scheduler.create(codebase, libURL);

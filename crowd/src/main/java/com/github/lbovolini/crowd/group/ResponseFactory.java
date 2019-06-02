@@ -21,12 +21,13 @@ public class ResponseFactory {
         if (response.equals(RELOAD)) {
             return of(RELOAD);
         }
-        return new String();
+        return "";
     }
 
     private static String of(String TYPE) {
         String codebase = CodebaseUtils.getCodebaseURLs();
         String libURL = CodebaseUtils.getLibURL();
         return codebase + SEPARATOR + HOST_NAME + SEPARATOR + PORT + SEPARATOR + libURL + SEPARATOR + TYPE;
+
     }
 }

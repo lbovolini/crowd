@@ -4,6 +4,7 @@ import com.github.lbovolini.crowd.configuration.Config;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Objects;
 
 public class URLUtils {
 
@@ -20,7 +21,7 @@ public class URLUtils {
 
     public static URL[] split(String urlsString) {
 
-        if (urlsString == null || urlsString.equals("")) {
+        if (Objects.isNull(urlsString) || urlsString.equals("")) {
             return null;
         }
 

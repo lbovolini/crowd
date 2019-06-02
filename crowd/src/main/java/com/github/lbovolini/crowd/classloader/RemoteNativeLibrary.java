@@ -18,8 +18,8 @@ public class RemoteNativeLibrary {
     private static final Map<String, Integer> loadedLibs = new ConcurrentHashMap<>();
 
     public RemoteNativeLibrary(URL url, String path) {
-        setUrl(Objects.requireNonNull(url));
-        setPath(Objects.requireNonNull(path));
+        setUrl(url);
+        setPath(path);
     }
 
     public String download(String name) throws IOException {

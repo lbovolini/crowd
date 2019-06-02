@@ -5,6 +5,7 @@ import com.github.lbovolini.crowd.utils.URLUtils;
 import java.net.InetSocketAddress;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Objects;
 
 import static com.github.lbovolini.crowd.configuration.Config.SEPARATOR;
 
@@ -17,10 +18,10 @@ public class ServerResponse {
 
 
     public ServerResponse(URL[] codebase, InetSocketAddress serverAddress, URL libURL, String type) {
-        this.codebase = codebase;
-        this.serverAddress = serverAddress;
-        this.libURL = libURL;
-        this.type = type;
+        this.codebase = Objects.requireNonNull(codebase);
+        this.serverAddress = Objects.requireNonNull(serverAddress);
+        this.libURL = Objects.requireNonNull(libURL);
+        this.type = Objects.requireNonNull(type);
     }
 
     public static ServerResponse fromObject(Object response) {
@@ -44,7 +45,6 @@ public class ServerResponse {
         String type = info[4];
 
         return new ServerResponse(codebase, serverAddress, nativeLibURL, type);
-
     }
 
     public URL[] getCodebase() {
@@ -61,5 +61,14 @@ public class ServerResponse {
 
     public String getType() {
         return type;
+    }
+
+    @Override
+    public String toString() {
+        return URLUtils.join(codebase)
+                + SEPARATOR + serverAddress.getAddress().getHostAddress()
+                + SEPARATOR + serverAddress.getPort()
+                + SEPARATOR + libURL
+                + SEPARATOR + type;
     }
 }
