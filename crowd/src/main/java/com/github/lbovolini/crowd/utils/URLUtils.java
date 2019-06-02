@@ -12,7 +12,7 @@ public class URLUtils {
         StringBuilder urlsString = new StringBuilder();
 
         for (URL url : urls) {
-            urlsString = urlsString.append(url.toString());
+            urlsString = urlsString.append(url.toString()).append(Config.URL_SEPARATOR));
         }
 
         return urlsString.toString();
