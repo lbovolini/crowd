@@ -52,7 +52,7 @@ public class AndroidRemoteClassLoader extends DexClassLoader {
         } catch (Exception e) { e.printStackTrace(); }
     }
 
-    public RemoteNativeLibrary(URL[] classURLs, URL libURL, String classPath, String libPath, ClassLoader parent){
+    public AndroidRemoteClassLoader(URL[] classURLs, URL libURL, String classPath, String libPath, ClassLoader parent){
         super(classPath, null, libPath, parent);
         this.classURLs = classURLs;
         this.classPath = classPath;
