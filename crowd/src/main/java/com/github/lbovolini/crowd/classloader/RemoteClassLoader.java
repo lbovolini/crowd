@@ -14,21 +14,11 @@ public class RemoteClassLoader extends URLClassLoader {
     }
 
     @Override
-    public Class<?> loadClass(String name) throws ClassNotFoundException {
-        return super.loadClass(name);
-    }
-
-    @Override
-    protected Class<?> loadClass(String name, boolean resolve) throws ClassNotFoundException {
-        return super.loadClass(name, resolve);
-    }
-
-    @Override
     protected String findLibrary(String libraryName) {
         try {
             return remoteNativeLibrary.download(libraryName);
         } catch (IOException e) {
-            return "";
+            return null;
         }
     }
 

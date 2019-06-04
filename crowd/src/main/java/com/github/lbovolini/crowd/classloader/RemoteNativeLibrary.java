@@ -1,13 +1,10 @@
 package com.github.lbovolini.crowd.classloader;
 
-import com.github.lbovolini.crowd.utils.FileDownloader;
-
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Map;
-import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class RemoteNativeLibrary {
@@ -31,7 +28,9 @@ public class RemoteNativeLibrary {
 
         create(filePath);
         String remoteLibName = System.mapLibraryName(name);
-        FileDownloader.download(this.libURL, filePath, remoteLibName);
+        if (!FileDownloader.download(this.libURL, filePath, remoteLibName)) {
+            throw new IOException(String.format("Native Library %s not found", name));
+        }
 
         return filePath;
     }
@@ -66,8 +65,6 @@ public class RemoteNativeLibrary {
     }
 
     public void setUrl(URL url) {
-        assert Objects.nonNull(url);
-
         try {
             if(!url.toString().endsWith("/")) {
                 url = new URL(url + "/");

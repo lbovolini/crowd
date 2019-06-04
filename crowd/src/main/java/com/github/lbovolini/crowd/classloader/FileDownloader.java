@@ -1,4 +1,6 @@
-package com.github.lbovolini.crowd.utils;
+package com.github.lbovolini.crowd.classloader;
+
+import com.github.lbovolini.crowd.configuration.Config;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -11,14 +13,15 @@ import java.nio.channels.ReadableByteChannel;
 
 public class FileDownloader {
 
-    public static void download(URL from, String destination, String name) throws IOException {
+    public static boolean download(URL from, String destination, String name) throws IOException {
         URL url = new URL(from + name);
-        download(url, destination);
+        return download(url, destination);
     }
 
-    public static void download(URL from, String destination) throws IOException {
+    public static boolean download(URL from, String destination) throws IOException {
 
         URLConnection connection = from.openConnection();
+        connection.setUseCaches(Config.CACHE);
         long fileSize = connection.getContentLength();
 
         try (InputStream source = connection.getInputStream();
@@ -30,6 +33,10 @@ public class FileDownloader {
             while(transferredSize < fileSize) {
                 transferredSize += fileChannel.transferFrom(channel, transferredSize, 1 << 24);
             }
+
+            return true;
+        } catch (Exception e) {
+            return false;
         }
     }
 }
