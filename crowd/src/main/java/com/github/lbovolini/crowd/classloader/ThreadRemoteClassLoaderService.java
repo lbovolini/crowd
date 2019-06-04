@@ -24,10 +24,13 @@ public class ThreadRemoteClassLoaderService {
 
     public void create(URL[] classURLs, URL libURL) {
         try {
-            Class classDefinition = Class.forName(CLASSLOADER);
-            Constructor constructor = classDefinition.getConstructor(URL[].class, URL.class, String.class, String.class, ClassLoader.class);
-            classLoader = (ClassLoader) constructor.newInstance(classURLs, libURL, this.classPath, this.libPath, this.parent);
-            //classLoader = new RemoteClassLoader(classURLs, libURL, this.classPath, this.libPath, this.parent);
+            if (CLASSLOADER.isEmpty()) {
+                classLoader = new RemoteClassLoader(classURLs, libURL, this.classPath, this.libPath, this.parent);
+            } else {
+                Class classDefinition = Class.forName(CLASSLOADER);
+                Constructor constructor = classDefinition.getConstructor(URL[].class, URL.class, String.class, String.class, ClassLoader.class);
+                classLoader = (ClassLoader) constructor.newInstance(classURLs, libURL, this.classPath, this.libPath, this.parent);
+            }
             thread.setContextClassLoader(classLoader);
         } catch (Exception e) {
             throw new UnsupportedOperationException(e.getMessage());
