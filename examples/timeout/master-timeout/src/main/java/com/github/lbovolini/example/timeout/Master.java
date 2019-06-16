@@ -20,6 +20,10 @@ public class Master {
     }
 
     public static void handle(Integer result, Throwable throwable) {
+        if (throwable != null) {
+            throwable.printStackTrace();
+            return;
+        }
         System.out.println(result);
     }
 

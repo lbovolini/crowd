@@ -7,7 +7,7 @@ import java.io.IOException;
 public class Master {
 
     public static void main(String[] args) throws IOException {
-        NodeGroup<RemoteOneWay> nodeGroup = new NodeGroup(RemoteOneWay.class.getName());
-        nodeGroup.forOne(remoteOneWay -> remoteOneWay.say(1));
+        NodeGroup<RemoteOneWay> nodeGroup = new NodeGroup(OneWay.class.getName());
+        nodeGroup.forOne(oneWay -> oneWay.say(1));
     }
 }
