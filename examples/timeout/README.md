@@ -1,0 +1,1 @@
+java -jar master-timeout-1.0-SNAPSHOT.jar

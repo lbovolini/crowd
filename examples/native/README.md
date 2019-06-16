@@ -1,0 +1,1 @@
+java -Dcodebase.url=file: -Dlib.url=file:libs -Djava.library.path=libs -jar master-nativeLib-1.0-SNAPSHOT.jar

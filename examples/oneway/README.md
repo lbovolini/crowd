@@ -1,0 +1,1 @@
+java -jar master-oneway-1.0-SNAPSHOT.jar
