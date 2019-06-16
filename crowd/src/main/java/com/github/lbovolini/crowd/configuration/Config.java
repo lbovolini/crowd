@@ -60,8 +60,8 @@ public class Config {
 
     public static final String CLASSLOADER = System.getProperty("classloader", "");
 
-    public static final int DEX_MIN_SDK_VERSION = Integer.parseInt(System.getProperty("dex.version", String.valueOf(26)));
-    public static final boolean DEX_OPTIMIZE = Boolean.valueOf(System.getProperty("dex.optimize", String.valueOf(Boolean.TRUE)));
+    public static final int DEX_MIN_SDK_VERSION = Integer.parseInt(System.getProperty("dex.version", "26"));
+    public static final boolean DEX_OPTIMIZE = Boolean.valueOf(System.getProperty("dex.optimize", "true"));
 
     public static boolean CACHE = Boolean.valueOf(System.getProperty("cache", "false"));
 }

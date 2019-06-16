@@ -11,7 +11,15 @@
  
     <modules>
         <module>crowd</module>
-        <module>hello</module>
+        <module>examples/hello/hello</module>
+        <module>examples/hello/master-hello</module>
+        <module>examples/timeout/timeout</module>
+        <module>examples/timeout/master-timeout</module>
+        <module>examples/oneway/oneway</module>
+        <module>examples/oneway/master-oneway</module>
+        <module>examples/native/native</module>
+        <module>examples/native/native/src/main/c</module>
+        <module>examples/native/master-native</module>
     </modules>
 
     <build>
