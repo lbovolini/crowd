@@ -6,6 +6,7 @@ import com.android.dx.command.dexer.DxContext;
 import com.android.dx.dex.DexOptions;
 import com.android.dx.dex.cf.CfOptions;
 import com.android.dx.dex.cf.CfTranslator;
+import com.android.dx.dex.file.ClassDefItem;
 import com.android.dx.dex.file.DexFile;
 
 import java.io.File;
