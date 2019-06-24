@@ -4,6 +4,7 @@ import java.lang.reflect.Constructor;
 import java.net.URL;
 
 import static com.github.lbovolini.crowd.configuration.Config.CLASSLOADER;
+import static com.github.lbovolini.crowd.configuration.Config.VENDOR;
 
 public class ThreadRemoteClassLoaderService {
 
@@ -22,11 +23,13 @@ public class ThreadRemoteClassLoaderService {
         this.parent = ThreadRemoteClassLoaderService.class.getClassLoader();
     }
 
+    //! TODO
     public void create(URL[] classURLs, URL libURL) {
         try {
-            if (CLASSLOADER.isEmpty()) {
+            if (VENDOR.contains("Oracle")) {
                 classLoader = new RemoteClassLoader(classURLs, libURL, this.classPath, this.libPath, this.parent);
-            } else {
+            }
+            else {
                 Class classDefinition = Class.forName(CLASSLOADER);
                 Constructor constructor = classDefinition.getConstructor(URL[].class, URL.class, String.class, String.class, ClassLoader.class);
                 classLoader = (ClassLoader) constructor.newInstance(classURLs, libURL, this.classPath, this.libPath, this.parent);
