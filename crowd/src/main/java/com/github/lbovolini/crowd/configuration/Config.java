@@ -58,10 +58,14 @@ public class Config {
     public static final String CODEBASE_URL = System.getProperty("codebase.url", "file:");
     public static final String URL_SEPARATOR = System.getProperty("codebase.url", " ");
 
-    public static final String CLASSLOADER = System.getProperty("classloader", "");
+    public static final String CLASSLOADER = System.getProperty("classloader", "com.github.lbovolini.crowd.classloader.AndroidRemoteClassLoader");
 
     public static final int DEX_MIN_SDK_VERSION = Integer.parseInt(System.getProperty("dex.version", "26"));
     public static final boolean DEX_OPTIMIZE = Boolean.valueOf(System.getProperty("dex.optimize", "true"));
 
     public static boolean CACHE = Boolean.valueOf(System.getProperty("cache", "false"));
+
+    public static final String OS_ARCH = System.getProperty("os.arch");
+    public static final String VENDOR = System.getProperty("java.vendor");
+    public static final String OS_NAME = System.getProperty("os.name");
 }
