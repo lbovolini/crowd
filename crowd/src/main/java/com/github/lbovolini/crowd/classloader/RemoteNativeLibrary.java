@@ -28,6 +28,7 @@ public class RemoteNativeLibrary {
 
         create(filePath);
         String remoteLibName = System.mapLibraryName(name);
+
         if (!FileDownloader.download(this.libURL, filePath, remoteLibName)) {
             throw new IOException(String.format("Native Library %s not found", name));
         }
@@ -65,11 +66,15 @@ public class RemoteNativeLibrary {
     }
 
     public void setUrl(URL url) {
+
+        String os = OsUtils.getOs();
+        String arch = OsUtils.getArch();
+
         try {
             if(!url.toString().endsWith("/")) {
-                url = new URL(url + "/");
+                url = new URL(url + "/" + os + "/" + arch + "/");
             }
-            this.libURL = url;
+            this.libURL = new URL(url + os + "/" + arch + "/");
         } catch (MalformedURLException e) { throw new IllegalArgumentException(url.toString()); }
     }
 
