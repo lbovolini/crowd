@@ -8,6 +8,11 @@
     <artifactId>crowd</artifactId>
     <version>1.0-SNAPSHOT</version>
 
+    <properties>
+        <android.platform>28</android.platform>
+        <android.sdk>${user.home}/Android/Sdk/</android.sdk>
+    </properties>
+
     <build>
         <plugins>
             <plugin>
@@ -17,9 +22,9 @@
                 <configuration>
                     <source>1.8</source>
                     <target>1.8</target>
-                    <excludes>
+                    <!--<excludes>
                         <exclude>**/AndroidRemoteClassLoader.java</exclude>
-                    </excludes>
+                    </excludes>-->
                 </configuration>
             </plugin>
 
@@ -108,6 +113,21 @@
             </plugin>
         </plugins>
     </build>
-
+    <dependencies>
+        <dependency>
+            <groupId>com.google.android</groupId>
+            <artifactId>android</artifactId>
+            <version>${android.platform}</version>
+            <scope>system</scope>
+            <systemPath>${android.sdk}/platforms/android-${android.platform}/android.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>com.android.dx</groupId>
+            <artifactId>dx</artifactId>
+            <version>${android.platform}</version>
+            <scope>system</scope>
+            <systemPath>${android.sdk}/build-tools/28.0.3/lib/dx.jar</systemPath>
+        </dependency>
+    </dependencies>
     
 </project>
