@@ -26,7 +26,7 @@ public class ThreadRemoteClassLoaderService {
     //! TODO
     public void create(URL[] classURLs, URL libURL) {
         try {
-            if (VENDOR.contains("Oracle")) {
+            if (VENDOR.contains("Oracle") || VENDOR.equals("N/A")) {
                 classLoader = new RemoteClassLoader(classURLs, libURL, this.classPath, this.libPath, this.parent);
             }
             else {
