@@ -13,7 +13,7 @@ cd ~/app
 ## Run Hello
 
 ```
-java -Dport=8006 -jar hello-1.0-SNAPSHOT.jar
+java -Dport=8006 -jar master-hello-1.0-SNAPSHOT.jar
 ```
 
 ## Run Client
