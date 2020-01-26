@@ -11,6 +11,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+import static com.github.lbovolini.crowd.configuration.Config.POOL_SIZE;
+
 public class ClientRequestHandler implements RequestHandler {
 
     private Object object;
@@ -80,7 +82,7 @@ public class ClientRequestHandler implements RequestHandler {
             }
         }
         // !todo
-        pool = Executors.newFixedThreadPool(4);
+        pool = Executors.newFixedThreadPool(POOL_SIZE);
     }
 
     private void setLatestCreatedObject(MessageFrom messageFrom) {
