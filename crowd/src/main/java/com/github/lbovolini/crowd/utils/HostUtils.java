@@ -1,4 +1,4 @@
-package com.github.lbovolini.crowd.host;
+package com.github.lbovolini.crowd.utils;
 
 import java.net.Inet4Address;
 import java.net.InetAddress;
@@ -7,7 +7,7 @@ import java.net.SocketException;
 import java.util.Collections;
 import java.util.Enumeration;
 
-public interface Host {
+public interface HostUtils {
     static String getHostAddress() throws SocketException {
 
         Enumeration<NetworkInterface> nets = NetworkInterface.getNetworkInterfaces();

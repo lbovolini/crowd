@@ -1,6 +1,6 @@
 package com.github.lbovolini.crowd.configuration;
 
-import com.github.lbovolini.crowd.host.Host;
+import com.github.lbovolini.crowd.utils.HostUtils;
 
 public class Config {
     /**
@@ -11,7 +11,7 @@ public class Config {
     public static final int HEADER_SIZE = Byte.BYTES + Short.BYTES;
     public static final int BUFFER_ARRAY_SIZE = 16;
 
-    public static final String HOST_NAME = System.getProperty("hostname", Host.getHostAddressName());
+    public static final String HOST_NAME = System.getProperty("hostname", HostUtils.getHostAddressName());
     public static final int PORT = Integer.parseInt(System.getProperty("port", String.valueOf(8081)));
 
     public static final int POOL_SIZE = Integer.parseInt(System.getProperty("pool.size",  String.valueOf(Runtime.getRuntime().availableProcessors())));
@@ -23,7 +23,7 @@ public class Config {
     public static final int MULTICAST_PORT = Integer.parseInt(System.getProperty("multicast.port", String.valueOf(8000)));
 
     public static final int MULTICAST_BUFFER_SIZE = 1024;
-    public static final String MULTICAST_INTERFACE_NAME = System.getProperty("multicast.interface", Host.getNetworkInterfaceName());
+    public static final String MULTICAST_INTERFACE_NAME = System.getProperty("multicast.interface", HostUtils.getNetworkInterfaceName());
     public static final int MULTICAST_CLIENT_PORT = Integer.parseInt(System.getProperty("multicast.client.port", String.valueOf(8011)));
 
     /**
