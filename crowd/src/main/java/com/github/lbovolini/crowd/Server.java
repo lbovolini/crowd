@@ -29,15 +29,11 @@ public class Server {
         inetSocketAddress = new InetSocketAddress(Config.HOST_NAME, Config.PORT);
     }
 
-    public void init() throws IOException {
+    public void start() throws IOException {
         //int threads = Runtime.getRuntime().availableProcessors();
         ExecutorService pool = Executors.newSingleThreadExecutor();
         group = AsynchronousChannelGroup.withThreadPool(pool);
         serverChannel = AsynchronousServerSocketChannel.open(group);
-    }
-
-    public void start() throws IOException {
-        init();
 
         serverChannel.bind(inetSocketAddress);
 
@@ -50,6 +46,4 @@ public class Server {
         //Thread.currentThread().join();
         //asynchronousChannelGroup.awaitTermination(Long.MAX_VALUE, TimeUnit.SECONDS);
     }
-
-
 }

@@ -1,50 +1,62 @@
 package com.github.lbovolini.crowd.group;
 
 import java.net.InetSocketAddress;
-import java.nio.channels.DatagramChannel;
-import java.util.concurrent.TimeUnit;
+import java.net.URL;
 
 import static com.github.lbovolini.crowd.configuration.Config.*;
 
 public class ClientMulticaster extends Multicaster {
 
-    private InetSocketAddress serverAddress;
+    private final TimeScheduler timeScheduler = new TimeScheduler(this);
 
     public ClientMulticaster() {
         super(MULTICAST_CLIENT_PORT);
     }
 
+    /**
+     * Manipula somente mensagens recebidas do servidor.
+     * Toda mensagem maior que 1 é uma mensagem enviada pelo servidor.
+     * @param message
+     * @param address
+     */
     @Override
-    public void handle(ServerResponse serverResponse) {
-
-    }
-
-    @Override
-    protected void handle(final DatagramChannel channel, String response, InetSocketAddress address) {
-        // !todo
-        updateLastResponseTime();
-        // !todo
-        if (response.length() > 1) {
-            ServerResponse serverResponse = ServerResponse.fromObject(response);
+    protected void handle(String message, InetSocketAddress address) {
+        timeScheduler.updateLastResponseTime();
+        if (message.length() > 1) {
+            ServerResponse serverResponse = ServerResponse.fromObject(message);
             setServerAddress(serverResponse);
-            //Message message = Message.create(Byte.valueOf(serverResponse.getType()), response.getBytes(StandardCharsets.UTF_8));
             handle(serverResponse);
         }
     }
 
-    private void setServerAddress(ServerResponse serverResponse) {
-        this.serverAddress = serverResponse.getServerAddress();
+    @Override
+    protected void scheduler() {
+        timeScheduler.start();
     }
 
-    @Override
-    protected void startScheduler(DatagramChannel channel) {
-        pool.scheduleWithFixedDelay(() -> {
-            if (isDownTimeExceeded()) {
-                responseFromTo(ResponseFactory.get(DISCOVER), channel, new InetSocketAddress(MULTICAST_IP, MULTICAST_PORT));
-            } else {
-                responseFromTo(ResponseFactory.get(HEARTBEAT), channel, new InetSocketAddress(serverAddress.getAddress(), MULTICAST_PORT));
-            }
-            wakeUp();
-        }, 0, HEARTBEAT_INTERVAL, TimeUnit.SECONDS);
+    public void connect(URL[] codebase, URL libURL, InetSocketAddress serverAddress) {}
+
+    public void update(URL[] codebase, URL libURL) {}
+
+    public void reload(URL[] codebase, URL libURL) {}
+
+    public void handle(ServerResponse response) {
+
+        String type = response.getType();
+        URL[] codebase = response.getCodebase();
+        URL libURL = response.getLibURL();
+
+        switch (type) {
+            case CONNECT:
+                connect(codebase, libURL, response.getServerAddress());
+                break;
+            case UPDATE:
+                update(codebase, libURL);
+                break;
+            case RELOAD:
+                reload(codebase, libURL);
+                break;
+        }
     }
+
 }

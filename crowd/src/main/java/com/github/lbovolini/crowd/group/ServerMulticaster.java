@@ -4,8 +4,6 @@ import com.github.lbovolini.crowd.monitor.Watcher;
 import com.github.lbovolini.crowd.monitor.WatcherHandler;
 
 import java.net.InetSocketAddress;
-import java.nio.channels.DatagramChannel;
-
 
 import static com.github.lbovolini.crowd.configuration.Config.*;
 
@@ -16,43 +14,16 @@ public class ServerMulticaster extends Multicaster {
     }
 
     @Override
-    public void handle(ServerResponse serverResponse) {
-
-    }
-
-    @Override
-    protected void handle(final DatagramChannel channel, String response, InetSocketAddress address) {
-
-        if (response.length() > 1) {
-            return;
-        }
-        if (DISCOVER.equals(response)) {
-            join(address);
-            responseFromTo(ResponseFactory.get(CONNECT), channel, address);
-        }
-        else if (HEARTBEAT.equals(response)) {
-            if (isMember(address)) {
-                responseFromTo(ResponseFactory.get(HEARTBEAT), channel, address);
-            } else {
-                join(address);
-                responseFromTo(ResponseFactory.get(CONNECT), channel, address);
-            }
-        }
-    }
-
-    @Override
-    protected void startScheduler(DatagramChannel channel) {
+    protected void scheduler() {
         new Watcher(CODEBASE_ROOT, new WatcherHandler() {
             @Override
             public void onCreate() {
-                responseFromTo(ResponseFactory.get(UPDATE), channel, allClients);
-                wakeUp();
+                sendAll(UPDATE);
             }
 
             @Override
             public void onModify() {
-                responseFromTo(ResponseFactory.get(RELOAD), channel, allClients);
-                wakeUp();
+                sendAll(RELOAD);
             }
 
             @Override
@@ -61,4 +32,35 @@ public class ServerMulticaster extends Multicaster {
             }
         }).start();
     }
+
+    /**
+     * handle mensagem do cliente
+     * @param response
+     * @param address
+     */
+    @Override
+    protected void handle(String response, InetSocketAddress address) {
+
+        if (response.length() > 1) {
+            return;
+        }
+        if (DISCOVER.equals(response)) {
+            join(address);
+            response(CONNECT, address);
+        }
+        else if (HEARTBEAT.equals(response)) {
+            if (isMember(address)) {
+                response(HEARTBEAT, address);
+            } else {
+                join(address);
+                response(CONNECT, address);
+            }
+        }
+    }
+
+    public static void main(String[] args) {
+        ServerMulticaster serverMulticaster = new ServerMulticaster();
+        serverMulticaster.start();
+    }
+
 }

@@ -3,45 +3,34 @@ package com.github.lbovolini.crowd.group;
 import java.io.IOException;
 import java.net.*;
 import java.nio.ByteBuffer;
-import java.nio.channels.*;
+import java.nio.channels.ClosedChannelException;
+import java.nio.channels.DatagramChannel;
+import java.nio.channels.SelectionKey;
+import java.nio.channels.Selector;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.Iterator;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 import static com.github.lbovolini.crowd.configuration.Config.*;
 
-public abstract class Multicaster {
+public abstract class Multicaster extends Thread {
 
-    // !todo thread safe?
     protected Selector selector;
 
     private final int port;
-    private final InetAddress group;
-    private final NetworkInterface networkInterface;
+    private InetAddress group;
+    private NetworkInterface networkInterface;
 
-    protected final ScheduledExecutorService pool = Executors.newSingleThreadScheduledExecutor();
-
-    private long lastResponseTime = 0;
-    private final Object lock = new Object();
-
+    protected DatagramChannel channel;
     private final Set<String> hosts = ConcurrentHashMap.newKeySet();
-    protected InetSocketAddress allClients = new InetSocketAddress(MULTICAST_IP, MULTICAST_CLIENT_PORT);
-
+    private InetSocketAddress serverAddress;
 
     public Multicaster(int port) {
         this.port = port;
-        try {
-            networkInterface = NetworkInterface.getByName(MULTICAST_INTERFACE_NAME);
-            group = InetAddress.getByName(MULTICAST_IP);
-        } catch (SocketException | UnknownHostException e) {
-            throw new RuntimeException(e.getMessage());
-        }
     }
 
-    private class ResponseFrom {
+    public class ResponseFrom {
         private final String response;
         private final InetSocketAddress address;
 
@@ -50,28 +39,47 @@ public abstract class Multicaster {
             this.address = address;
         }
 
-        private String getResponse() {
+        public String getResponse() {
             return response;
         }
 
-        private InetSocketAddress getAddress() {
+        public InetSocketAddress getAddress() {
             return address;
         }
     }
 
-    protected void responseFromTo(String response, DatagramChannel channel, InetSocketAddress address) {
-        ResponseFrom attach = new ResponseFrom(response, address);
-        try {
-            channel.register(selector, SelectionKey.OP_WRITE, attach);
-        } catch (ClosedChannelException e) { e.printStackTrace(); }
+    private void init() throws IOException {
+        networkInterface = NetworkInterface.getByName(MULTICAST_INTERFACE_NAME);
+        group = InetAddress.getByName(MULTICAST_IP);
+        channel.setOption(StandardSocketOptions.SO_REUSEADDR, true);
+        // !TODO
+        channel.bind(new InetSocketAddress("0.0.0.0", port));
+        channel.setOption(StandardSocketOptions.IP_MULTICAST_IF, networkInterface);
+        //channel.setOption(StandardSocketOptions.IP_MULTICAST_LOOP, false);
+        channel.configureBlocking(false);
+        channel.join(group, networkInterface);
+        channel.register(selector, SelectionKey.OP_READ);
     }
 
-    public abstract void handle(ServerResponse serverResponse);
+    @Override
+    public void run() {
+        try (final DatagramChannel channel = DatagramChannel.open(StandardProtocolFamily.INET);
+             final Selector selector = Selector.open()) {
 
-    protected abstract void handle(final DatagramChannel channel, String response, InetSocketAddress address);
+            this.channel = channel;
+            this.selector = selector;
+            init();
+            scheduler();
 
-    // !todo thread safe?
-    protected abstract void startScheduler(final DatagramChannel channel);
+            while (true) {
+                if (!selector.isOpen()) { break; }
+                if (selector.select() == 0) { continue; }
+                handleSelectionKeys(selector.selectedKeys());
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     private void read(SelectionKey selectionKey) throws IOException {
 
@@ -85,14 +93,8 @@ public abstract class Multicaster {
 
         buffer.flip();
         String message = getMessage(buffer);
-        handle(channel, message, (InetSocketAddress)address);
-    }
 
-    private String getMessage(ByteBuffer buffer) {
-        byte[] buff = new byte[buffer.limit()];
-        buffer.get(buff, 0, buffer.limit());
-        buffer.clear();
-        return new String(buff, StandardCharsets.UTF_8);
+        handle(message, (InetSocketAddress)address);
     }
 
     private void write(SelectionKey selectionKey) throws IOException {
@@ -101,6 +103,7 @@ public abstract class Multicaster {
         ResponseFrom responseFrom = (ResponseFrom) selectionKey.attachment();
         InetSocketAddress address = responseFrom.getAddress();
 
+        //!TODO
         byte[] response = responseFrom.getResponse().getBytes(StandardCharsets.UTF_8);
         ByteBuffer buffer = ByteBuffer.wrap(response);
         while (buffer.hasRemaining()) {
@@ -112,6 +115,24 @@ public abstract class Multicaster {
     }
 
 
+    /**
+     * Envia mensagem somente para o servidor
+     * @param message
+     */
+    public void send(String message) {
+        response(message, new InetSocketAddress(serverAddress.getAddress(), MULTICAST_PORT));
+        this.selector.wakeup();
+    }
+
+    /**
+     * Envia mensagem para todos participantes do grupo
+     * @param message
+     */
+    public void sendAll(String message) {
+        response(message, new InetSocketAddress(MULTICAST_IP, MULTICAST_PORT));
+        this.selector.wakeup();
+    }
+
     protected boolean isMyself(InetSocketAddress address) {
         if (address.getAddress().getHostName().equals(HOST_NAME)) {
             return (address.getPort() == MULTICAST_PORT);
@@ -119,60 +140,28 @@ public abstract class Multicaster {
         return false;
     }
 
-    // !todo thread safe?
-    protected void wakeUp() {
-        this.selector.wakeup();
-    }
-
-
-    protected void updateLastResponseTime() {
-        synchronized (lock) {
-            lastResponseTime = System.nanoTime();
-        }
-    }
-
-    protected boolean isDownTimeExceeded() {
-        long downTime;
-        synchronized (lock) {
-            downTime = System.nanoTime() - lastResponseTime;
-        }
-        downTime = TimeUnit.NANOSECONDS.toSeconds(downTime);
-
-        return downTime > MAX_DOWNTIME;
-    }
-
-
+    /**
+     * Adiciona endereço do Agent ao conjunto de endereços
+     * @param address
+     */
     protected void join(InetSocketAddress address) {
         hosts.add(address.toString());
     }
 
+    /**
+     * Verifica se o endereço está presente no conjunto de endereços
+     * @param address
+     * @return
+     */
     protected boolean isMember(InetSocketAddress address) {
         return hosts.contains(address.toString());
     }
 
-    public void start() {
-        try (final DatagramChannel channel = DatagramChannel.open(StandardProtocolFamily.INET);
-             final Selector selector = Selector.open()) {
-
-            this.selector = selector;
-            initChannel(channel, selector);
-            startScheduler(channel);
-
-            while (true) {
-                if (!selector.isOpen()) { break; }
-                if (selector.select() == 0) { continue; }
-                handleSelectionKeys(selector.selectedKeys());
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void handleSelectionKeys(final Set selectedKeys) throws IOException {
-        Iterator keyIterator = selectedKeys.iterator();
+    private void handleSelectionKeys(final Set<SelectionKey> selectedKeys) throws IOException {
+        Iterator<SelectionKey> keyIterator = selectedKeys.iterator();
 
         while (keyIterator.hasNext()) {
-            SelectionKey selectionKey = (SelectionKey)keyIterator.next();
+            SelectionKey selectionKey = keyIterator.next();
             keyIterator.remove();
 
             if (!selectionKey.isValid()) { continue; }
@@ -185,16 +174,35 @@ public abstract class Multicaster {
         }
     }
 
-    private void initChannel(final DatagramChannel channel, final Selector selector) throws IOException {
-        channel.setOption(StandardSocketOptions.SO_REUSEADDR, true);
-        // !TODO
-        channel.bind(new InetSocketAddress("0.0.0.0", this.port));
-        channel.setOption(StandardSocketOptions.IP_MULTICAST_IF, this.networkInterface);
-        //channel.setOption(StandardSocketOptions.IP_MULTICAST_LOOP, false);
-        channel.configureBlocking(false);
-        channel.join(this.group, this.networkInterface);
-        channel.register(selector, SelectionKey.OP_READ);
+    protected void setServerAddress(ServerResponse serverResponse) {
+        this.serverAddress = serverResponse.getServerAddress();
     }
 
+    protected void response(String message, InetSocketAddress destination) {
+        ResponseFrom attach = new ResponseFrom(ResponseFactory.get(message), destination);
+        try {
+            channel.register(selector, SelectionKey.OP_WRITE, attach);
+        } catch (ClosedChannelException e) { e.printStackTrace(); }
+    }
+
+    private void handle(ServerResponse serverResponse) {}
+
+    /**
+     * Se a resposta é maior do que 1, então foi enviada pelo servidor
+     * @param response
+     * @param address
+     */
+    protected void handle(String response, InetSocketAddress address) {
+
+    }
+
+    private static String getMessage(ByteBuffer buffer) {
+        byte[] buff = new byte[buffer.limit()];
+        buffer.get(buff, 0, buffer.limit());
+        buffer.clear();
+        return new String(buff, StandardCharsets.UTF_8);
+    }
+
+    protected abstract void scheduler();
 
 }

@@ -112,7 +112,6 @@ public class AndroidRemoteClassLoader extends DexClassLoader {
 
         boolean success = false;
 
-
         for (URL baseURL : classURLs) {
             try {
                 URL url = getClassURL(baseURL, urlName + ".class");
@@ -136,7 +135,7 @@ public class AndroidRemoteClassLoader extends DexClassLoader {
         }
     }
 
-    public  Class defineClass(String name, byte[] bytes) {
+    public Class defineClass(String name, byte[] bytes) {
         try {
             String path = convert(name, bytes);
             classPath = classPath + ":" + path;

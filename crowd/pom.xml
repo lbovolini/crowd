@@ -35,7 +35,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>com.github.lbovolini.crowd.Client</mainClass>
+                            <mainClass>com.github.lbovolini.crowd.Agent</mainClass>
                             <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
                             <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
                             <addClasspath>true</addClasspath>
@@ -60,7 +60,7 @@
                 </executions>
                 <configuration>
                     <executable>java</executable>
-                    <mainClass>com.github.lbovolini.crowd.Client</mainClass>
+                    <mainClass>com.github.lbovolini.crowd.Agent</mainClass>
                 </configuration>
             </plugin>
 
@@ -126,7 +126,7 @@
             <artifactId>dx</artifactId>
             <version>${android.platform}</version>
             <scope>system</scope>
-            <systemPath>${android.sdk}/build-tools/28.0.3/lib/dx.jar</systemPath>
+            <systemPath>${android.sdk}/build-tools/29.0.2/lib/dx.jar</systemPath>
         </dependency>
     </dependencies>
     

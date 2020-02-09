@@ -3,8 +3,6 @@ package com.github.lbovolini.crowd.connection;
 import com.github.lbovolini.crowd.message.Message;
 import com.github.lbovolini.crowd.message.PartialMessage;
 import com.github.lbovolini.crowd.message.Flags;
-import com.github.lbovolini.crowd.connection.ByteBufferPool;
-import com.github.lbovolini.crowd.connection.Connection;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -13,29 +11,29 @@ import java.util.Queue;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 
-public class ReadHandler implements CompletionHandler<Long, Connection> {
+public class ReadHandler implements CompletionHandler<Long, IOChannel> {
 
     static final int TYPE = 1;
     static final int SIZE = 2;
     static final int DATA = 3;
 
-    public void completed(Long result, Connection connection) {
+    public void completed(Long result, IOChannel ioChannel) {
 
         int length = 0;
 
-        ReentrantLock readLock = connection.getReadLock();
+        ReentrantLock readLock = ioChannel.getReadLock();
         readLock.lock();
 
-        ByteBuffer[] readerBufferArray = connection.getReaderBufferArray();
+        ByteBuffer[] readerBufferArray = ioChannel.getReaderBufferArray();
 
         try {
             if (result < 0) {
-                connection.close();
+                ioChannel.close();
                 return;
             }
             else if (result != 0) {
-                ByteBufferPool readerPool = connection.getReaderBufferPool();
-                Queue<ByteBuffer> readerBufferQueue = connection.getReaderBufferQueue();
+                ByteBufferPool readerPool = ioChannel.getReaderBufferPool();
+                Queue<ByteBuffer> readerBufferQueue = ioChannel.getReaderBufferQueue();
 
                 int i = 0;
                 while (i < readerBufferArray.length) {
@@ -46,7 +44,7 @@ public class ReadHandler implements CompletionHandler<Long, Connection> {
                     ByteBuffer byteBuffer = readerBufferQueue.peek();
                     byteBuffer.flip();
 
-                    handle(connection, byteBuffer, connection.getPartialMessage());
+                    handle(ioChannel, byteBuffer, ioChannel.getPartialMessage());
 
                     readerBufferArray[i] = null;
                     readerPool.offer(readerBufferQueue.poll());
@@ -73,17 +71,17 @@ public class ReadHandler implements CompletionHandler<Long, Connection> {
             readLock.unlock();
         }
 
-        connection.getChannel().read(readerBufferArray, 0, length, 0, TimeUnit.SECONDS, connection, this );
+        ioChannel.getChannel().read(readerBufferArray, 0, length, 0, TimeUnit.SECONDS, ioChannel, this );
     }
 
-    public void failed(Throwable exc, Connection connection) {
+    public void failed(Throwable exc, IOChannel ioChannel) {
 
-        ReentrantLock readLock = connection.getReadLock();
+        ReentrantLock readLock = ioChannel.getReadLock();
         readLock.lock();
 
         try {
-            connection.getChannel().close();
-            connection.getReaderBufferQueue().clear();
+            ioChannel.getChannel().close();
+            ioChannel.getReaderBufferQueue().clear();
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
@@ -92,7 +90,7 @@ public class ReadHandler implements CompletionHandler<Long, Connection> {
     }
 
 
-    public static void handle(Connection connection, ByteBuffer buffer, PartialMessage partialMessage) {
+    public static void handle(IOChannel ioChannel, ByteBuffer buffer, PartialMessage partialMessage) {
 
         int position = partialMessage.getPosition();
 
@@ -116,7 +114,7 @@ public class ReadHandler implements CompletionHandler<Long, Connection> {
                 case DATA:
                     if (readDataFromBuffer(buffer, partialMessage)) {
                         Message message = Message.create(partialMessage.getType(), partialMessage.getData());
-                        connection.handle(message);
+                        ioChannel.handle(message);
                         partialMessage.setPosition(TYPE);
                         position = TYPE;
                     }

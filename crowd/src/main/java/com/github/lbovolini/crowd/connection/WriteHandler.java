@@ -1,8 +1,5 @@
 package com.github.lbovolini.crowd.connection;
 
-import com.github.lbovolini.crowd.connection.ByteBufferPool;
-import com.github.lbovolini.crowd.connection.Connection;
-
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.CompletionHandler;
@@ -10,28 +7,25 @@ import java.util.Queue;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 
-/**
- * Based on https://www.codeproject.com/Tips/766107/AsynchronousSocketChannel-Concurrent-Writes
- */
-public class WriteHandler implements CompletionHandler<Long, Connection> {
+public class WriteHandler implements CompletionHandler<Long, IOChannel> {
 
-    public void completed(Long result, Connection connection) {
+    public void completed(Long result, IOChannel ioChannel) {
 
         int length = 0;
 
-        ReentrantLock writeLock = connection.getWriteLock();
+        ReentrantLock writeLock = ioChannel.getWriteLock();
         writeLock.lock();
 
-        ByteBuffer[] bufferArray = connection.getWriterBufferArray();
+        ByteBuffer[] bufferArray = ioChannel.getWriterBufferArray();
 
         try {
             if (result < 0) {
-                connection.close();
+                ioChannel.close();
                 return;
             }
             else if (result != 0) {
-                ByteBufferPool writerPool = connection.getWriterBufferPool();
-                Queue<ByteBuffer> bufferQueue = connection.getWriterBufferQueue();
+                ByteBufferPool writerPool = ioChannel.getWriterBufferPool();
+                Queue<ByteBuffer> bufferQueue = ioChannel.getWriterBufferQueue();
 
                 int i = 0;
                 while (i < bufferArray.length) {
@@ -68,17 +62,17 @@ public class WriteHandler implements CompletionHandler<Long, Connection> {
             writeLock.unlock();
         }
 
-        connection.getChannel().write(bufferArray, 0, length, 0, TimeUnit.SECONDS, connection, this);
+        ioChannel.getChannel().write(bufferArray, 0, length, 0, TimeUnit.SECONDS, ioChannel, this);
     }
 
-    public void failed(Throwable exc, Connection connection) {
+    public void failed(Throwable exc, IOChannel ioChannel) {
 
-        ReentrantLock writeLock = connection.getWriteLock();
+        ReentrantLock writeLock = ioChannel.getWriteLock();
         writeLock.lock();
 
         try {
-            connection.close();
-            connection.getWriterBufferQueue().clear();
+            ioChannel.close();
+            ioChannel.getWriterBufferQueue().clear();
         } catch (IOException e) {
             e.printStackTrace();
         } finally {

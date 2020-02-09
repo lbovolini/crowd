@@ -44,9 +44,6 @@ public class Config {
     public static final int HEARTBEAT_INTERVAL = 5;
     public static final int MAX_DOWNTIME = 15;
 
-    /**
-     * NON FINAL
-     */
     public static final String LIB_URL = System.getProperty("lib.url", "file:");
     public static final String LIB_PATH = System.getProperty("lib.path", System.getProperty("java.io.tmpdir"));
 
@@ -63,7 +60,7 @@ public class Config {
     public static final int DEX_MIN_SDK_VERSION = Integer.parseInt(System.getProperty("dex.version", "26"));
     public static final boolean DEX_OPTIMIZE = Boolean.valueOf(System.getProperty("dex.optimize", "true"));
 
-    public static boolean CACHE = Boolean.valueOf(System.getProperty("cache", "false"));
+    public static final boolean CACHE = Boolean.valueOf(System.getProperty("cache", "false"));
 
     public static final String OS_ARCH = System.getProperty("os.arch");
     public static final String VENDOR = System.getProperty("java.vendor");
