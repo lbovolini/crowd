@@ -53,7 +53,7 @@ public class ReadHandler implements CompletionHandler<Long, IOChannel> {
 
                 ///
                 if (readerBufferQueue.isEmpty()) {
-                    readerBufferQueue.add(readerPool.pool());
+                    readerBufferQueue.add(readerPool.poll());
                 }
 
                 for (ByteBuffer buffer : readerBufferQueue) {
