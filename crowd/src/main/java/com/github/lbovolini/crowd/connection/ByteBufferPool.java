@@ -13,7 +13,7 @@ public class ByteBufferPool {
         byteBufferDeque = new ConcurrentLinkedDeque<>();
     }
 
-    public ByteBuffer pool() {
+    public ByteBuffer poll() {
 
         ByteBuffer buffer = byteBufferDeque.poll();
 

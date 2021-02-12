@@ -91,7 +91,7 @@ public class IOChannel {
 
     public boolean read() {
 
-        ByteBuffer byteBuffer = readerBufferPool.pool();
+        ByteBuffer byteBuffer = readerBufferPool.poll();
 
         readLock.lock();
 

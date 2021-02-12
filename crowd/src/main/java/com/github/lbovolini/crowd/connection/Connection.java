@@ -54,7 +54,7 @@ public class Connection {
         //    System.out.println("Message too big");
         //}
 
-        ByteBuffer buffer = ioChannel.getWriterBufferPool().pool();
+        ByteBuffer buffer = ioChannel.getWriterBufferPool().poll();
         buffer.put(message.getType()).putShort(message.getDataLength()).put(message.getData());
         buffer.flip();
 

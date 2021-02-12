@@ -1,3 +1,5 @@
+[![Coverage Status](https://coveralls.io/repos/github/lbovolini/crowd/badge.svg?branch=master)](https://coveralls.io/github/lbovolini/crowd?branch=master)
+
 ## Build Project
 
 ```
