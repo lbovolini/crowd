@@ -12,6 +12,8 @@ on:
 jobs:
   build:
 
+    environment: build
+
     runs-on: ubuntu-latest
 
     steps:
@@ -21,4 +23,6 @@ jobs:
         with:
           java-version: 11
       - name: Build with Maven
-        run: mvn -B package --file pom.xml
+        env:
+          COVERALLS_TOKEN: ${{ secrets.COVERALLS_TOKEN }}
+        run: mvn -B package --file crowd/pom.xml jacoco:report coveralls:report
