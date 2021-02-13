@@ -1,4 +1,4 @@
-![CI](https://github.com/lbovolini/crowd/workflows/Java%20CI%20with%20Maven/badge.svg)  [![Coverage Status](https://coveralls.io/repos/github/lbovolini/crowd/badge.svg?branch=master)](https://coveralls.io/github/lbovolini/crowd?branch=master) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+![CI](https://github.com/lbovolini/crowd/workflows/CI/badge.svg)  [![Coverage Status](https://coveralls.io/repos/github/lbovolini/crowd/badge.svg?branch=master)](https://coveralls.io/github/lbovolini/crowd?branch=master) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 ## Build Project
 
