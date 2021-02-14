@@ -7,6 +7,9 @@ import com.github.lbovolini.crowd.node.NodeGroup;
 
 import java.io.IOException;
 
+/**
+ * Responsável por manipular as requisições recebidas pelo servidor.
+ */
 public class ServerRequestHandler implements RequestHandler {
 
     private final NodeGroup nodeGroup;

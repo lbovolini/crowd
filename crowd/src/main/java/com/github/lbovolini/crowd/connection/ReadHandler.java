@@ -11,6 +11,9 @@ import java.util.Queue;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 
+/**
+ * Responsável pela leitura assíncrona e não bloqueante das mensagens através dos canais de comunicação.
+ */
 public class ReadHandler implements CompletionHandler<Long, IOChannel> {
 
     static final int TYPE = 1;

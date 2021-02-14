@@ -4,6 +4,9 @@ import java.io.IOException;
 import java.net.URL;
 import java.net.URLClassLoader;
 
+/**
+ * Responsável por carregar as classes (.class) e as bibliotecas nativas através da rede.
+ */
 public class RemoteClassLoader extends URLClassLoader {
 
     private final RemoteNativeLibrary remoteNativeLibrary;

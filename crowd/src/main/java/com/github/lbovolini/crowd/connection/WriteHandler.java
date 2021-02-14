@@ -7,6 +7,9 @@ import java.util.Queue;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 
+/**
+ * Responsável pela escrita assíncrona e não bloqueante das mensagens através dos canais de comunicação.
+ */
 public class WriteHandler implements CompletionHandler<Long, IOChannel> {
 
     public void completed(Long result, IOChannel ioChannel) {

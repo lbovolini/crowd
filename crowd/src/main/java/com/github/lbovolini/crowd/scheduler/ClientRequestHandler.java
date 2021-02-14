@@ -13,6 +13,9 @@ import java.util.concurrent.TimeUnit;
 
 import static com.github.lbovolini.crowd.configuration.Config.POOL_SIZE;
 
+/**
+ * Responsável por manipular as requisições recebidas pelo cliente.
+ */
 public class ClientRequestHandler implements RequestHandler {
 
     private Object object;
