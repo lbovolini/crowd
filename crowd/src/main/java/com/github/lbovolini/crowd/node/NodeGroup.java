@@ -14,6 +14,10 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 
+/**
+ * Grupo de nós. Contem todos os dispositivos (nós) candidatos e/ou participantes da computação.
+ * @param <T>
+ */
 public class NodeGroup<T> {
 
     private final String className;
@@ -42,12 +46,21 @@ public class NodeGroup<T> {
         pool.execute(multicaster::start);
     }
 
+    /**
+     * Permite a adicão de um dispositivo remoto ao grupo de nós.
+     * @param cores Número de núcleos de processamento do dispositivo disponíveis para a computação.
+     * @param connection
+     */
     public void join(int cores, Connection connection) {
         Node node = new Node(cores, connection);
         running.put(connection.getHostId(), node);
         onReady(node);
     }
 
+    /**
+     * Permite a remoção de um dispositivo remoto do grupo de nós.
+     * @param id
+     */
     public void leave(String id) {
         running.remove(id);
     }

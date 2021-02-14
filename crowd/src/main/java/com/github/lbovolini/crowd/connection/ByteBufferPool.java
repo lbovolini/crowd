@@ -5,6 +5,10 @@ import com.github.lbovolini.crowd.configuration.Config;
 import java.nio.ByteBuffer;
 import java.util.concurrent.ConcurrentLinkedDeque;
 
+/**
+ * Fila utilizada para otimizar a alocação de buffers.
+ * Todos os métodos são thread-safe.
+ */
 public class ByteBufferPool {
 
     private final ConcurrentLinkedDeque<ByteBuffer> byteBufferDeque;
@@ -13,6 +17,10 @@ public class ByteBufferPool {
         byteBufferDeque = new ConcurrentLinkedDeque<>();
     }
 
+    /**
+     * Remove um buffer da fila e retorna, ou, se a fila estiver vazia, cria e retorna um novo buffer.
+     * @return Retorna um buffer de tamanho definido pela constante BUFFER_SIZE.
+     */
     public ByteBuffer poll() {
 
         ByteBuffer buffer = byteBufferDeque.poll();
@@ -24,6 +32,10 @@ public class ByteBufferPool {
         return buffer;
     }
 
+    /**
+     * Limpa e insere o buffer na fila.
+     * @param byteBuffer Buffer
+     */
     public void offer(ByteBuffer byteBuffer) {
         byteBuffer.clear();
         byteBufferDeque.offer(byteBuffer);

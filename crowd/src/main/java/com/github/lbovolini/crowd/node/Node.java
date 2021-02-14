@@ -4,6 +4,9 @@ import com.github.lbovolini.crowd.connection.Connection;
 import com.github.lbovolini.crowd.message.Message;
 import com.github.lbovolini.crowd.object.RemoteObject;
 
+/**
+ * Representa os dispositivos remotos (nós).
+ */
 public class Node {
 
     private final long id;

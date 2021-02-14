@@ -2,6 +2,9 @@ package com.github.lbovolini.crowd.configuration;
 
 import com.github.lbovolini.crowd.utils.HostUtils;
 
+/**
+ * Contém todas as configurações da aplicação.
+ */
 public class Config {
     /**
      * TCP connection
