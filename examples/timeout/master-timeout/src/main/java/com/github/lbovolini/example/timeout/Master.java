@@ -1,5 +1,6 @@
 package com.github.lbovolini.example.timeout;
 
+import com.github.lbovolini.crowd.node.Crowd;
 import com.github.lbovolini.crowd.node.NodeGroup;
 
 import java.io.IOException;
@@ -29,7 +30,7 @@ public class Master {
 
     public static void main(String[] args) throws IOException {
 
-        NodeGroup<RemoteTimeout> nodeGroup = new NodeGroup(Timeout.class.getName());
-        nodeGroup.forOne(Master::solve);
+        Crowd<RemoteTimeout> crowd = new Crowd<>(Timeout.class.getName());
+        crowd.forOne(Master::solve);
     }
 }

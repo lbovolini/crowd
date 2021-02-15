@@ -5,11 +5,11 @@ import java.net.URL;
 
 import static com.github.lbovolini.crowd.configuration.Config.*;
 
-public class ClientMulticaster extends Multicaster {
+public class ClientMulticast extends Multicast {
 
     private final TimeScheduler timeScheduler = new TimeScheduler(this);
 
-    public ClientMulticaster() {
+    public ClientMulticast() {
         super(MULTICAST_CLIENT_PORT);
     }
 

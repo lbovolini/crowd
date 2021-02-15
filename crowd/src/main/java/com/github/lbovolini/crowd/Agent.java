@@ -1,7 +1,6 @@
 package com.github.lbovolini.crowd;
 
-import com.github.lbovolini.crowd.group.ClientMulticaster;
-import com.github.lbovolini.crowd.group.ServerResponse;
+import com.github.lbovolini.crowd.group.ClientMulticast;
 import com.github.lbovolini.crowd.connection.ClientAttachment;
 import com.github.lbovolini.crowd.connection.ClientConnectionHandler;
 import com.github.lbovolini.crowd.scheduler.ClientRequestHandler;
@@ -43,7 +42,7 @@ public final class Agent {
         init();
         scheduler.start();
 
-        ClientMulticaster clientMulticaster = new ClientMulticaster() {
+        ClientMulticast clientMulticaster = new ClientMulticast() {
             @Override
             public void connect(URL[] codebase, URL libURL, InetSocketAddress serverAddress) {
                 scheduler.create(codebase, libURL);

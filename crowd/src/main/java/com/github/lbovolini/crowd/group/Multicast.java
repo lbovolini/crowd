@@ -14,7 +14,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import static com.github.lbovolini.crowd.configuration.Config.*;
 
-public abstract class Multicaster extends Thread {
+public abstract class Multicast extends Thread {
 
     protected Selector selector;
 
@@ -26,7 +26,7 @@ public abstract class Multicaster extends Thread {
     private final Set<String> hosts = ConcurrentHashMap.newKeySet();
     private InetSocketAddress serverAddress;
 
-    public Multicaster(int port) {
+    public Multicast(int port) {
         this.port = port;
     }
 

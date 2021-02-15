@@ -21,7 +21,7 @@ public class RemoteObject implements InvocationHandler {
     private final Node node;
 
     private final AtomicInteger requestIdCounter;
-    private final Map<Integer, CompletableFuture> requests;
+    private final Map<Integer, CompletableFuture<? super Object>> requests;
 
     private RemoteObject(Node node) {
         this.node = node;
@@ -95,7 +95,7 @@ public class RemoteObject implements InvocationHandler {
 
         if (isPrimitiveVoid) { return null; }
 
-        CompletableFuture<?> future = new CompletableFuture<>();
+        CompletableFuture<? super Object> future = new CompletableFuture<>();
         this.requests.put(requestId, future);
         return future;
     }
@@ -104,7 +104,7 @@ public class RemoteObject implements InvocationHandler {
         return requestIdCounter.incrementAndGet();
     }
 
-    public CompletableFuture getFuture(int requestId) {
+    public CompletableFuture<? super Object> getFuture(int requestId) {
         return requests.remove(requestId);
     }
 

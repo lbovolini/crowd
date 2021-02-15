@@ -1,5 +1,6 @@
 package com.github.lbovolini.example.nativeLib;
 
+import com.github.lbovolini.crowd.node.Crowd;
 import com.github.lbovolini.crowd.node.NodeGroup;
 
 import java.io.IOException;
@@ -8,8 +9,8 @@ public class Master {
 
     public static void main(String[] args) throws IOException {
 
-        NodeGroup<RemoteNative> nodeGroup = new NodeGroup<>(Call.class.getName());
-        nodeGroup.forOne(remoteNative -> remoteNative.say("World"));
+        Crowd<RemoteNative> crowd = new Crowd<>(Call.class.getName());
+        crowd.forOne(remoteNative -> remoteNative.say("World"));
     }
 
 }
