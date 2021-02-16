@@ -3,8 +3,26 @@ package com.github.lbovolini.crowd.connection;
 import java.nio.channels.AsynchronousSocketChannel;
 import java.nio.channels.CompletionHandler;
 
+/**
+ * Está classe é utilizada para lidar com o resultado da operação assíncrona de requisição de conexão feita por um
+ * socket de um cliente remoto para este socket servidor.
+ * O resultado da operação, se a conexão for aceita, será a criação de um novo canal de socket assíncrono para a nova conexão,
+ * ou uma falha na operação, caso a conexão não seja aceita.
+ * Assim, o método correto será invocado de acordo com este resultado.
+ * Quando uma operação assíncrona de I/O completar ou falhar este handler será invocado para consumir o seu resultado.
+ * Os métodos desta classe não devem, nunca, bloquear ou executar por um período de tempo que não seja mínimo.
+ */
 public class ServerConnectionHandler implements CompletionHandler<AsynchronousSocketChannel, ServerAttachment> {
 
+
+    /**
+     * Este método é invocado quando a operação assíncrona de I/O completar com sucesso.
+     * Para permitir ao thread que invocou este handler possa atender a outros handlers, este método não deve, nunca,
+     * bloquear ou executar por um período de tempo que não seja mínimo.
+     * @param channel Um socket assíncrono conectado ao cliente remoto.
+     * @param attachment Representa o contexto da atual operação assíncrona de I/O.
+     * É o objeto associado à operação de I/O quando esta foi iniciada.
+     */
     public void completed(AsynchronousSocketChannel channel, ServerAttachment attachment) {
 
         attachment.getServerChannel().accept(attachment, this);
@@ -13,7 +31,15 @@ public class ServerConnectionHandler implements CompletionHandler<AsynchronousSo
         connection.receive();
     }
 
-    public void failed(Throwable e, ServerAttachment serverAttachment) {
-        e.printStackTrace();
+    /**
+     * Este método é invocado quando a operação assíncrona de I/O falhar.
+     * Para permitir ao thread que invocou este handler possa atender a outros handlers, este método não deve, nunca,
+     * bloquear ou executar por um período de tempo que não seja mínimo.
+     * @param throwable Exceção que indica o motivo da falha da operação assíncrona de I/O.
+     * @param serverAttachment Representa o contexto da atual operação assíncrona de I/O.
+     * É o objeto associado à operação assíncrona de I/O quando esta foi iniciada.
+     */
+    public void failed(Throwable throwable, ServerAttachment serverAttachment) {
+        throwable.printStackTrace();
     }
 }

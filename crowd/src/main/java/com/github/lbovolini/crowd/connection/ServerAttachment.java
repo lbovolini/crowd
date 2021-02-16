@@ -4,6 +4,10 @@ import com.github.lbovolini.crowd.scheduler.Scheduler;
 
 import java.nio.channels.AsynchronousServerSocketChannel;
 
+/**
+ * Contém as informações do servidor necessárias para realizar a comunicação com os clientes.
+ * Representa o contexto da atual operação assíncrona de I/O.
+ */
 public class ServerAttachment {
 
     private final AsynchronousServerSocketChannel serverChannel;
