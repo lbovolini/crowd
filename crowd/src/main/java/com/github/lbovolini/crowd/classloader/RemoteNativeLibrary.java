@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -105,6 +106,10 @@ public class RemoteNativeLibrary {
      * @param url
      */
     public void setUrl(URL url) {
+
+        if (Objects.isNull(url)) {
+            return;
+        }
 
         String os = OsUtils.getOs();
         String arch = OsUtils.getArch();

@@ -14,29 +14,29 @@ import java.util.concurrent.locks.ReentrantLock;
 /**
  * Responsável pela leitura assíncrona e não bloqueante das mensagens através dos canais de comunicação.
  */
-public class ReadHandler implements CompletionHandler<Long, IOChannel> {
+public class ReaderChannelHandler implements CompletionHandler<Long, ReaderChannelContext> {
 
     static final int TYPE = 1;
     static final int SIZE = 2;
     static final int DATA = 3;
 
-    public void completed(Long result, IOChannel ioChannel) {
+    public void completed(Long result, ReaderChannelContext channelContext) {
 
         int length = 0;
 
-        ReentrantLock readLock = ioChannel.getReadLock();
+        ReentrantLock readLock = channelContext.getReadLock();
         readLock.lock();
 
-        ByteBuffer[] readerBufferArray = ioChannel.getReaderBufferArray();
+        ByteBuffer[] readerBufferArray = channelContext.getReaderBufferArray();
 
         try {
             if (result < 0) {
-                ioChannel.close();
+                channelContext.close();
                 return;
             }
             else if (result != 0) {
-                ByteBufferPool readerPool = ioChannel.getReaderBufferPool();
-                Queue<ByteBuffer> readerBufferQueue = ioChannel.getReaderBufferQueue();
+                ByteBufferPool readerPool = channelContext.getReaderBufferPool();
+                Queue<ByteBuffer> readerBufferQueue = channelContext.getReaderBufferQueue();
 
                 int i = 0;
                 while (i < readerBufferArray.length) {
@@ -47,7 +47,7 @@ public class ReadHandler implements CompletionHandler<Long, IOChannel> {
                     ByteBuffer byteBuffer = readerBufferQueue.peek();
                     byteBuffer.flip();
 
-                    handle(ioChannel, byteBuffer, ioChannel.getPartialMessage());
+                    handle(channelContext, byteBuffer, channelContext.getPartialMessage());
 
                     readerBufferArray[i] = null;
                     readerPool.offer(readerBufferQueue.poll());
@@ -74,17 +74,17 @@ public class ReadHandler implements CompletionHandler<Long, IOChannel> {
             readLock.unlock();
         }
 
-        ioChannel.getChannel().read(readerBufferArray, 0, length, 0, TimeUnit.SECONDS, ioChannel, this );
+        channelContext.getChannel().read(readerBufferArray, 0, length, 0, TimeUnit.SECONDS, channelContext, this );
     }
 
-    public void failed(Throwable exc, IOChannel ioChannel) {
+    public void failed(Throwable exc, ReaderChannelContext channelContext) {
 
-        ReentrantLock readLock = ioChannel.getReadLock();
+        ReentrantLock readLock = channelContext.getReadLock();
         readLock.lock();
 
         try {
-            ioChannel.getChannel().close();
-            ioChannel.getReaderBufferQueue().clear();
+            channelContext.getChannel().close();
+            channelContext.getReaderBufferQueue().clear();
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
@@ -93,7 +93,7 @@ public class ReadHandler implements CompletionHandler<Long, IOChannel> {
     }
 
 
-    public static void handle(IOChannel ioChannel, ByteBuffer buffer, PartialMessage partialMessage) {
+    public static void handle(ReaderChannelContext channelContext, ByteBuffer buffer, PartialMessage partialMessage) {
 
         int position = partialMessage.getPosition();
 
@@ -117,7 +117,7 @@ public class ReadHandler implements CompletionHandler<Long, IOChannel> {
                 case DATA:
                     if (readDataFromBuffer(buffer, partialMessage)) {
                         Message message = Message.create(partialMessage.getType(), partialMessage.getData());
-                        ioChannel.handle(message);
+                        channelContext.handle(message);
                         partialMessage.setPosition(TYPE);
                         position = TYPE;
                     }

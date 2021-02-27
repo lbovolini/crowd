@@ -1,28 +1,22 @@
 package com.github.lbovolini.crowd.scheduler;
 
-import com.github.lbovolini.crowd.classloader.ThreadRemoteClassLoaderService;
-
-import java.net.URL;
 import java.util.concurrent.BlockingDeque;
 import java.util.concurrent.LinkedBlockingDeque;
 
 public class Scheduler implements Runnable {
 
     private final Thread thread;
-    private final ThreadRemoteClassLoaderService loaderService;
 
     private final BlockingDeque<MessageFrom> messages;
-    private final RequestHandler handler;
+    private final Dispatcher dispatcher;
 
-    public Scheduler(RequestHandler requestHandler) {
-        this(requestHandler, System.getProperty("java.class.path"), System.getProperty("java.library.path"));
-    }
 
-    public Scheduler(RequestHandler requestHandler, String classPath, String libPath) {
-        this.handler = requestHandler;
+        //this(dispatcher, System.getProperty("java.class.path"), System.getProperty("java.library.path"));
+
+    public Scheduler(Dispatcher dispatcher) {
+        this.dispatcher = dispatcher;
         this.messages = new LinkedBlockingDeque<>();
         this.thread = new Thread(this);
-        this.loaderService = new ThreadRemoteClassLoaderService(thread, classPath, libPath);
     }
 
     @Override
@@ -30,7 +24,7 @@ public class Scheduler implements Runnable {
         while (true) {
             try {
                 MessageFrom messageFrom = messages.take();
-                handler.handle(messageFrom);
+                dispatcher.dispatch(messageFrom);
             } catch (Exception e) { e.printStackTrace(); }
         }
     }
@@ -45,18 +39,8 @@ public class Scheduler implements Runnable {
         }
     }
 
-    public void create(URL[] classURLs, URL libURL) {
-        loaderService.create(classURLs, libURL);
-    }
-
-    public void update(URL[] classURLs, URL libURL) {
-        //loaderService.updateCodebaseURLs(codebase);
-    }
-
-    public void reload(URL[] classURLs, URL libURL) {
-        //loaderService.reload(classURLs, libURL);
-        MessageFrom messageFrom = ((ClientRequestHandler)handler).getLatestCreatedObject();
-        enqueue(messageFrom);
+    public Dispatcher getDispatcher() {
+        return dispatcher;
     }
 
 }

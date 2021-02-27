@@ -12,7 +12,7 @@ import java.nio.channels.CompletionHandler;
  * Quando uma operação assíncrona de I/O completar ou falhar este handler será invocado para consumir o seu resultado.
  * Os métodos desta classe não devem, nunca, bloquear ou executar por um período de tempo que não seja mínimo.
  */
-public class ServerConnectionHandler implements CompletionHandler<AsynchronousSocketChannel, ServerAttachment> {
+public class ServerConnectionChannelHandler implements CompletionHandler<AsynchronousSocketChannel, ServerConnectionChannelContext> {
 
 
     /**
@@ -21,9 +21,9 @@ public class ServerConnectionHandler implements CompletionHandler<AsynchronousSo
      * bloquear ou executar por um período de tempo que não seja mínimo.
      * @param channel Um socket assíncrono conectado ao cliente remoto.
      * @param attachment Representa o contexto da atual operação assíncrona de I/O.
-     * É o objeto associado à operação de I/O quando esta foi iniciada.
+     * É o objeto associado à operação assíncrona de I/O quando esta foi iniciada.
      */
-    public void completed(AsynchronousSocketChannel channel, ServerAttachment attachment) {
+    public void completed(AsynchronousSocketChannel channel, ServerConnectionChannelContext attachment) {
 
         attachment.getServerChannel().accept(attachment, this);
 
@@ -36,10 +36,10 @@ public class ServerConnectionHandler implements CompletionHandler<AsynchronousSo
      * Para permitir ao thread que invocou este handler possa atender a outros handlers, este método não deve, nunca,
      * bloquear ou executar por um período de tempo que não seja mínimo.
      * @param throwable Exceção que indica o motivo da falha da operação assíncrona de I/O.
-     * @param serverAttachment Representa o contexto da atual operação assíncrona de I/O.
+     * @param serverConnectionChannelContext Representa o contexto da atual operação assíncrona de I/O.
      * É o objeto associado à operação assíncrona de I/O quando esta foi iniciada.
      */
-    public void failed(Throwable throwable, ServerAttachment serverAttachment) {
+    public void failed(Throwable throwable, ServerConnectionChannelContext serverConnectionChannelContext) {
         throwable.printStackTrace();
     }
 }

@@ -1,8 +1,9 @@
 package com.github.lbovolini.crowd.node;
 
 import com.github.lbovolini.crowd.configuration.Config;
-import com.github.lbovolini.crowd.connection.ServerAttachment;
-import com.github.lbovolini.crowd.connection.ServerConnectionHandler;
+import com.github.lbovolini.crowd.connection.ServerConnectionChannelContext;
+import com.github.lbovolini.crowd.connection.ServerConnectionChannelHandler;
+import com.github.lbovolini.crowd.scheduler.Dispatcher;
 import com.github.lbovolini.crowd.scheduler.RequestHandler;
 import com.github.lbovolini.crowd.scheduler.Scheduler;
 import com.github.lbovolini.crowd.scheduler.ServerRequestHandler;
@@ -35,16 +36,16 @@ public class Server {
         executorService = Executors.newFixedThreadPool(poolSize);
         asynchronousChannelGroup = AsynchronousChannelGroup.withThreadPool(executorService);
         asynchronousServerSocketChannel = AsynchronousServerSocketChannel.open(asynchronousChannelGroup);
-        RequestHandler requestHandler = new ServerRequestHandler(nodeGroup);
-        scheduler = new Scheduler(requestHandler);
+        Dispatcher dispatcher = new Dispatcher(new ServerRequestHandler(nodeGroup));
+        scheduler = new Scheduler(dispatcher);
     }
 
     public void start() throws IOException {
         asynchronousServerSocketChannel.bind(inetSocketAddress);
         scheduler.start();
 
-        ServerAttachment serverInfo = new ServerAttachment(asynchronousServerSocketChannel, scheduler);
-        asynchronousServerSocketChannel.accept(serverInfo, new ServerConnectionHandler());
+        ServerConnectionChannelContext serverInfo = new ServerConnectionChannelContext(asynchronousServerSocketChannel, scheduler);
+        asynchronousServerSocketChannel.accept(serverInfo, new ServerConnectionChannelHandler());
     }
 
     // !todo loggger

@@ -13,7 +13,7 @@ import java.nio.channels.CompletionHandler;
  * Quando uma operação assíncrona de I/O completar ou falhar este handler será invocado para consumir o seu resultado.
  * Os métodos desta classe não devem, nunca, bloquear ou executar por um período de tempo que não seja mínimo.
  */
-public class ClientConnectionHandler implements CompletionHandler<Void, ClientAttachment> {
+public class ClientConnectionChannelHandler implements CompletionHandler<Void, ClientConnectionChannelContext> {
 
     /**
      * Este método é invocado quando a operação assíncrona de I/O completar com sucesso.
@@ -23,7 +23,7 @@ public class ClientConnectionHandler implements CompletionHandler<Void, ClientAt
      * @param attachment Representa o contexto da atual operação assíncrona de I/O.
      * É o objeto associado à operação assíncrona de I/O quando esta foi iniciada.
      */
-    public void completed(Void aVoid, ClientAttachment attachment) {
+    public void completed(Void aVoid, ClientConnectionChannelContext attachment) {
 
         Message message = null;
         try {
@@ -44,7 +44,7 @@ public class ClientConnectionHandler implements CompletionHandler<Void, ClientAt
      * @param attachment Representa o contexto da atual operação assíncrona de I/O.
      * É o objeto associado à operação assíncrona de I/O quando esta foi iniciada.
      */
-    public void failed(Throwable throwable, ClientAttachment attachment) {
+    public void failed(Throwable throwable, ClientConnectionChannelContext attachment) {
         throwable.printStackTrace();
     }
 }

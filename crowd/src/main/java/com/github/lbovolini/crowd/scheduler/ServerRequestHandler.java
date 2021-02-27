@@ -1,5 +1,6 @@
 package com.github.lbovolini.crowd.scheduler;
 
+import com.github.lbovolini.crowd.classloader.Context;
 import com.github.lbovolini.crowd.message.Message;
 import com.github.lbovolini.crowd.message.messages.JoinGroup;
 import com.github.lbovolini.crowd.message.messages.Response;
@@ -50,6 +51,11 @@ public class ServerRequestHandler implements RequestHandler {
     @Override
     public void stop() {
 
+    }
+
+    @Override
+    public Context getContext() {
+        return null;
     }
 
 

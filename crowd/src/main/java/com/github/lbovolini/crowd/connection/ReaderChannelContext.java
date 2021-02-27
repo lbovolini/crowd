@@ -13,7 +13,7 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import static com.github.lbovolini.crowd.configuration.Config.BUFFER_ARRAY_SIZE;
 
-public class IOChannel {
+public class ReaderChannelContext {
 
     private boolean closed;
 
@@ -23,29 +23,21 @@ public class IOChannel {
     private final Connection connection;
 
     private static final ByteBufferPool readerBufferPool = new ByteBufferPool();
-    private static final ByteBufferPool writerBufferPool = new ByteBufferPool();
 
-    private static final WriteHandler writeHandler = new WriteHandler();
-    private static final ReadHandler readHandler = new ReadHandler();
+    private static final ReaderChannelHandler READER_CHANNEL_HANDLER = new ReaderChannelHandler();
 
-    private final ReentrantLock writeLock;
     private final ReentrantLock readLock;
 
-    private final Queue<ByteBuffer> writerBufferQueue;
     private final Queue<ByteBuffer> readerBufferQueue;
 
-    private final ByteBuffer[] writerBufferArray;
     private final ByteBuffer[] readerBufferArray;
 
-    public IOChannel(AsynchronousSocketChannel channel, Connection connection) {
+    public ReaderChannelContext(AsynchronousSocketChannel channel, Connection connection) {
         this.channel = channel;
         this.connection = connection;
         this.partialMessage = new PartialMessage();
-        this.writeLock = new ReentrantLock();
         this.readLock = new ReentrantLock();
-        this.writerBufferQueue = new LinkedList<>();
         this.readerBufferQueue = new LinkedList<>();
-        this.writerBufferArray = new ByteBuffer[BUFFER_ARRAY_SIZE];
         this.readerBufferArray = new ByteBuffer[BUFFER_ARRAY_SIZE];
     }
 
@@ -61,28 +53,12 @@ public class IOChannel {
         return readerBufferPool;
     }
 
-    public ByteBufferPool getWriterBufferPool() {
-        return writerBufferPool;
-    }
-
-    public ReentrantLock getWriteLock() {
-        return writeLock;
-    }
-
     public ReentrantLock getReadLock() {
         return readLock;
     }
 
-    public Queue<ByteBuffer> getWriterBufferQueue() {
-        return writerBufferQueue;
-    }
-
     public Queue<ByteBuffer> getReaderBufferQueue() {
         return readerBufferQueue;
-    }
-
-    public ByteBuffer[] getWriterBufferArray() {
-        return writerBufferArray;
     }
 
     public ByteBuffer[] getReaderBufferArray() {
@@ -108,32 +84,11 @@ public class IOChannel {
         }
 
         readerBufferArray[0] = byteBuffer;
-        channel.read(readerBufferArray, 0, 1, 0, TimeUnit.SECONDS, this, readHandler);
+        channel.read(readerBufferArray, 0, 1, 0, TimeUnit.SECONDS, this, READER_CHANNEL_HANDLER);
 
         return true;
     }
 
-    public boolean write(ByteBuffer byteBuffer) {
-
-        writeLock.lock();
-
-        try {
-            if (isClosed()) { return false; }
-
-            final boolean wasEmpty = writerBufferQueue.isEmpty();
-            writerBufferQueue.add(byteBuffer);
-
-            if (!wasEmpty) { return true; }
-        }
-        finally {
-            writeLock.unlock();
-        }
-
-        writerBufferArray[0] = byteBuffer;
-        channel.write(writerBufferArray, 0, 1, 0, TimeUnit.SECONDS, this, writeHandler );
-
-        return true;
-    }
 
     public boolean isClosed() {
         return closed;
