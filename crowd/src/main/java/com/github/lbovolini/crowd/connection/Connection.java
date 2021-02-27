@@ -15,12 +15,14 @@ public class Connection {
 
     private final Scheduler scheduler;
     private final AsynchronousSocketChannel channel;
-    private final IOChannel ioChannel;
+    private final ReaderChannelContext readerChannelContext;
+    private final WriterChannelContext writerChannelContext;
 
     public Connection(AsynchronousSocketChannel channel, Scheduler scheduler) {
         this.channel = channel;
         this.scheduler = scheduler;
-        this.ioChannel = new IOChannel(channel, this);
+        this.readerChannelContext = new ReaderChannelContext(channel, this);
+        this.writerChannelContext = new WriterChannelContext(channel);
     }
 
 
@@ -49,21 +51,16 @@ public class Connection {
     }
 
     public void send(Message message) {
-        // !todo ?
-        //if (message.getDataLength() > (BUFFER_SIZE - HEADER_SIZE)) {
-        //    System.out.println("Message too big");
-        //}
-
-        ByteBuffer buffer = ioChannel.getWriterBufferPool().poll();
+        ByteBuffer buffer = writerChannelContext.getWriterBufferPool().poll();
         buffer.put(message.getType()).putShort(message.getDataLength()).put(message.getData());
         buffer.flip();
 
-        ioChannel.write(buffer);
+        writerChannelContext.write(buffer);
     }
 
 
     public void receive() {
-        ioChannel.read();
+        readerChannelContext.read();
     }
 
     public void handle(Message message) {
@@ -71,7 +68,8 @@ public class Connection {
     };
 
     public void close() throws IOException {
-        ioChannel.close();
+        readerChannelContext.close();
+        writerChannelContext.close();
     }
 
 }

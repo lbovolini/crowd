@@ -7,25 +7,28 @@ import java.util.Queue;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 
-public class WriteHandler implements CompletionHandler<Long, IOChannel> {
+/**
+ * Responsável pela escrita assíncrona e não bloqueante das mensagens através dos canais de comunicação.
+ */
+public class WriterChannelHandler implements CompletionHandler<Long, WriterChannelContext> {
 
-    public void completed(Long result, IOChannel ioChannel) {
+    public void completed(Long result, WriterChannelContext channelContext) {
 
         int length = 0;
 
-        ReentrantLock writeLock = ioChannel.getWriteLock();
+        ReentrantLock writeLock = channelContext.getWriteLock();
         writeLock.lock();
 
-        ByteBuffer[] bufferArray = ioChannel.getWriterBufferArray();
+        ByteBuffer[] bufferArray = channelContext.getWriterBufferArray();
 
         try {
             if (result < 0) {
-                ioChannel.close();
+                channelContext.close();
                 return;
             }
             else if (result != 0) {
-                ByteBufferPool writerPool = ioChannel.getWriterBufferPool();
-                Queue<ByteBuffer> bufferQueue = ioChannel.getWriterBufferQueue();
+                ByteBufferPool writerPool = channelContext.getWriterBufferPool();
+                Queue<ByteBuffer> bufferQueue = channelContext.getWriterBufferQueue();
 
                 int i = 0;
                 while (i < bufferArray.length) {
@@ -62,17 +65,17 @@ public class WriteHandler implements CompletionHandler<Long, IOChannel> {
             writeLock.unlock();
         }
 
-        ioChannel.getChannel().write(bufferArray, 0, length, 0, TimeUnit.SECONDS, ioChannel, this);
+        channelContext.getChannel().write(bufferArray, 0, length, 0, TimeUnit.SECONDS, channelContext, this);
     }
 
-    public void failed(Throwable exc, IOChannel ioChannel) {
+    public void failed(Throwable exc, WriterChannelContext channelContext) {
 
-        ReentrantLock writeLock = ioChannel.getWriteLock();
+        ReentrantLock writeLock = channelContext.getWriteLock();
         writeLock.lock();
 
         try {
-            ioChannel.close();
-            ioChannel.getWriterBufferQueue().clear();
+            channelContext.close();
+            channelContext.getWriterBufferQueue().clear();
         } catch (IOException e) {
             e.printStackTrace();
         } finally {

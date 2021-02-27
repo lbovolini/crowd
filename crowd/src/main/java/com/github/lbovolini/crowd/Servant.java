@@ -8,6 +8,9 @@ import com.github.lbovolini.crowd.message.messages.InvokeMethod;
 import java.io.IOException;
 import java.lang.reflect.Method;
 
+/**
+ * Responsável pela execução dos métodos no objeto remoto hospedado.
+ */
 public class Servant {
 
     public static void execute(final Object object, InvokeMethod request, Connection connection) {

@@ -1,6 +1,6 @@
 package com.github.lbovolini.example.hello;
 
-import com.github.lbovolini.crowd.node.NodeGroup;
+import com.github.lbovolini.crowd.node.Crowd;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -9,7 +9,7 @@ public class Master {
     static int i = 0;
     static final Object lock = new Object();
 
-    public static void solve(IHello<CompletableFuture> hello) {
+    public static void solve(IHello<CompletableFuture<String>> hello) {
 
         synchronized (lock) {
             if (i > Short.MAX_VALUE) {
@@ -36,7 +36,7 @@ public class Master {
     }
 
     public static void main(String[] args) throws Exception {
-        NodeGroup<IHello> nodeGroup = new NodeGroup<>(Hello.class.getName());
-        nodeGroup.forAll(hello -> solve(hello));
+        Crowd<IHello<CompletableFuture<String>>> crowd = new Crowd<>(Hello.class.getName());
+        crowd.forAll(Master::solve);
     }
 }

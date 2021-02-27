@@ -13,12 +13,15 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
+/**
+ * Representa o Stub para o objeto remoto. Permite instanciar o objeto no dispositivo remoto, assim como realizar a invocação de seus métodos.
+ */
 public class RemoteObject implements InvocationHandler {
 
     private final Node node;
 
     private final AtomicInteger requestIdCounter;
-    private final Map<Integer, CompletableFuture> requests;
+    private final Map<Integer, CompletableFuture<? super Object>> requests;
 
     private RemoteObject(Node node) {
         this.node = node;
@@ -26,10 +29,26 @@ public class RemoteObject implements InvocationHandler {
         this.requests = new ConcurrentHashMap<>();
     }
 
+    /**
+     * Instancia um objeto remoto no dispositivo informado utilizando o construtor padrão.
+     * @param className
+     * @param node
+     * @return
+     * @throws Exception
+     */
     public static Object newInstance(String className, Node node) throws Exception {
         return newInstance(className, null, null, node);
     }
 
+    /**
+     * Instancia um objeto remoto no dispositivo informado utilizando um construtor parametrizado.
+     * @param className
+     * @param args
+     * @param parameterTypes
+     * @param node
+     * @return
+     * @throws Exception
+     */
     public static Object newInstance(String className, Object[] args, Class<?>[] parameterTypes, Node node) throws Exception {
 
         RemoteObject remoteObject = new RemoteObject(node);
@@ -41,6 +60,13 @@ public class RemoteObject implements InvocationHandler {
                 remoteObject);
     }
 
+    /**
+     * Envia a mensagem de criação de objeto para o dispositivo remoto.
+     * @param className
+     * @param parameterTypes
+     * @param args
+     * @throws IOException
+     */
     private void create(String className, Class<?>[] parameterTypes, Object[] args) throws IOException {
         Message message = MessageFactory.create(className, parameterTypes, args);
         this.node.setRemoteObject(this);
@@ -48,6 +74,15 @@ public class RemoteObject implements InvocationHandler {
     }
 
 
+    /**
+     * Permite a invocação remota dos métodos do objeto remoto.
+     * @param o
+     * @param method
+     * @param args
+     * @return
+     * @throws Exception
+     */
+    @Override
     public Object invoke(Object o, Method method, Object[] args) throws Exception {
 
         boolean isPrimitiveVoid = Void.TYPE.equals(method.getReturnType());
@@ -60,7 +95,7 @@ public class RemoteObject implements InvocationHandler {
 
         if (isPrimitiveVoid) { return null; }
 
-        CompletableFuture<?> future = new CompletableFuture<>();
+        CompletableFuture<? super Object> future = new CompletableFuture<>();
         this.requests.put(requestId, future);
         return future;
     }
@@ -69,7 +104,7 @@ public class RemoteObject implements InvocationHandler {
         return requestIdCounter.incrementAndGet();
     }
 
-    public CompletableFuture getFuture(int requestId) {
+    public CompletableFuture<? super Object> getFuture(int requestId) {
         return requests.remove(requestId);
     }
 

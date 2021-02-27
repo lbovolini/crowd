@@ -1,11 +1,11 @@
 package com.github.lbovolini.crowd;
 
-import com.github.lbovolini.crowd.group.ClientMulticaster;
-import com.github.lbovolini.crowd.group.ServerResponse;
-import com.github.lbovolini.crowd.connection.ClientAttachment;
-import com.github.lbovolini.crowd.connection.ClientConnectionHandler;
+import com.github.lbovolini.crowd.classloader.Context;
+import com.github.lbovolini.crowd.group.ClientMulticast;
+import com.github.lbovolini.crowd.connection.ClientConnectionChannelContext;
+import com.github.lbovolini.crowd.connection.ClientConnectionChannelHandler;
 import com.github.lbovolini.crowd.scheduler.ClientRequestHandler;
-import com.github.lbovolini.crowd.scheduler.RequestHandler;
+import com.github.lbovolini.crowd.scheduler.Dispatcher;
 import com.github.lbovolini.crowd.scheduler.Scheduler;
 
 import java.io.IOException;
@@ -24,7 +24,6 @@ public final class Agent {
 
     private AsynchronousSocketChannel channel;
 
-    private final RequestHandler requestHandler;
 
     private final Scheduler scheduler;
 
@@ -34,8 +33,9 @@ public final class Agent {
         this.libPath = libPath;
         this.hostAddress = new InetSocketAddress(host, port);
         this.channel = AsynchronousSocketChannel.open();
-        this.requestHandler = new ClientRequestHandler();
-        this.scheduler = new Scheduler(requestHandler, classPath, libPath);
+
+        Dispatcher dispatcher = new Dispatcher(new ClientRequestHandler(new Context(classPath, libPath)));
+        this.scheduler = new Scheduler(dispatcher);
     }
 
     public void start() throws IOException {
@@ -43,26 +43,32 @@ public final class Agent {
         init();
         scheduler.start();
 
-        ClientMulticaster clientMulticaster = new ClientMulticaster() {
+        final Context context = scheduler.getDispatcher().getHandler().getContext();
+
+        ClientMulticast clientMulticast = new ClientMulticast() {
             @Override
             public void connect(URL[] codebase, URL libURL, InetSocketAddress serverAddress) {
-                scheduler.create(codebase, libURL);
                 try {
+                    context.setClassURLs(codebase);
+                    context.setLibURL(libURL);
+                    System.out.println(serverAddress.getHostName());
                     reconnect(serverAddress);
-                } catch (IOException e) { e.printStackTrace(); }
+                } catch (Exception e) { e.printStackTrace(); }
             }
 
             @Override
             public void update(URL[] codebase, URL libURL) {
-                scheduler.update(codebase, libURL);
+                context.setClassURLs(codebase);
+                context.setLibURL(libURL);
             }
 
             @Override
             public void reload(URL[] codebase, URL libURL) {
-                scheduler.reload(codebase, libURL);
+                context.setClassURLs(codebase);
+                context.setLibURL(libURL);
             }
         };
-        clientMulticaster.start();
+        clientMulticast.start();
     }
 
 
@@ -74,9 +80,9 @@ public final class Agent {
     }
 
     private void connect(InetSocketAddress serverAddress) {
-        ClientAttachment clientInfo = new ClientAttachment(channel, scheduler, cores);
-        ClientConnectionHandler clientConnectionHandler = new ClientConnectionHandler();
-        channel.connect(serverAddress, clientInfo, clientConnectionHandler);
+        ClientConnectionChannelContext clientInfo = new ClientConnectionChannelContext(channel, scheduler, cores);
+        ClientConnectionChannelHandler clientConnectionChannelHandler = new ClientConnectionChannelHandler();
+        channel.connect(serverAddress, clientInfo, clientConnectionChannelHandler);
     }
 
     private void reconnect(InetSocketAddress serverAddress) throws IOException {

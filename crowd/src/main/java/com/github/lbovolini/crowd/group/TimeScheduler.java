@@ -12,19 +12,19 @@ public class TimeScheduler {
     private long lastResponseTime = 0;
     private final Object lock = new Object();
 
-    private final Multicaster multicaster;
+    private final Multicast multicast;
     private final ScheduledExecutorService pool = Executors.newSingleThreadScheduledExecutor();
 
-    public TimeScheduler(Multicaster multicaster) {
-        this.multicaster = multicaster;
+    public TimeScheduler(Multicast multicast) {
+        this.multicast = multicast;
     }
 
     protected void start() {
         pool.scheduleWithFixedDelay(() -> {
             if (isDownTimeExceeded()) {
-                multicaster.sendAll(DISCOVER);
+                multicast.sendAll(DISCOVER);
             } else {
-                multicaster.send(HEARTBEAT);
+                multicast.send(HEARTBEAT);
             }
         }, 0, HEARTBEAT_INTERVAL, TimeUnit.SECONDS);
     }

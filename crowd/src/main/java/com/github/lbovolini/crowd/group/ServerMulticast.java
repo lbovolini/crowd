@@ -7,9 +7,9 @@ import java.net.InetSocketAddress;
 
 import static com.github.lbovolini.crowd.configuration.Config.*;
 
-public class ServerMulticaster extends Multicaster {
+public class ServerMulticast extends Multicast {
 
-    public ServerMulticaster() {
+    public ServerMulticast() {
         super(MULTICAST_PORT);
     }
 
@@ -59,7 +59,7 @@ public class ServerMulticaster extends Multicaster {
     }
 
     public static void main(String[] args) {
-        ServerMulticaster serverMulticaster = new ServerMulticaster();
+        ServerMulticast serverMulticaster = new ServerMulticast();
         serverMulticaster.start();
     }
 

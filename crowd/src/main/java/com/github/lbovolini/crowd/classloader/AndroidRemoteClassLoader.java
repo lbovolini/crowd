@@ -1,5 +1,5 @@
 package com.github.lbovolini.crowd.classloader;
-
+/*
 import com.android.dx.cf.direct.DirectClassFile;
 import com.android.dx.cf.direct.StdAttributeFactory;
 import com.android.dx.command.dexer.DxContext;
@@ -23,9 +23,9 @@ import java.util.Set;
 
 import com.github.lbovolini.crowd.configuration.Config;
 import dalvik.system.BaseDexClassLoader;
-import dalvik.system.DexClassLoader;
+import dalvik.system.DexClassLoader;*/
 
-public class AndroidRemoteClassLoader extends DexClassLoader {
+public class AndroidRemoteClassLoader {} /* extends DexClassLoader {
 
     private String classPath;
     private String classPathRoot;
@@ -179,6 +179,6 @@ public class AndroidRemoteClassLoader extends DexClassLoader {
     }
 }
 
-
+*/
 
 

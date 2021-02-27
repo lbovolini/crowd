@@ -1,6 +1,6 @@
 package com.github.lbovolini.example.hello;
 
-public class Hello implements IHello {
+public class Hello implements IHello<String> {
     int x;
 
     public String say(Integer i) throws InterruptedException {
