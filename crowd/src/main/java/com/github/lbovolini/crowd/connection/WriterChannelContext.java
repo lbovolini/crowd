@@ -25,28 +25,56 @@ public class WriterChannelContext {
 
     private final Queue<ByteBuffer> writerBufferQueue;
 
-    private final ByteBuffer[] writerBufferArray;
+    private ByteBuffer[] writerBufferArray;
 
     public WriterChannelContext(AsynchronousSocketChannel channel) {
         this.channel = channel;
         this.writeLock = new ReentrantLock();
         this.writerBufferQueue = new LinkedList<>();
-        this.writerBufferArray = new ByteBuffer[BUFFER_ARRAY_SIZE];
     }
 
     public AsynchronousSocketChannel getChannel() {
         return channel;
     }
 
-    public boolean write(ByteBuffer byteBuffer) {
+    public boolean write(byte type, byte[] data) {
+
+        int size = HEADER_SIZE + data.length;
+        int neededBuffers = (int) Math.ceil(size / (double) BUFFER_SIZE);
+
+        if (neededBuffers > BUFFER_ARRAY_SIZE || (neededBuffers * BUFFER_SIZE) > MAX_MESSAGE_SIZE) {
+            throw new RuntimeException("Buffers are greater than MAX_MESSAGE_SIZE");
+        }
+
+        ByteBuffer[] neededBufferArray = new ByteBuffer[neededBuffers];
+
+        int i = 0;
+        while (i < neededBuffers) {
+            neededBufferArray[i] = writerBufferPool.poll();
+            i++;
+        }
+
+
+        short dataLength = (short) data.length;
+        int writtenSum = Math.min(dataLength, BUFFER_SIZE - HEADER_SIZE);
+
+        neededBufferArray[0].put(type).putShort(dataLength).put(data, 0, writtenSum);
+        neededBufferArray[0].flip();
+
+        for (int k = 1; k < neededBuffers; k++) {
+            int newWritten = Math.min(dataLength - writtenSum, BUFFER_SIZE);
+            neededBufferArray[k].put(data, writtenSum, newWritten);
+            neededBufferArray[k].flip();
+            writtenSum += newWritten;
+        }
 
         writeLock.lock();
 
         try {
             if (isClosed()) { return false; }
 
-            final boolean wasEmpty = writerBufferQueue.isEmpty();
-            writerBufferQueue.add(byteBuffer);
+            boolean wasEmpty = writerBufferQueue.isEmpty();
+            writerBufferQueue.addAll(Arrays.asList(neededBufferArray));
 
             if (!wasEmpty) { return true; }
         }
@@ -54,8 +82,8 @@ public class WriterChannelContext {
             writeLock.unlock();
         }
 
-        writerBufferArray[0] = byteBuffer;
-        channel.write(writerBufferArray, 0, 1, 0, TimeUnit.SECONDS, this, WRITER_CHANNEL_HANDLER );
+        setWriterBufferArray(neededBufferArray);
+        channel.write(writerBufferArray, 0, neededBuffers, 0, TimeUnit.SECONDS, this, WRITER_CHANNEL_HANDLER);
 
         return true;
     }
@@ -83,5 +111,9 @@ public class WriterChannelContext {
 
     public ByteBuffer[] getWriterBufferArray() {
         return writerBufferArray;
+    }
+
+    public void setWriterBufferArray(ByteBuffer[] writerBufferArray) {
+        this.writerBufferArray = writerBufferArray;
     }
 }

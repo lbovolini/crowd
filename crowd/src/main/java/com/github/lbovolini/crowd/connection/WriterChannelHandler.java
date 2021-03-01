@@ -7,6 +7,8 @@ import java.util.Queue;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 
+import static com.github.lbovolini.crowd.configuration.Config.BUFFER_ARRAY_SIZE;
+
 /**
  * Responsável pela escrita assíncrona e não bloqueante das mensagens através dos canais de comunicação.
  */
@@ -50,6 +52,7 @@ public class WriterChannelHandler implements CompletionHandler<Long, WriterChann
                     return;
                 }
 
+                bufferArray = new ByteBuffer[Math.min(bufferQueue.size(), BUFFER_ARRAY_SIZE)];
                 for (ByteBuffer buffer : bufferQueue) {
                     bufferArray[length] = buffer;
                     length++;
@@ -58,6 +61,7 @@ public class WriterChannelHandler implements CompletionHandler<Long, WriterChann
                         break;
                     }
                 }
+                channelContext.setWriterBufferArray(bufferArray);
             }
         } catch (IOException e) {
             e.printStackTrace();

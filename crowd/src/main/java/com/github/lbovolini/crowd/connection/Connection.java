@@ -6,7 +6,6 @@ import com.github.lbovolini.crowd.scheduler.Scheduler;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
-import java.nio.ByteBuffer;
 import java.nio.channels.AsynchronousSocketChannel;
 
 public class Connection {
@@ -51,11 +50,7 @@ public class Connection {
     }
 
     public void send(Message message) {
-        ByteBuffer buffer = writerChannelContext.getWriterBufferPool().poll();
-        buffer.put(message.getType()).putShort(message.getDataLength()).put(message.getData());
-        buffer.flip();
-
-        writerChannelContext.write(buffer);
+        writerChannelContext.write(message.getType(), message.getData());
     }
 
 
