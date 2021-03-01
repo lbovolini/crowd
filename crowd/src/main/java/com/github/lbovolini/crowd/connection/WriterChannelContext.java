@@ -9,8 +9,6 @@ import java.util.Queue;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 
-import static com.github.lbovolini.crowd.configuration.Config.*;
-
 public class WriterChannelContext {
 
     private boolean closed;
@@ -39,34 +37,7 @@ public class WriterChannelContext {
 
     public boolean write(byte type, byte[] data) {
 
-        int size = HEADER_SIZE + data.length;
-        int neededBuffers = (int) Math.ceil(size / (double) BUFFER_SIZE);
-
-        if (neededBuffers > BUFFER_ARRAY_SIZE || (neededBuffers * BUFFER_SIZE) > MAX_MESSAGE_SIZE) {
-            throw new RuntimeException("Buffers are greater than MAX_MESSAGE_SIZE");
-        }
-
-        ByteBuffer[] neededBufferArray = new ByteBuffer[neededBuffers];
-
-        int i = 0;
-        while (i < neededBuffers) {
-            neededBufferArray[i] = writerBufferPool.poll();
-            i++;
-        }
-
-
-        short dataLength = (short) data.length;
-        int writtenSum = Math.min(dataLength, BUFFER_SIZE - HEADER_SIZE);
-
-        neededBufferArray[0].put(type).putShort(dataLength).put(data, 0, writtenSum);
-        neededBufferArray[0].flip();
-
-        for (int k = 1; k < neededBuffers; k++) {
-            int newWritten = Math.min(dataLength - writtenSum, BUFFER_SIZE);
-            neededBufferArray[k].put(data, writtenSum, newWritten);
-            neededBufferArray[k].flip();
-            writtenSum += newWritten;
-        }
+        ByteBuffer[] byteBufferArray = BufferUtils.putRawMessage(type, data, writerBufferPool);
 
         writeLock.lock();
 
@@ -74,7 +45,7 @@ public class WriterChannelContext {
             if (isClosed()) { return false; }
 
             boolean wasEmpty = writerBufferQueue.isEmpty();
-            writerBufferQueue.addAll(Arrays.asList(neededBufferArray));
+            writerBufferQueue.addAll(Arrays.asList(byteBufferArray));
 
             if (!wasEmpty) { return true; }
         }
@@ -82,8 +53,8 @@ public class WriterChannelContext {
             writeLock.unlock();
         }
 
-        setWriterBufferArray(neededBufferArray);
-        channel.write(writerBufferArray, 0, neededBuffers, 0, TimeUnit.SECONDS, this, WRITER_CHANNEL_HANDLER);
+        setWriterBufferArray(byteBufferArray);
+        channel.write(writerBufferArray, 0, byteBufferArray.length, 0, TimeUnit.SECONDS, this, WRITER_CHANNEL_HANDLER);
 
         return true;
     }
