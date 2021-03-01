@@ -7,9 +7,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.nio.ByteBuffer;
 import java.util.Arrays;
+import java.util.Collections;
 
-import static com.github.lbovolini.crowd.configuration.Config.BUFFER_SIZE;
-import static com.github.lbovolini.crowd.configuration.Config.HEADER_SIZE;
+import static com.github.lbovolini.crowd.configuration.Config.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
@@ -47,12 +47,13 @@ class BufferUtilsTest {
 
         // Input
         byte type = 1;
-        byte[] data = ("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut " +
+        String text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut " +
                 "labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi " +
                 "ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse " +
                 "cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa " +
-                "qui officia deserunt mollit anim id est laborum.")
-                .getBytes();
+                "qui officia deserunt mollit anim id est laborum.";
+        int copies = (BUFFER_ARRAY_SIZE / 2) * (int) Math.ceil(BUFFER_SIZE / (double) text.length());
+        byte[] data = String.join("", Collections.nCopies(copies, text)).getBytes();
 
         // Expected output
         ByteBuffer[] expectedOutput = new ByteBuffer[(int) Math.ceil((data.length + HEADER_SIZE) / (double) BUFFER_SIZE)];
@@ -83,7 +84,32 @@ class BufferUtilsTest {
         ByteBuffer[] byteBufferArray = BufferUtils.putRawMessage(type, data, writerByteBufferPool);
 
         // Assertions
+        assertTrue(data.length > BUFFER_SIZE);
         assertTrue(Arrays.equals(expectedOutput, byteBufferArray));
+    }
+
+    @Test
+    void shouldThrowExceptionWhenPutRawMessageWithMultipleBuffersBiggerThenMaxMessageSize() {
+
+        // Input
+        byte type = 1;
+        String text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut " +
+                "labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi " +
+                "ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse " +
+                "cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa " +
+                "qui officia deserunt mollit anim id est laborum.";
+        int copies = BUFFER_ARRAY_SIZE * (int) Math.ceil(BUFFER_SIZE / (double) text.length()) + 1;
+        byte[] data = String.join("", Collections.nCopies(copies, text)).getBytes();
+
+        // Assertions
+        assertTrue(data.length + HEADER_SIZE > (BUFFER_ARRAY_SIZE * BUFFER_SIZE));
+
+        Exception exception = assertThrows(RuntimeException.class, () -> {
+            // Should test ONLY this method
+            ByteBuffer[] byteBufferArray = BufferUtils.putRawMessage(type, data, writerByteBufferPool);
+        });
+
+        assertEquals("Message are greater than maximum message size or greater total size of combined buffers in array", exception.getMessage());
     }
 
     @Test
