@@ -9,8 +9,6 @@ import java.util.Queue;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 
-import static com.github.lbovolini.crowd.configuration.Config.*;
-
 public class WriterChannelContext {
 
     private boolean closed;
@@ -25,28 +23,29 @@ public class WriterChannelContext {
 
     private final Queue<ByteBuffer> writerBufferQueue;
 
-    private final ByteBuffer[] writerBufferArray;
+    private ByteBuffer[] writerBufferArray;
 
     public WriterChannelContext(AsynchronousSocketChannel channel) {
         this.channel = channel;
         this.writeLock = new ReentrantLock();
         this.writerBufferQueue = new LinkedList<>();
-        this.writerBufferArray = new ByteBuffer[BUFFER_ARRAY_SIZE];
     }
 
     public AsynchronousSocketChannel getChannel() {
         return channel;
     }
 
-    public boolean write(ByteBuffer byteBuffer) {
+    public boolean write(byte type, byte[] data) {
+
+        ByteBuffer[] byteBufferArray = BufferUtils.putRawMessage(type, data, writerBufferPool);
 
         writeLock.lock();
 
         try {
             if (isClosed()) { return false; }
 
-            final boolean wasEmpty = writerBufferQueue.isEmpty();
-            writerBufferQueue.add(byteBuffer);
+            boolean wasEmpty = writerBufferQueue.isEmpty();
+            writerBufferQueue.addAll(Arrays.asList(byteBufferArray));
 
             if (!wasEmpty) { return true; }
         }
@@ -54,8 +53,8 @@ public class WriterChannelContext {
             writeLock.unlock();
         }
 
-        writerBufferArray[0] = byteBuffer;
-        channel.write(writerBufferArray, 0, 1, 0, TimeUnit.SECONDS, this, WRITER_CHANNEL_HANDLER );
+        setWriterBufferArray(byteBufferArray);
+        channel.write(writerBufferArray, 0, byteBufferArray.length, 0, TimeUnit.SECONDS, this, WRITER_CHANNEL_HANDLER);
 
         return true;
     }
@@ -83,5 +82,9 @@ public class WriterChannelContext {
 
     public ByteBuffer[] getWriterBufferArray() {
         return writerBufferArray;
+    }
+
+    public void setWriterBufferArray(ByteBuffer[] writerBufferArray) {
+        this.writerBufferArray = writerBufferArray;
     }
 }
