@@ -42,7 +42,7 @@ public class BufferUtils {
         int arrayLength = (int) Math.ceil(size / (double) BUFFER_SIZE);
 
         if (arrayLength > BUFFER_ARRAY_SIZE || (arrayLength * BUFFER_SIZE) > MAX_MESSAGE_SIZE) {
-            throw new RuntimeException("Buffers are greater than MAX_MESSAGE_SIZE");
+            throw new RuntimeException("Message are greater than maximum message size or greater total size of combined buffers in array");
         }
 
         return arrayLength;
