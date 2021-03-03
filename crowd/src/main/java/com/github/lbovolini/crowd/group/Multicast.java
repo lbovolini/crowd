@@ -7,45 +7,30 @@ import java.nio.channels.ClosedChannelException;
 import java.nio.channels.DatagramChannel;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
-import java.nio.charset.StandardCharsets;
 import java.util.Iterator;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 
 import static com.github.lbovolini.crowd.configuration.Config.*;
 
-public abstract class Multicast extends Thread {
+public abstract class Multicast extends Thread implements MulticastService {
 
     protected Selector selector;
+
+    private final boolean isServer;
 
     private final int port;
     private InetAddress group;
     private NetworkInterface networkInterface;
 
     protected DatagramChannel channel;
-    private final Set<String> hosts = ConcurrentHashMap.newKeySet();
     private InetSocketAddress serverAddress;
 
-    public Multicast(int port) {
+    private final MulticastRequestHandler multicastRequestHandler;
+
+    public Multicast(int port, MulticastRequestHandler multicastRequestHandler, boolean isServer) {
         this.port = port;
-    }
-
-    public class ResponseFrom {
-        private final String response;
-        private final InetSocketAddress address;
-
-        ResponseFrom(String  response, InetSocketAddress address) {
-            this.response = response;
-            this.address = address;
-        }
-
-        public String getResponse() {
-            return response;
-        }
-
-        public InetSocketAddress getAddress() {
-            return address;
-        }
+        this.multicastRequestHandler = multicastRequestHandler;
+        this.isServer = isServer;
     }
 
     private void init() throws IOException {
@@ -69,7 +54,7 @@ public abstract class Multicast extends Thread {
             this.channel = channel;
             this.selector = selector;
             init();
-            scheduler();
+            onInit();
 
             while (true) {
                 if (!selector.isOpen()) { break; }
@@ -84,28 +69,43 @@ public abstract class Multicast extends Thread {
     private void read(SelectionKey selectionKey) throws IOException {
 
         DatagramChannel channel = (DatagramChannel) selectionKey.channel();
-        ByteBuffer buffer = ByteBuffer.allocate(MULTICAST_BUFFER_SIZE);
+
+        int bufferSize = 1;
+
+        if (!isServer) {
+            bufferSize = MULTICAST_BUFFER_SIZE;
+        }
+
+        ByteBuffer buffer = ByteBuffer.allocate(bufferSize);
 
         SocketAddress address = null;
         while (address == null) {
             address = channel.receive(buffer);
         }
-
         buffer.flip();
-        String message = getMessage(buffer);
 
-        handle(message, (InetSocketAddress)address);
+        Message message = new Message(buffer.array(), buffer.limit(), address);
+        Request request = new Request(new Connection(this), message);
+
+
+        if (!isServer) {
+            setServerAddress((InetSocketAddress) address);
+        }
+
+        onReceive();
+
+        multicastRequestHandler.handle(request);
     }
 
     private void write(SelectionKey selectionKey) throws IOException {
 
         DatagramChannel channel = (DatagramChannel) selectionKey.channel();
-        ResponseFrom responseFrom = (ResponseFrom) selectionKey.attachment();
-        InetSocketAddress address = responseFrom.getAddress();
+        Message message = (Message) selectionKey.attachment();
+        InetSocketAddress address = message.getAddress();
 
-        //!TODO
-        byte[] response = responseFrom.getResponse().getBytes(StandardCharsets.UTF_8);
+        byte[] response = message.getData();
         ByteBuffer buffer = ByteBuffer.wrap(response);
+
         while (buffer.hasRemaining()) {
             channel.send(buffer, address);
         }
@@ -117,44 +117,25 @@ public abstract class Multicast extends Thread {
 
     /**
      * Envia mensagem somente para o servidor
-     * @param message
+     * @param type
      */
-    public void send(String message) {
-        response(message, new InetSocketAddress(serverAddress.getAddress(), MULTICAST_PORT));
+    public void send(String type) {
+        response(Message.ofType(type, serverAddress));
         this.selector.wakeup();
     }
 
     /**
      * Envia mensagem para todos participantes do grupo
-     * @param message
+     * @param type
      */
-    public void sendAll(String message) {
-        response(message, new InetSocketAddress(MULTICAST_IP, MULTICAST_PORT));
+    public void sendAll(String type) {
+        response(Message.ofType(type, new InetSocketAddress(MULTICAST_IP, MULTICAST_PORT)));
         this.selector.wakeup();
     }
 
-    protected boolean isMyself(InetSocketAddress address) {
-        if (address.getAddress().getHostName().equals(HOST_NAME)) {
-            return (address.getPort() == MULTICAST_PORT);
-        }
-        return false;
-    }
-
-    /**
-     * Adiciona endereço do Agent ao conjunto de endereços
-     * @param address
-     */
-    protected void join(InetSocketAddress address) {
-        hosts.add(address.toString());
-    }
-
-    /**
-     * Verifica se o endereço está presente no conjunto de endereços
-     * @param address
-     * @return
-     */
-    protected boolean isMember(InetSocketAddress address) {
-        return hosts.contains(address.toString());
+    public void sendToHost(String type, InetSocketAddress address) {
+        response(Message.ofType(type, address));
+        this.selector.wakeup();
     }
 
     private void handleSelectionKeys(final Set<SelectionKey> selectedKeys) throws IOException {
@@ -174,35 +155,18 @@ public abstract class Multicast extends Thread {
         }
     }
 
-    protected void setServerAddress(ServerResponse serverResponse) {
-        this.serverAddress = serverResponse.getServerAddress();
-    }
-
-    protected void response(String message, InetSocketAddress destination) {
-        ResponseFrom attach = new ResponseFrom(ResponseFactory.get(message), destination);
+    private void response(Message message) {
         try {
-            channel.register(selector, SelectionKey.OP_WRITE, attach);
+            channel.register(selector, SelectionKey.OP_WRITE, message);
         } catch (ClosedChannelException e) { e.printStackTrace(); }
     }
 
-    private void handle(ServerResponse serverResponse) {}
 
-    /**
-     * Se a resposta é maior do que 1, então foi enviada pelo servidor
-     * @param response
-     * @param address
-     */
-    protected void handle(String response, InetSocketAddress address) {
-
+    public void setServerAddress(InetSocketAddress address) {
+        this.serverAddress =  address;
     }
 
-    private static String getMessage(ByteBuffer buffer) {
-        byte[] buff = new byte[buffer.limit()];
-        buffer.get(buff, 0, buffer.limit());
-        buffer.clear();
-        return new String(buff, StandardCharsets.UTF_8);
+    public InetSocketAddress getServerAddress() {
+        return serverAddress;
     }
-
-    protected abstract void scheduler();
-
 }
