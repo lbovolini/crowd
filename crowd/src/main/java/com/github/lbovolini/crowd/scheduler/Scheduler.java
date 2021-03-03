@@ -7,14 +7,11 @@ public class Scheduler implements Runnable {
 
     private final Thread thread;
 
-    private final BlockingDeque<MessageFrom> messages;
-    private final Dispatcher dispatcher;
+    private final BlockingDeque<Request> messages;
+    private final RequestHandler requestHandler;
 
-
-        //this(dispatcher, System.getProperty("java.class.path"), System.getProperty("java.library.path"));
-
-    public Scheduler(Dispatcher dispatcher) {
-        this.dispatcher = dispatcher;
+    public Scheduler(RequestHandler requestHandler) {
+        this.requestHandler = requestHandler;
         this.messages = new LinkedBlockingDeque<>();
         this.thread = new Thread(this);
     }
@@ -23,14 +20,14 @@ public class Scheduler implements Runnable {
     public void run() {
         while (true) {
             try {
-                MessageFrom messageFrom = messages.take();
-                dispatcher.dispatch(messageFrom);
+                Request request = messages.take();
+                requestHandler.handle(request);
             } catch (Exception e) { e.printStackTrace(); }
         }
     }
 
-    public boolean enqueue(MessageFrom messageFrom) {
-        return messages.offer(messageFrom);
+    public boolean enqueue(Request request) {
+        return messages.offer(request);
     }
 
     public void start() {
@@ -39,8 +36,7 @@ public class Scheduler implements Runnable {
         }
     }
 
-    public Dispatcher getDispatcher() {
-        return dispatcher;
+    public RequestHandler getRequestHandler() {
+        return requestHandler;
     }
-
 }

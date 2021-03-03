@@ -24,14 +24,14 @@ public class ServerRequestHandler implements RequestHandler {
     }
 
     @Override
-    public void handle(MessageFrom messageFrom) throws Exception {
+    public void handle(Request request) throws Exception {
 
-        Message message = messageFrom.getMessage();
+        Message message = request.getMessage();
         Message.Type type = Message.Type.get(message.getType());
 
         switch (type) {
             case JOIN: {
-                join(messageFrom);
+                join(request);
                 break;
             }
             //case LEAVE: {
@@ -39,7 +39,7 @@ public class ServerRequestHandler implements RequestHandler {
             //    break;
             //}
             case REPLY: {
-                reply(messageFrom);
+                reply(request);
                 break;
             }
             default: {
@@ -59,13 +59,13 @@ public class ServerRequestHandler implements RequestHandler {
     }
 
 
-    private void join(MessageFrom messageFrom) throws IOException, ClassNotFoundException {
-        JoinGroup joinGroup = (JoinGroup)getObject(messageFrom.getMessage());
-        nodeGroup.join(joinGroup.getCores(), messageFrom.getConnection());
+    private void join(Request request) throws IOException, ClassNotFoundException {
+        JoinGroup joinGroup = (JoinGroup)getObject(request.getMessage());
+        nodeGroup.join(joinGroup.getCores(), request.getConnection());
     }
 
-    private void reply(MessageFrom messageFrom) throws IOException, ClassNotFoundException {
-        Response response = (Response)getObject(messageFrom.getMessage());
-        nodeGroup.reply(response, messageFrom.getConnection());
+    private void reply(Request request) throws IOException, ClassNotFoundException {
+        Response response = (Response)getObject(request.getMessage());
+        nodeGroup.reply(response, request.getConnection());
     }
 }

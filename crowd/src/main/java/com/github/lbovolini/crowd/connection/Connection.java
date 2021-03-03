@@ -1,7 +1,7 @@
 package com.github.lbovolini.crowd.connection;
 
 import com.github.lbovolini.crowd.message.Message;
-import com.github.lbovolini.crowd.scheduler.MessageFrom;
+import com.github.lbovolini.crowd.scheduler.Request;
 import com.github.lbovolini.crowd.scheduler.Scheduler;
 
 import java.io.IOException;
@@ -59,7 +59,7 @@ public class Connection {
     }
 
     public void handle(Message message) {
-        scheduler.enqueue(new MessageFrom(this, message));
+        scheduler.enqueue(new Request(this, message));
     };
 
     public void close() throws IOException {
