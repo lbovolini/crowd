@@ -5,7 +5,7 @@ import com.github.lbovolini.crowd.group.ClientMulticast;
 import com.github.lbovolini.crowd.connection.ClientConnectionChannelContext;
 import com.github.lbovolini.crowd.connection.ClientConnectionChannelHandler;
 import com.github.lbovolini.crowd.scheduler.ClientRequestHandler;
-import com.github.lbovolini.crowd.scheduler.Dispatcher;
+import com.github.lbovolini.crowd.scheduler.RequestHandler;
 import com.github.lbovolini.crowd.scheduler.Scheduler;
 
 import java.io.IOException;
@@ -34,8 +34,8 @@ public final class Agent {
         this.hostAddress = new InetSocketAddress(host, port);
         this.channel = AsynchronousSocketChannel.open();
 
-        Dispatcher dispatcher = new Dispatcher(new ClientRequestHandler(new Context(classPath, libPath)));
-        this.scheduler = new Scheduler(dispatcher);
+        RequestHandler requestHandler = new ClientRequestHandler(new Context(classPath, libPath));
+        this.scheduler = new Scheduler(requestHandler);
     }
 
     public void start() throws IOException {
@@ -43,7 +43,7 @@ public final class Agent {
         init();
         scheduler.start();
 
-        final Context context = scheduler.getDispatcher().getHandler().getContext();
+        final Context context = scheduler.getRequestHandler().getContext();
 
         ClientMulticast clientMulticast = new ClientMulticast() {
             @Override
@@ -51,7 +51,6 @@ public final class Agent {
                 try {
                     context.setClassURLs(codebase);
                     context.setLibURL(libURL);
-                    System.out.println(serverAddress.getHostName());
                     reconnect(serverAddress);
                 } catch (Exception e) { e.printStackTrace(); }
             }

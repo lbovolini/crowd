@@ -3,8 +3,6 @@ package com.github.lbovolini.crowd.node;
 import com.github.lbovolini.crowd.configuration.Config;
 import com.github.lbovolini.crowd.connection.ServerConnectionChannelContext;
 import com.github.lbovolini.crowd.connection.ServerConnectionChannelHandler;
-import com.github.lbovolini.crowd.scheduler.Dispatcher;
-import com.github.lbovolini.crowd.scheduler.RequestHandler;
 import com.github.lbovolini.crowd.scheduler.Scheduler;
 import com.github.lbovolini.crowd.scheduler.ServerRequestHandler;
 
@@ -36,8 +34,7 @@ public class Server {
         executorService = Executors.newFixedThreadPool(poolSize);
         asynchronousChannelGroup = AsynchronousChannelGroup.withThreadPool(executorService);
         asynchronousServerSocketChannel = AsynchronousServerSocketChannel.open(asynchronousChannelGroup);
-        Dispatcher dispatcher = new Dispatcher(new ServerRequestHandler(nodeGroup));
-        scheduler = new Scheduler(dispatcher);
+        scheduler = new Scheduler(new ServerRequestHandler(nodeGroup));
     }
 
     public void start() throws IOException {
