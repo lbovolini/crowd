@@ -1,9 +1,11 @@
 package com.github.lbovolini.crowd;
 
 import com.github.lbovolini.crowd.classloader.Context;
-import com.github.lbovolini.crowd.group.ClientMulticast;
+import com.github.lbovolini.crowd.group.MulticastClient;
 import com.github.lbovolini.crowd.connection.ClientConnectionChannelContext;
 import com.github.lbovolini.crowd.connection.ClientConnectionChannelHandler;
+import com.github.lbovolini.crowd.group.CodebaseService;
+import com.github.lbovolini.crowd.group.MulticastClientRequestHandler;
 import com.github.lbovolini.crowd.scheduler.ClientRequestHandler;
 import com.github.lbovolini.crowd.scheduler.Dispatcher;
 import com.github.lbovolini.crowd.scheduler.Scheduler;
@@ -45,30 +47,32 @@ public final class Agent {
 
         final Context context = scheduler.getDispatcher().getHandler().getContext();
 
-        ClientMulticast clientMulticast = new ClientMulticast() {
+        CodebaseService codebaseService = new CodebaseService() {
             @Override
-            public void connect(URL[] codebase, URL libURL, InetSocketAddress serverAddress) {
+            public void onConnect(URL[] codebase, URL libURL, InetSocketAddress serverAddress) {
                 try {
                     context.setClassURLs(codebase);
                     context.setLibURL(libURL);
-                    System.out.println(serverAddress.getHostName());
                     reconnect(serverAddress);
                 } catch (Exception e) { e.printStackTrace(); }
             }
 
             @Override
-            public void update(URL[] codebase, URL libURL) {
+            public void onUpdate(URL[] codebase, URL libURL) {
                 context.setClassURLs(codebase);
                 context.setLibURL(libURL);
             }
 
             @Override
-            public void reload(URL[] codebase, URL libURL) {
+            public void onReload(URL[] codebase, URL libURL) {
                 context.setClassURLs(codebase);
                 context.setLibURL(libURL);
             }
+
         };
-        clientMulticast.start();
+
+        MulticastClient multicastClient = new MulticastClient(new MulticastClientRequestHandler(codebaseService));
+        multicastClient.start();
     }
 
 

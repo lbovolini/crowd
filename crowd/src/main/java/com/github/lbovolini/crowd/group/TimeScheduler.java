@@ -36,10 +36,13 @@ public class TimeScheduler {
     }
 
     private boolean isDownTimeExceeded() {
+
         long downTime;
+
         synchronized (lock) {
             downTime = System.nanoTime() - lastResponseTime;
         }
+
         return TimeUnit.NANOSECONDS.toSeconds(downTime) > MAX_DOWNTIME;
     }
 
