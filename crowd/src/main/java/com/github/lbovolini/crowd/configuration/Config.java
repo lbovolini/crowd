@@ -25,6 +25,7 @@ public class Config {
     public static final String MULTICAST_IP = System.getProperty("multicast.ip", "225.4.5.6");
     public static final int MULTICAST_PORT = Integer.parseInt(System.getProperty("multicast.port", String.valueOf(8000)));
 
+    // !important Should NOT be bigger than datagram packet max size
     public static final int MULTICAST_BUFFER_SIZE = 1024;
     public static final String MULTICAST_INTERFACE_NAME = System.getProperty("multicast.interface", HostUtils.getNetworkInterfaceName());
     public static final int MULTICAST_CLIENT_PORT = Integer.parseInt(System.getProperty("multicast.client.port", String.valueOf(8011)));

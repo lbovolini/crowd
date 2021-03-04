@@ -109,10 +109,12 @@ public abstract class Multicast extends Thread implements MulticastService {
         byte[] response = message.getData();
         ByteBuffer buffer = ByteBuffer.wrap(response);
 
-        while (buffer.hasRemaining()) {
-            channel.send(buffer, address);
-        }
+        int bytesSent = channel.send(buffer, address);
         buffer.clear();
+
+        if (bytesSent == 0) {
+            return;
+        }
 
         channel.register(selectionKey.selector(), SelectionKey.OP_READ);
     }
