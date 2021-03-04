@@ -8,6 +8,7 @@ import java.nio.channels.DatagramChannel;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.util.Iterator;
+import java.util.Objects;
 import java.util.Set;
 
 import static com.github.lbovolini.crowd.configuration.Config.*;
@@ -78,18 +79,20 @@ public abstract class Multicast extends Thread implements MulticastService {
 
         ByteBuffer buffer = ByteBuffer.allocate(bufferSize);
 
-        SocketAddress address = null;
-        while (address == null) {
-            address = channel.receive(buffer);
+        InetSocketAddress address = (InetSocketAddress) channel.receive(buffer);
+
+        if (Objects.isNull(address)) {
+            buffer.clear();
+            return;
         }
+
         buffer.flip();
 
         Message message = new Message(buffer.array(), buffer.limit(), address);
         Request request = new Request(new Connection(this), message);
 
-
         if (!isServer) {
-            setServerAddress((InetSocketAddress) address);
+            setServerAddress(address);
         }
 
         onReceive();
