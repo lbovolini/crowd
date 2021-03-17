@@ -6,6 +6,7 @@ import com.github.lbovolini.crowd.message.messages.JoinGroup;
 import com.github.lbovolini.crowd.message.messages.Response;
 
 import java.io.IOException;
+import java.io.UncheckedIOException;
 
 public class MessageFactory {
 
@@ -14,18 +15,33 @@ public class MessageFactory {
         return Message.create(Message.Type.CREATE, createObject);
     }
 
-    public static Message invoke(int requestId, String method, Class<?>[] types, Object[] args) throws IOException {
+    public static Message invoke(int requestId, String method, Class<?>[] types, Object[] args) {
         InvokeMethod invokeMethod = new InvokeMethod(requestId, method, types, args);
-        return Message.create(Message.Type.INVOKE, invokeMethod);
+
+        try {
+            return Message.create(Message.Type.INVOKE, invokeMethod);
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
     }
 
-    public static Message join(int cores) throws IOException {
+    public static Message join(int cores) {
         JoinGroup joinGroup = new JoinGroup(cores);
-        return Message.create(Message.Type.JOIN, joinGroup);
+
+        try {
+            return Message.create(Message.Type.JOIN, joinGroup);
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
     }
 
-    public static Message reply(int requestId, Object result, String exception) throws IOException {
+    public static Message reply(int requestId, Object result, String exception) {
         Response response = new Response(requestId, result, exception);
-        return Message.create(Message.Type.REPLY, response);
+
+        try {
+            return Message.create(Message.Type.REPLY, response);
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
     }
 }

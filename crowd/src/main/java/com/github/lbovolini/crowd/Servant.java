@@ -5,7 +5,6 @@ import com.github.lbovolini.crowd.message.Message;
 import com.github.lbovolini.crowd.message.MessageFactory;
 import com.github.lbovolini.crowd.message.messages.InvokeMethod;
 
-import java.io.IOException;
 import java.lang.reflect.Method;
 
 /**
@@ -36,12 +35,8 @@ public class Servant {
     }
 
     private static void reply(int requestId, Object result, String exception, Connection connection) {
-        try {
-            Message message = MessageFactory.reply(requestId, result, exception);
-            connection.send(message);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        Message message = MessageFactory.reply(requestId, result, exception);
+        connection.send(message);
     }
 
     private static String getException(Object object, InvokeMethod request){

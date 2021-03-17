@@ -3,7 +3,7 @@ package com.github.lbovolini.crowd.connection;
 import com.github.lbovolini.crowd.message.Message;
 import com.github.lbovolini.crowd.message.MessageFactory;
 
-import java.io.IOException;
+import java.nio.channels.AsynchronousSocketChannel;
 import java.nio.channels.CompletionHandler;
 
 /**
@@ -20,18 +20,26 @@ public class ClientConnectionChannelHandler implements CompletionHandler<Void, C
      * Para permitir ao thread que invocou este handler possa atender a outros handlers, este método não deve, nunca,
      * bloquear ou executar por um período de tempo que não seja mínimo.
      * @param aVoid Resultado da operação assíncrona de I/O.
-     * @param attachment Representa o contexto da atual operação assíncrona de I/O.
+     * @param context Representa o contexto da atual operação assíncrona de I/O.
      * É o objeto associado à operação assíncrona de I/O quando esta foi iniciada.
      */
-    public void completed(Void aVoid, ClientConnectionChannelContext attachment) {
+    public void completed(Void aVoid, ClientConnectionChannelContext context) {
 
-        Message message = null;
-        try {
-            message = MessageFactory.join(attachment.getCores());
-        } catch (IOException e) { e.printStackTrace(); }
+        Message message = MessageFactory.join(context.getCores());
 
+        AsynchronousSocketChannel channel = context.getChannel();
 
-        Connection connection = new Connection(attachment.getChannel(), attachment.getScheduler());
+        ReaderChannelContext readerChannelContext = new ReaderChannelContext(channel);
+        WriterChannelContext writerChannelContext = new WriterChannelContext(channel);
+
+        ReaderChannel readerChannel = new ReaderChannel(readerChannelContext);
+        WriterChannel writerChannel = new WriterChannel(writerChannelContext);
+
+        Connection connection = new Connection(channel, readerChannel, writerChannel);
+
+        MessageHandler messageHandler = new MessageHandler(context.getScheduler(), connection);
+        readerChannelContext.setMessageHandler(messageHandler);
+
         connection.send(message);
         connection.receive();
     }
@@ -41,10 +49,10 @@ public class ClientConnectionChannelHandler implements CompletionHandler<Void, C
      * Para permitir ao thread que invocou este handler possa atender a outros handlers, este método não deve, nunca,
      * bloquear ou executar por um período de tempo que não seja mínimo.
      * @param throwable Exceção que indica o motivo da falha da operação assíncrona de I/O.
-     * @param attachment Representa o contexto da atual operação assíncrona de I/O.
+     * @param context Representa o contexto da atual operação assíncrona de I/O.
      * É o objeto associado à operação assíncrona de I/O quando esta foi iniciada.
      */
-    public void failed(Throwable throwable, ClientConnectionChannelContext attachment) {
+    public void failed(Throwable throwable, ClientConnectionChannelContext context) {
         throwable.printStackTrace();
     }
 }

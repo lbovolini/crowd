@@ -1,5 +1,6 @@
 package com.github.lbovolini.crowd.connection;
 
+import com.github.lbovolini.crowd.buffer.ByteBufferPool;
 import com.github.lbovolini.crowd.configuration.Config;
 import org.junit.jupiter.api.Test;
 
