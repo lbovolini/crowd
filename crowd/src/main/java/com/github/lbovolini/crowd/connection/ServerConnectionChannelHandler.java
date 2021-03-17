@@ -20,14 +20,24 @@ public class ServerConnectionChannelHandler implements CompletionHandler<Asynchr
      * Para permitir ao thread que invocou este handler possa atender a outros handlers, este método não deve, nunca,
      * bloquear ou executar por um período de tempo que não seja mínimo.
      * @param channel Um socket assíncrono conectado ao cliente remoto.
-     * @param attachment Representa o contexto da atual operação assíncrona de I/O.
+     * @param context Representa o contexto da atual operação assíncrona de I/O.
      * É o objeto associado à operação assíncrona de I/O quando esta foi iniciada.
      */
-    public void completed(AsynchronousSocketChannel channel, ServerConnectionChannelContext attachment) {
+    public void completed(AsynchronousSocketChannel channel, ServerConnectionChannelContext context) {
 
-        attachment.getServerChannel().accept(attachment, this);
+        context.getServerChannel().accept(context, this);
 
-        Connection connection = new Connection(channel, attachment.getScheduler());
+        ReaderChannelContext readerChannelContext = new ReaderChannelContext(channel);
+        WriterChannelContext writerChannelContext = new WriterChannelContext(channel);
+
+        ReaderChannel readerChannel = new ReaderChannel(readerChannelContext);
+        WriterChannel writerChannel = new WriterChannel(writerChannelContext);
+
+        Connection connection = new Connection(channel, readerChannel, writerChannel);
+
+        MessageHandler messageHandler = new MessageHandler(context.getScheduler(), connection);
+        readerChannelContext.setMessageHandler(messageHandler);
+
         connection.receive();
     }
 
@@ -36,10 +46,10 @@ public class ServerConnectionChannelHandler implements CompletionHandler<Asynchr
      * Para permitir ao thread que invocou este handler possa atender a outros handlers, este método não deve, nunca,
      * bloquear ou executar por um período de tempo que não seja mínimo.
      * @param throwable Exceção que indica o motivo da falha da operação assíncrona de I/O.
-     * @param serverConnectionChannelContext Representa o contexto da atual operação assíncrona de I/O.
+     * @param context Representa o contexto da atual operação assíncrona de I/O.
      * É o objeto associado à operação assíncrona de I/O quando esta foi iniciada.
      */
-    public void failed(Throwable throwable, ServerConnectionChannelContext serverConnectionChannelContext) {
+    public void failed(Throwable throwable, ServerConnectionChannelContext context) {
         throwable.printStackTrace();
     }
 }

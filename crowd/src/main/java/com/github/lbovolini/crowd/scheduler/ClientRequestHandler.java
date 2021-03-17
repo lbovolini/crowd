@@ -2,8 +2,6 @@ package com.github.lbovolini.crowd.scheduler;
 
 import com.github.lbovolini.crowd.Servant;
 import com.github.lbovolini.crowd.classloader.Context;
-import com.github.lbovolini.crowd.classloader.RemoteClassLoader;
-import com.github.lbovolini.crowd.classloader.RemoteClassLoaderService;
 import com.github.lbovolini.crowd.message.Message;
 import com.github.lbovolini.crowd.message.messages.CreateObject;
 import com.github.lbovolini.crowd.message.messages.InvokeMethod;
@@ -27,7 +25,7 @@ public class ClientRequestHandler implements RequestHandler {
     private final ExecutorService executor;
 
     private final Object lock = new Object();
-    private MessageFrom latestCreatedObject;
+    private Request latestCreatedObject;
     private final Context context;
 
     public ClientRequestHandler(Context context) {
@@ -40,31 +38,31 @@ public class ClientRequestHandler implements RequestHandler {
         return Message.deserialize(message.getData());
     }
 
-    private void create(MessageFrom messageFrom) throws Exception {
-        setLatestCreatedObject(messageFrom);
+    private void create(Request request) throws Exception {
+        setLatestCreatedObject(request);
         stop();
-        CreateObject createObject = (CreateObject)getObject(messageFrom.getMessage());
+        CreateObject createObject = (CreateObject)getObject(request.getMessage());
         object = newObject(createObject.getName(), createObject.getParameterTypes(), createObject.getArgs());
     }
 
 
-    private void invoke(MessageFrom messageFrom) throws IOException, ClassNotFoundException {
-        InvokeMethod invokeMethod = (InvokeMethod)getObject(messageFrom.getMessage());
-        pool.execute(() -> Servant.execute(object, invokeMethod, messageFrom.getConnection()));
+    private void invoke(Request request) throws IOException, ClassNotFoundException {
+        InvokeMethod invokeMethod = (InvokeMethod)getObject(request.getMessage());
+        pool.execute(() -> Servant.execute(object, invokeMethod, request.getConnection()));
     }
 
 
     @Override
-    public void handle(MessageFrom messageFrom) {
+    public void handle(Request request) {
 
         executor.submit(() -> {
-            Message message = messageFrom.getMessage();
+            Message message = request.getMessage();
             Message.Type type = Message.Type.get(message.getType());
 
             switch (type) {
                 case CREATE: {
                     try {
-                        create(messageFrom);
+                        create(request);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -72,7 +70,7 @@ public class ClientRequestHandler implements RequestHandler {
                 }
                 case INVOKE: {
                     try {
-                        invoke(messageFrom);
+                        invoke(request);
                     } catch (IOException e) {
                         e.printStackTrace();
                     } catch (ClassNotFoundException e) {
@@ -111,11 +109,11 @@ public class ClientRequestHandler implements RequestHandler {
         pool = Executors.newFixedThreadPool(POOL_SIZE);
     }
 
-    private void setLatestCreatedObject(MessageFrom messageFrom) {
-        this.latestCreatedObject = messageFrom;
+    private void setLatestCreatedObject(Request request) {
+        this.latestCreatedObject = request;
     }
 
-    public MessageFrom getLatestCreatedObject() {
+    public Request getLatestCreatedObject() {
         synchronized (lock) {
             return latestCreatedObject;
         }

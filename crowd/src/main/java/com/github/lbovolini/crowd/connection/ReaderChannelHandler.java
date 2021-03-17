@@ -1,5 +1,6 @@
 package com.github.lbovolini.crowd.connection;
 
+import com.github.lbovolini.crowd.buffer.ByteBufferPool;
 import com.github.lbovolini.crowd.message.Message;
 import com.github.lbovolini.crowd.message.PartialMessage;
 import com.github.lbovolini.crowd.message.Flags;
@@ -20,23 +21,23 @@ public class ReaderChannelHandler implements CompletionHandler<Long, ReaderChann
     static final int SIZE = 2;
     static final int DATA = 3;
 
-    public void completed(Long result, ReaderChannelContext channelContext) {
+    public void completed(Long result, ReaderChannelContext context) {
 
         int length = 0;
 
-        ReentrantLock readLock = channelContext.getReadLock();
+        ReentrantLock readLock = context.getReadLock();
         readLock.lock();
 
-        ByteBuffer[] readerBufferArray = channelContext.getReaderBufferArray();
+        ByteBuffer[] readerBufferArray = context.getReaderBufferArray();
 
         try {
             if (result < 0) {
-                channelContext.close();
+                context.close();
                 return;
             }
             else if (result != 0) {
-                ByteBufferPool readerPool = channelContext.getReaderBufferPool();
-                Queue<ByteBuffer> readerBufferQueue = channelContext.getReaderBufferQueue();
+                ByteBufferPool readerPool = context.getReaderBufferPool();
+                Queue<ByteBuffer> readerBufferQueue = context.getReaderBufferQueue();
 
                 int i = 0;
                 while (i < readerBufferArray.length) {
@@ -47,7 +48,7 @@ public class ReaderChannelHandler implements CompletionHandler<Long, ReaderChann
                     ByteBuffer byteBuffer = readerBufferQueue.peek();
                     byteBuffer.flip();
 
-                    handle(channelContext, byteBuffer, channelContext.getPartialMessage());
+                    handle(context, byteBuffer, context.getPartialMessage());
 
                     readerBufferArray[i] = null;
                     readerPool.offer(readerBufferQueue.poll());
@@ -74,17 +75,17 @@ public class ReaderChannelHandler implements CompletionHandler<Long, ReaderChann
             readLock.unlock();
         }
 
-        channelContext.getChannel().read(readerBufferArray, 0, length, 0, TimeUnit.SECONDS, channelContext, this );
+        context.getChannel().read(readerBufferArray, 0, length, 0, TimeUnit.SECONDS, context, this );
     }
 
-    public void failed(Throwable exc, ReaderChannelContext channelContext) {
+    public void failed(Throwable exc, ReaderChannelContext context) {
 
-        ReentrantLock readLock = channelContext.getReadLock();
+        ReentrantLock readLock = context.getReadLock();
         readLock.lock();
 
         try {
-            channelContext.getChannel().close();
-            channelContext.getReaderBufferQueue().clear();
+            context.getChannel().close();
+            context.getReaderBufferQueue().clear();
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
@@ -93,7 +94,7 @@ public class ReaderChannelHandler implements CompletionHandler<Long, ReaderChann
     }
 
 
-    public static void handle(ReaderChannelContext channelContext, ByteBuffer buffer, PartialMessage partialMessage) {
+    public static void handle(ReaderChannelContext context, ByteBuffer buffer, PartialMessage partialMessage) {
 
         int position = partialMessage.getPosition();
 
@@ -117,7 +118,11 @@ public class ReaderChannelHandler implements CompletionHandler<Long, ReaderChann
                 case DATA:
                     if (readDataFromBuffer(buffer, partialMessage)) {
                         Message message = Message.create(partialMessage.getType(), partialMessage.getData());
-                        channelContext.handle(message);
+
+                        // !todo
+                        context.getMessageHandler().handle(message);
+
+
                         partialMessage.setPosition(TYPE);
                         position = TYPE;
                     }

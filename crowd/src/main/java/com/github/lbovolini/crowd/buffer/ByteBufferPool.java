@@ -1,4 +1,4 @@
-package com.github.lbovolini.crowd.connection;
+package com.github.lbovolini.crowd.buffer;
 
 import com.github.lbovolini.crowd.configuration.Config;
 

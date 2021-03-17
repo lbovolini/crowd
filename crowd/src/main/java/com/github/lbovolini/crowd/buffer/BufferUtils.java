@@ -1,4 +1,4 @@
-package com.github.lbovolini.crowd.connection;
+package com.github.lbovolini.crowd.buffer;
 
 import java.nio.ByteBuffer;
 import java.util.Objects;

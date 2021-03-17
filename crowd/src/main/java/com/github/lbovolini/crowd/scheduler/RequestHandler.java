@@ -4,7 +4,7 @@ import com.github.lbovolini.crowd.classloader.Context;
 
 public interface RequestHandler {
 
-    void handle(MessageFrom messageFrom) throws Exception;
+    void handle(Request request) throws Exception;
 
     void stop();
 

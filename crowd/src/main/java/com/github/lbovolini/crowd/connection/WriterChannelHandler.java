@@ -1,5 +1,7 @@
 package com.github.lbovolini.crowd.connection;
 
+import com.github.lbovolini.crowd.buffer.ByteBufferPool;
+
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.CompletionHandler;
@@ -14,23 +16,23 @@ import static com.github.lbovolini.crowd.configuration.Config.BUFFER_ARRAY_SIZE;
  */
 public class WriterChannelHandler implements CompletionHandler<Long, WriterChannelContext> {
 
-    public void completed(Long result, WriterChannelContext channelContext) {
+    public void completed(Long result, WriterChannelContext context) {
 
         int length = 0;
 
-        ReentrantLock writeLock = channelContext.getWriteLock();
+        ReentrantLock writeLock = context.getWriteLock();
         writeLock.lock();
 
-        ByteBuffer[] bufferArray = channelContext.getWriterBufferArray();
+        ByteBuffer[] bufferArray = context.getWriterBufferArray();
 
         try {
             if (result < 0) {
-                channelContext.close();
+                context.close();
                 return;
             }
             else if (result != 0) {
-                ByteBufferPool writerPool = channelContext.getWriterBufferPool();
-                Queue<ByteBuffer> bufferQueue = channelContext.getWriterBufferQueue();
+                ByteBufferPool writerPool = context.getWriterBufferPool();
+                Queue<ByteBuffer> bufferQueue = context.getWriterBufferQueue();
 
                 int i = 0;
                 while (i < bufferArray.length) {
@@ -61,7 +63,7 @@ public class WriterChannelHandler implements CompletionHandler<Long, WriterChann
                         break;
                     }
                 }
-                channelContext.setWriterBufferArray(bufferArray);
+                context.setWriterBufferArray(bufferArray);
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -69,17 +71,17 @@ public class WriterChannelHandler implements CompletionHandler<Long, WriterChann
             writeLock.unlock();
         }
 
-        channelContext.getChannel().write(bufferArray, 0, length, 0, TimeUnit.SECONDS, channelContext, this);
+        context.getChannel().write(bufferArray, 0, length, 0, TimeUnit.SECONDS, context, this);
     }
 
-    public void failed(Throwable exc, WriterChannelContext channelContext) {
+    public void failed(Throwable exc, WriterChannelContext context) {
 
-        ReentrantLock writeLock = channelContext.getWriteLock();
+        ReentrantLock writeLock = context.getWriteLock();
         writeLock.lock();
 
         try {
-            channelContext.close();
-            channelContext.getWriterBufferQueue().clear();
+            context.close();
+            context.getWriterBufferQueue().clear();
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
