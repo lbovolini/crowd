@@ -24,7 +24,7 @@ public class ReaderChannel {
     public boolean read() {
 
         ByteBuffer[] byteBufferArray = new ByteBuffer[1];
-        byteBufferArray[0] = context.getReaderBufferPool().poll();
+        byteBufferArray[0] = ReaderChannelContext.getReaderBufferPool().poll();
 
         Lock readLock = context.getReadLock();
         readLock.lock();
