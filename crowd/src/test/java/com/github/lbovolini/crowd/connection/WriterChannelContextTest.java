@@ -38,7 +38,7 @@ class WriterChannelContextTest {
             assertTrue(context.isClosed());
 
         } catch (IOException e) {
-            e.printStackTrace();
+            fail(e);
         }
     }
 
