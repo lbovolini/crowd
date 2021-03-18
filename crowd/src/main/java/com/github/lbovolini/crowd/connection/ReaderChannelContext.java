@@ -45,7 +45,7 @@ public class ReaderChannelContext {
         return partialMessage;
     }
 
-    public ByteBufferPool getReaderBufferPool() {
+    public static ByteBufferPool getReaderBufferPool() {
         return readerBufferPool;
     }
 
