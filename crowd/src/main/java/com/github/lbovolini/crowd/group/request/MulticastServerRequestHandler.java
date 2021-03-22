@@ -22,18 +22,18 @@ public class MulticastServerRequestHandler implements MulticastRequestHandler {
         byte type = request.getMessage().getType();
         InetSocketAddress address = request.getMessage().getAddress();
 
-        MulticastConnection multicastConnection = request.getConnection();
+        MulticastConnection connection = request.getConnection();
 
         if (DISCOVER.getType() == type) {
             join(address);
-            multicastConnection.send(CONNECT, address);
+            connection.send(CONNECT, address);
         }
         else if (HEARTBEAT.getType() == type) {
             if (isMember(address)) {
-                multicastConnection.send(HEARTBEAT, address);
+                connection.send(HEARTBEAT, address);
             } else {
                 join(address);
-                multicastConnection.send(CONNECT, address);
+                connection.send(CONNECT, address);
             }
         }
     }

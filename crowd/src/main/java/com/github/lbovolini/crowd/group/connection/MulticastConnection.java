@@ -6,9 +6,11 @@ import java.net.InetSocketAddress;
 
 public class MulticastConnection {
 
+    private final MulticastReaderChannel readerChannel;
     private final MulticastWriterChannel writerChannel;
 
-    public MulticastConnection(MulticastWriterChannel writerChannel) {
+    public MulticastConnection(MulticastReaderChannel readerChannel, MulticastWriterChannel writerChannel) {
+        this.readerChannel = readerChannel;
         this.writerChannel = writerChannel;
     }
 
@@ -22,6 +24,10 @@ public class MulticastConnection {
 
     public void multicastSend(MulticastMessageType type) {
         writerChannel.writeGroup(type.getType());
+    }
+
+    public void receive() {
+        readerChannel.read();
     }
 
 }

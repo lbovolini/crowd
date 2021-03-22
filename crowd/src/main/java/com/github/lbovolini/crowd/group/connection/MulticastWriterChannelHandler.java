@@ -27,6 +27,6 @@ public class MulticastWriterChannelHandler {
             return;
         }
 
-        channel.register(selectionKey.selector(), SelectionKey.OP_READ);
+        context.getConnection().receive();
     }
 }
