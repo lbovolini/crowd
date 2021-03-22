@@ -1,8 +1,10 @@
-package com.github.lbovolini.crowd.group;
+package com.github.lbovolini.crowd.group.request;
+
+import com.github.lbovolini.crowd.group.CodebaseService;
+import com.github.lbovolini.crowd.group.message.MulticastMessageType;
+import com.github.lbovolini.crowd.group.message.ServerResponse;
 
 import java.net.URL;
-
-import static com.github.lbovolini.crowd.configuration.Config.*;
 
 public class MulticastClientRequestHandler implements MulticastRequestHandler {
 
@@ -18,7 +20,7 @@ public class MulticastClientRequestHandler implements MulticastRequestHandler {
      * @param request
      */
     @Override
-    public void handle(Request request) {
+    public void handle(MulticastRequest request) {
 
         if (request.getMessage().getDataLength() <= 1) {
             return;
@@ -26,11 +28,11 @@ public class MulticastClientRequestHandler implements MulticastRequestHandler {
 
         ServerResponse response = ServerResponse.fromObject(request.getMessage().getDataAsString());
 
-        String type = response.getType();
+        byte type = Byte.parseByte(response.getType());
         URL[] codebase = response.getCodebase();
         URL libURL = response.getLibURL();
 
-        switch (type) {
+        switch (MulticastMessageType.get(type)) {
             case CONNECT:
                 codebaseService.onConnect(codebase, libURL, response.getServerAddress());
                 break;

@@ -1,11 +1,11 @@
 package com.github.lbovolini.crowd;
 
 import com.github.lbovolini.crowd.classloader.Context;
-import com.github.lbovolini.crowd.group.MulticastClient;
+import com.github.lbovolini.crowd.group.worker.MulticastClientWorker;
 import com.github.lbovolini.crowd.connection.ClientConnectionChannelContext;
 import com.github.lbovolini.crowd.connection.ClientConnectionChannelHandler;
 import com.github.lbovolini.crowd.group.CodebaseService;
-import com.github.lbovolini.crowd.group.MulticastClientRequestHandler;
+import com.github.lbovolini.crowd.group.worker.MulticastWorkerFactory;
 import com.github.lbovolini.crowd.scheduler.ClientRequestHandler;
 import com.github.lbovolini.crowd.scheduler.RequestHandler;
 import com.github.lbovolini.crowd.scheduler.Scheduler;
@@ -71,8 +71,8 @@ public final class Agent {
 
         };
 
-        MulticastClient multicastClient = new MulticastClient(new MulticastClientRequestHandler(codebaseService));
-        multicastClient.start();
+        MulticastClientWorker multicastClientWorker = MulticastWorkerFactory.defaultClientWorker(codebaseService);
+        multicastClientWorker.start();
     }
 
 

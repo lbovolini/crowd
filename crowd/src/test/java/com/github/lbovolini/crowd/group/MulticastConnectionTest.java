@@ -15,7 +15,7 @@ import static org.mockito.Mockito.*;
 class ConnectionTest {
 
     @Mock
-    private Multicast multicast;
+    private MulticastWorker multicastWorker;
 
     @InjectMocks
     private Connection connection;
@@ -29,7 +29,7 @@ class ConnectionTest {
         connection.send(messageType);
 
         // Assertions
-        verify(multicast, only()).send(messageType);
+        verify(multicastWorker, only()).send(messageType);
     }
 
     @Test
@@ -41,7 +41,7 @@ class ConnectionTest {
         connection.sendAll(messageType);
 
         // Assertions
-        verify(multicast, only()).sendAll(messageType);
+        verify(multicastWorker, only()).sendAll(messageType);
     }
 
     @Test
@@ -54,6 +54,6 @@ class ConnectionTest {
         connection.sendToHost(messageType, address);
 
         // Assertions
-        verify(multicast, only()).sendToHost(messageType, address);
+        verify(multicastWorker, only()).sendToHost(messageType, address);
     }
 }

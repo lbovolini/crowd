@@ -10,7 +10,7 @@ import static com.github.lbovolini.crowd.configuration.Config.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class MulticastClientRequestHandlerTest {
+class MulticastWorkerClientRequestHandlerTest {
 
     @Mock
     private CodebaseService codebaseService;
@@ -21,7 +21,7 @@ class MulticastClientRequestHandlerTest {
     @Test
     void shouldHandleConnectRequest() {
         // Input
-        Request request = new Request(null, Message.ofType(CONNECT, null));
+        Request request = new Request(null, MulticastMessage.ofType(CONNECT, null));
 
         // Should test ONLY this method
         requestHandler.handle(request);
@@ -32,7 +32,7 @@ class MulticastClientRequestHandlerTest {
     @Test
     void shouldHandleUpdateRequest() {
         // Input
-        Request request = new Request(null, Message.ofType(UPDATE, null));
+        Request request = new Request(null, MulticastMessage.ofType(UPDATE, null));
 
         // Should test ONLY this method
         requestHandler.handle(request);
@@ -43,7 +43,7 @@ class MulticastClientRequestHandlerTest {
     @Test
     void shouldHandleReloadRequest() {
         // Input
-        Request request = new Request(null, Message.ofType(RELOAD, null));
+        Request request = new Request(null, MulticastMessage.ofType(RELOAD, null));
 
         // Should test ONLY this method
         requestHandler.handle(request);
