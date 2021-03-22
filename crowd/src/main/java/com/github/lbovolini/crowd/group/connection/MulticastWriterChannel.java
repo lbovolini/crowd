@@ -18,23 +18,21 @@ public class MulticastWriterChannel {
         this.context = context;
     }
 
-    public boolean write(byte type) {
-        return write(type, context.getServerAddress());
+    public void write(byte type) {
+        write(type, context.getServerAddress());
     }
 
-    public boolean write(byte type, InetSocketAddress address) {
+    public void write(byte type, InetSocketAddress address) {
         MulticastMessage message = MulticastMessage.ofType(MulticastMessageType.get(type), address);
         try {
             context.getChannel().register(context.getSelector(), SelectionKey.OP_WRITE, message);
             context.getSelector().wakeup();
-            return true;
         } catch (ClosedChannelException e) {
             e.printStackTrace();
-            return false;
         }
     }
 
-    public boolean writeGroup(byte type) {
-        return write(type, new InetSocketAddress(MULTICAST_IP, MULTICAST_PORT));
+    public void writeGroup(byte type) {
+        write(type, new InetSocketAddress(MULTICAST_IP, MULTICAST_PORT));
     }
 }

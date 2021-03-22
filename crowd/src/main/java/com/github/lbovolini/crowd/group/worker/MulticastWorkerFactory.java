@@ -40,9 +40,10 @@ public class MulticastWorkerFactory {
             MulticastRequestHandler requestHandler = new MulticastClientRequestHandler(codebaseService);
             MulticastScheduler scheduler = new MulticastScheduler(requestHandler);
 
+            MulticastReaderChannel readerChannel = new MulticastReaderChannel(channelContext);
             MulticastWriterChannel writerChannel = new MulticastWriterChannel(channelContext);
 
-            MulticastConnection connection = new MulticastConnection(writerChannel);
+            MulticastConnection connection = new MulticastConnection(readerChannel, writerChannel);
 
             MulticastMessageHandler messageHandler = new MulticastMessageHandler(connection, scheduler);
 
@@ -72,13 +73,12 @@ public class MulticastWorkerFactory {
             MulticastRequestHandler requestHandler = new MulticastServerRequestHandler();
             MulticastScheduler scheduler = new MulticastScheduler(requestHandler);
 
-            //MulticastReaderChannel readerChannel = new MulticastReaderChannel(context);
+            MulticastReaderChannel readerChannel = new MulticastReaderChannel(channelContext);
             MulticastWriterChannel writerChannel = new MulticastWriterChannel(channelContext);
 
-            MulticastConnection connection = new MulticastConnection(writerChannel);
+            MulticastConnection connection = new MulticastConnection(readerChannel, writerChannel);
 
             MulticastMessageHandler messageHandler = new MulticastMessageHandler(connection, scheduler);
-            //context.setMessageHandler(messageHandler);
 
             MulticastWorkerContext workerContext = new MulticastWorkerContext(channelContext, connection, messageHandler);
 
