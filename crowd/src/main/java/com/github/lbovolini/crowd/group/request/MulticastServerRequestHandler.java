@@ -1,37 +1,39 @@
-package com.github.lbovolini.crowd.group;
+package com.github.lbovolini.crowd.group.request;
+
+import com.github.lbovolini.crowd.group.connection.MulticastConnection;
 
 import java.net.InetSocketAddress;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static com.github.lbovolini.crowd.configuration.Config.*;
+import static com.github.lbovolini.crowd.group.message.MulticastMessageType.*;
 
 public class MulticastServerRequestHandler implements MulticastRequestHandler {
 
     private static final Set<String> hosts = ConcurrentHashMap.newKeySet();
 
     @Override
-    public void handle(Request request) {
+    public void handle(MulticastRequest request) {
 
         if (request.getMessage().getDataLength() > 1) {
             return;
         }
 
-        String response = request.getMessage().getDataAsString();
+        byte type = request.getMessage().getType();
         InetSocketAddress address = request.getMessage().getAddress();
 
-        Connection connection = request.getConnection();
+        MulticastConnection multicastConnection = request.getConnection();
 
-        if (DISCOVER.equals(response)) {
+        if (DISCOVER.getType() == type) {
             join(address);
-            connection.sendToHost(CONNECT, address);
+            multicastConnection.send(CONNECT, address);
         }
-        else if (HEARTBEAT.equals(response)) {
+        else if (HEARTBEAT.getType() == type) {
             if (isMember(address)) {
-                connection.sendToHost(HEARTBEAT, address);
+                multicastConnection.send(HEARTBEAT, address);
             } else {
                 join(address);
-                connection.sendToHost(CONNECT, address);
+                multicastConnection.send(CONNECT, address);
             }
         }
     }

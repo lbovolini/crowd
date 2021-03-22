@@ -1,4 +1,4 @@
-package com.github.lbovolini.crowd.group;
+package com.github.lbovolini.crowd.group.worker;
 
 public interface MulticastService {
 

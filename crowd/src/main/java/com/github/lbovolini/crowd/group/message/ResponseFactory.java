@@ -1,35 +1,38 @@
-package com.github.lbovolini.crowd.group;
+package com.github.lbovolini.crowd.group.message;
 
 import com.github.lbovolini.crowd.utils.CodebaseUtils;
 
 import java.nio.charset.StandardCharsets;
 
 import static com.github.lbovolini.crowd.configuration.Config.*;
+import static com.github.lbovolini.crowd.group.message.MulticastMessageType.*;
+
 
 public class ResponseFactory {
 
-    public static byte[] get(String response) {
+    public static byte[] get(MulticastMessageType type) {
 
-        if (response.equals(HEARTBEAT)) {
-            return HEARTBEAT.getBytes(StandardCharsets.UTF_8);
+        if (type.equals(HEARTBEAT)) {
+            return new byte[] { HEARTBEAT.getType() };
         }
-        if (response.equals(DISCOVER)) {
-            return DISCOVER.getBytes(StandardCharsets.UTF_8);
+        if (type.equals(DISCOVER)) {
+            return new byte[] { DISCOVER.getType() };
         }
-        if (response.equals(UPDATE)) {
+        if (type.equals(UPDATE)) {
             return of(UPDATE);
         }
-        if (response.equals(CONNECT)) {
+        if (type.equals(CONNECT)) {
             return of(CONNECT);
         }
-        if (response.equals(RELOAD)) {
+        if (type.equals(RELOAD)) {
             return of(RELOAD);
         }
 
         return new byte[] {};
     }
 
-    private static byte[] of(String type) {
+    // !TODO pq type por ultimo?
+    private static byte[] of(MulticastMessageType type) {
 
         String codebase = CodebaseUtils.getCodebaseURLs();
         String libURL = CodebaseUtils.getLibURL();
@@ -38,7 +41,7 @@ public class ResponseFactory {
                 + HOST_NAME + SEPARATOR
                 + PORT + SEPARATOR
                 + libURL + SEPARATOR
-                + type).getBytes(StandardCharsets.UTF_8);
+                + type.getType()).getBytes(StandardCharsets.UTF_8);
 
     }
 }
