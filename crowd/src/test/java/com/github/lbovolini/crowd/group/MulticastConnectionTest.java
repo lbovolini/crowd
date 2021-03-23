@@ -1,5 +1,10 @@
 package com.github.lbovolini.crowd.group;
 
+import com.github.lbovolini.crowd.group.connection.MulticastConnection;
+import com.github.lbovolini.crowd.group.connection.MulticastReaderChannel;
+import com.github.lbovolini.crowd.group.connection.MulticastWriterChannel;
+import com.github.lbovolini.crowd.group.message.MulticastMessageType;
+import com.github.lbovolini.crowd.group.worker.MulticastWorker;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -8,52 +13,54 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.net.InetSocketAddress;
 
-import static com.github.lbovolini.crowd.configuration.Config.HEARTBEAT;
+import static com.github.lbovolini.crowd.group.message.MulticastMessageType.HEARTBEAT;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class ConnectionTest {
+class MulticastConnectionTest {
 
     @Mock
-    private MulticastWorker multicastWorker;
+    private MulticastReaderChannel readerChannel;
+    @Mock
+    private MulticastWriterChannel writerChannel;
 
     @InjectMocks
-    private Connection connection;
+    private MulticastConnection multicastConnection;
 
     @Test
     void shouldSendMessageToServer() {
         // Input
-        String messageType = HEARTBEAT;
+        MulticastMessageType messageType = HEARTBEAT;
 
         // Should test ONLY this method
-        connection.send(messageType);
+        multicastConnection.send(messageType);
 
         // Assertions
-        verify(multicastWorker, only()).send(messageType);
+        verify(writerChannel, only()).write(messageType.getType());
     }
 
     @Test
     void shouldSendMessageToAllHosts() {
         // Input
-        String messageType = HEARTBEAT;
+        MulticastMessageType messageType = HEARTBEAT;
 
         // Should test ONLY this method
-        connection.sendAll(messageType);
+        multicastConnection.multicastSend(messageType);
 
         // Assertions
-        verify(multicastWorker, only()).sendAll(messageType);
+        verify(writerChannel, only()).writeGroup(messageType.getType());
     }
 
     @Test
     void shouldSendMessageToSpecificHost() {
         // Input
-        String messageType = HEARTBEAT;
+        MulticastMessageType messageType = HEARTBEAT;
         InetSocketAddress address = InetSocketAddress.createUnresolved("localhost", 0);
 
         // Should test ONLY this method
-        connection.sendToHost(messageType, address);
+        multicastConnection.send(messageType, address);
 
         // Assertions
-        verify(multicastWorker, only()).sendToHost(messageType, address);
+        verify(writerChannel, only()).write(messageType.getType(), address);
     }
 }

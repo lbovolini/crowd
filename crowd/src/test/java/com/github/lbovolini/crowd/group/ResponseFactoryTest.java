@@ -1,11 +1,14 @@
 package com.github.lbovolini.crowd.group;
 
+import com.github.lbovolini.crowd.group.message.MulticastMessageType;
+import com.github.lbovolini.crowd.group.message.ResponseFactory;
 import com.github.lbovolini.crowd.utils.CodebaseUtils;
 import org.junit.jupiter.api.Test;
 
 import java.nio.charset.StandardCharsets;
 
 import static com.github.lbovolini.crowd.configuration.Config.*;
+import static com.github.lbovolini.crowd.group.message.MulticastMessageType.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 class ResponseFactoryTest {
@@ -13,10 +16,10 @@ class ResponseFactoryTest {
     @Test
     void shouldCreateHeartbeatMessage() {
         // Input
-        String messageType = HEARTBEAT;
+        MulticastMessageType messageType = HEARTBEAT;
 
         // Expected output
-        byte[] expectedOutput = messageType.getBytes(StandardCharsets.UTF_8);
+        byte[] expectedOutput = new byte[] { messageType.getType() };
 
         // Should test ONLY this method
         byte[] data = ResponseFactory.get(messageType);
@@ -28,10 +31,10 @@ class ResponseFactoryTest {
     @Test
     void shouldCreateDiscoverMessage() {
         // Input
-        String messageType = DISCOVER;
+        MulticastMessageType messageType = DISCOVER;
 
         // Expected output
-        byte[] expectedOutput = messageType.getBytes(StandardCharsets.UTF_8);
+        byte[] expectedOutput = new byte[] { messageType.getType() };
 
         // Should test ONLY this method
         byte[] data = ResponseFactory.get(messageType);
@@ -43,7 +46,7 @@ class ResponseFactoryTest {
     @Test
     void shouldCreateUpdateMessage() {
         // Input
-        String messageType = UPDATE;
+        MulticastMessageType messageType = UPDATE;
 
         // Expected output
         String codebase = CodebaseUtils.getCodebaseURLs();
@@ -53,7 +56,7 @@ class ResponseFactoryTest {
                 + HOST_NAME + SEPARATOR
                 + PORT + SEPARATOR
                 + libURL + SEPARATOR
-                + messageType).getBytes(StandardCharsets.UTF_8);
+                + messageType.getType()).getBytes(StandardCharsets.UTF_8);
 
         // Should test ONLY this method
         byte[] data = ResponseFactory.get(messageType);
@@ -65,7 +68,7 @@ class ResponseFactoryTest {
     @Test
     void shouldCreateConnectMessage() {
         // Input
-        String messageType = CONNECT;
+        MulticastMessageType messageType = CONNECT;
 
         // Expected output
         String codebase = CodebaseUtils.getCodebaseURLs();
@@ -75,7 +78,7 @@ class ResponseFactoryTest {
                 + HOST_NAME + SEPARATOR
                 + PORT + SEPARATOR
                 + libURL + SEPARATOR
-                + messageType).getBytes(StandardCharsets.UTF_8);
+                + messageType.getType()).getBytes(StandardCharsets.UTF_8);
 
         // Should test ONLY this method
         byte[] data = ResponseFactory.get(messageType);
@@ -87,7 +90,7 @@ class ResponseFactoryTest {
     @Test
     void shouldCreateReloadMessage() {
         // Input
-        String messageType = RELOAD;
+        MulticastMessageType messageType = RELOAD;
 
         // Expected output
         String codebase = CodebaseUtils.getCodebaseURLs();
@@ -97,7 +100,7 @@ class ResponseFactoryTest {
                 + HOST_NAME + SEPARATOR
                 + PORT + SEPARATOR
                 + libURL + SEPARATOR
-                + messageType).getBytes(StandardCharsets.UTF_8);
+                + messageType.getType()).getBytes(StandardCharsets.UTF_8);
 
         // Should test ONLY this method
         byte[] data = ResponseFactory.get(messageType);
@@ -106,18 +109,4 @@ class ResponseFactoryTest {
         assertArrayEquals(expectedOutput, data);
     }
 
-    @Test
-    void shouldCreateEmptyMessageWhenUnknownMessageType() {
-        // Input
-        String messageType = "SOMETHING THAT IS NOT A MESSAGE TYPE";
-
-        // Expected output
-        byte[] expectedOutput = new byte[] {};
-
-        // Should test ONLY this method
-        byte[] data = ResponseFactory.get(messageType);
-
-        // Assertions
-        assertArrayEquals(expectedOutput, data);
-    }
 }
