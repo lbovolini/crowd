@@ -30,15 +30,6 @@ public class Config {
     public static final String MULTICAST_INTERFACE_NAME = System.getProperty("multicast.interface", HostUtils.getNetworkInterfaceName());
     public static final int MULTICAST_CLIENT_PORT = Integer.parseInt(System.getProperty("multicast.client.port", String.valueOf(8011)));
 
-    /**
-     * MULTICAST messages
-     */
-    public static final String HEARTBEAT = "0";
-    public static final String DISCOVER = "1";
-    public static final String CONNECT = "2";
-    public static final String UPDATE = "3";
-    public static final String RELOAD = "4";
-
     //
     public static final String SEPARATOR = ";";
 

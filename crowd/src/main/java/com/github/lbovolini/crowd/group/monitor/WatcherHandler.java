@@ -1,4 +1,4 @@
-package com.github.lbovolini.crowd.monitor;
+package com.github.lbovolini.crowd.group.monitor;
 
 public interface WatcherHandler {
 

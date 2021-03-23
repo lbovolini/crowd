@@ -1,4 +1,4 @@
-package com.github.lbovolini.crowd.monitor;
+package com.github.lbovolini.crowd.group.monitor;
 
 import com.github.lbovolini.crowd.configuration.Config;
 

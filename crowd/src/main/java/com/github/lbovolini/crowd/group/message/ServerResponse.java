@@ -1,4 +1,4 @@
-package com.github.lbovolini.crowd.group;
+package com.github.lbovolini.crowd.group.message;
 
 import com.github.lbovolini.crowd.utils.URLUtils;
 

@@ -1,4 +1,6 @@
-package com.github.lbovolini.crowd.group;
+package com.github.lbovolini.crowd.group.worker;
+
+import com.github.lbovolini.crowd.group.connection.MulticastConnection;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -6,25 +8,27 @@ import java.util.concurrent.TimeUnit;
 
 import static com.github.lbovolini.crowd.configuration.Config.*;
 import static com.github.lbovolini.crowd.configuration.Config.HEARTBEAT_INTERVAL;
+import static com.github.lbovolini.crowd.group.message.MulticastMessageType.DISCOVER;
+import static com.github.lbovolini.crowd.group.message.MulticastMessageType.HEARTBEAT;
 
 public class TimeScheduler {
 
     private long lastResponseTime = 0;
     private final Object lock = new Object();
 
-    private final Multicast multicast;
+    private final MulticastConnection connection;
     private final ScheduledExecutorService pool = Executors.newSingleThreadScheduledExecutor();
 
-    public TimeScheduler(Multicast multicast) {
-        this.multicast = multicast;
+    public TimeScheduler(MulticastConnection connection) {
+        this.connection = connection;
     }
 
     protected void start() {
         pool.scheduleWithFixedDelay(() -> {
             if (isDownTimeExceeded()) {
-                multicast.sendAll(DISCOVER);
+                connection.multicastSend(DISCOVER);
             } else {
-                multicast.send(HEARTBEAT);
+                connection.send(HEARTBEAT);
             }
         }, 0, HEARTBEAT_INTERVAL, TimeUnit.SECONDS);
     }
