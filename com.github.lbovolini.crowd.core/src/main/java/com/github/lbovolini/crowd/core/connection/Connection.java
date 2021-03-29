@@ -65,6 +65,7 @@ public class Connection {
     }
 
     public void receive(WorkerContext workerContext) {
+        receive();
         ReaderChannelHandler.handle(workerContext);
     }
 
