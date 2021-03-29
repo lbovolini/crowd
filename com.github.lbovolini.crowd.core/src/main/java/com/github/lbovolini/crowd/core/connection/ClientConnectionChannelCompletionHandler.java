@@ -37,7 +37,7 @@ public class ClientConnectionChannelCompletionHandler implements CompletionHandl
         WriterChannel writerChannel = new WriterChannel(writerChannelContext);
 
         RequestQueue requestQueue = context.getScheduler();
-        Connection connection = new Connection(readerChannel, writerChannel, requestQueue);
+        Connection connection = new Connection(channel, readerChannel, writerChannel, requestQueue);
 
         connection.send(message);
         connection.receive();

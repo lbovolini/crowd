@@ -17,8 +17,8 @@ public class Connection {
 
     private final WorkerContext workerContext;
 
-    public Connection(ReaderChannel readerChannel, WriterChannel writerChannel, RequestQueue requestQueue) {
-        this.channel = readerChannel.getContext().getChannel();
+    public Connection(AsynchronousSocketChannel channel, ReaderChannel readerChannel, WriterChannel writerChannel, RequestQueue requestQueue) {
+        this.channel = channel;
         this.readerChannel = readerChannel;
         this.writerChannel = writerChannel;
         this.workerContext = new WorkerContext(readerChannel.getContext(), writerChannel.getContext(), new MessageHandler(this, requestQueue));

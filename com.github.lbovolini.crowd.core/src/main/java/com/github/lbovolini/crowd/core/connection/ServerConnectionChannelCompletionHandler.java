@@ -33,7 +33,7 @@ public class ServerConnectionChannelCompletionHandler implements CompletionHandl
         ReaderChannel readerChannel = new ReaderChannel(readerChannelContext);
         WriterChannel writerChannel = new WriterChannel(writerChannelContext);
 
-        Connection connection = new Connection(readerChannel, writerChannel, context.getScheduler());
+        Connection connection = new Connection(channel, readerChannel, writerChannel, context.getScheduler());
         connection.receive();
     }
 
