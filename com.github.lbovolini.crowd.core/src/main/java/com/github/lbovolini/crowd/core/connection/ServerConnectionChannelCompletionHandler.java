@@ -1,34 +1,31 @@
 package com.github.lbovolini.crowd.core.connection;
 
-import com.github.lbovolini.crowd.core.message.Message;
-import com.github.lbovolini.crowd.core.message.MessageFactory;
-import com.github.lbovolini.crowd.core.worker.WorkerContext;
-
 import java.nio.channels.AsynchronousSocketChannel;
 import java.nio.channels.CompletionHandler;
 
 /**
- * Está classe é utilizada para lidar com o resultado da operação assíncrona de tentativa de conexão do socket local com o host remoto.
- * O resultado da tentativa será ou uma conexão realizada com sucesso, ou uma falha na conexão caso esta não possa ser estabelecida.
+ * Está classe é utilizada para lidar com o resultado da operação assíncrona de requisição de conexão feita por um
+ * socket de um cliente remoto para este socket servidor.
+ * O resultado da operação, se a conexão for aceita, será a criação de um novo canal de socket assíncrono para a nova conexão,
+ * ou uma falha na operação, caso a conexão não seja aceita.
  * Assim, o método correto será invocado de acordo com este resultado.
  * Quando uma operação assíncrona de I/O completar ou falhar este handler será invocado para consumir o seu resultado.
  * Os métodos desta classe não devem, nunca, bloquear ou executar por um período de tempo que não seja mínimo.
  */
-public class ClientConnectionChannelHandler implements CompletionHandler<Void, ClientConnectionChannelContext> {
+public class ServerConnectionChannelCompletionHandler implements CompletionHandler<AsynchronousSocketChannel, ServerConnectionChannelContext> {
+
 
     /**
      * Este método é invocado quando a operação assíncrona de I/O completar com sucesso.
      * Para permitir ao thread que invocou este handler possa atender a outros handlers, este método não deve, nunca,
      * bloquear ou executar por um período de tempo que não seja mínimo.
-     * @param aVoid Resultado da operação assíncrona de I/O.
+     * @param channel Um socket assíncrono conectado ao cliente remoto.
      * @param context Representa o contexto da atual operação assíncrona de I/O.
      * É o objeto associado à operação assíncrona de I/O quando esta foi iniciada.
      */
-    public void completed(Void aVoid, ClientConnectionChannelContext context) {
+    public void completed(AsynchronousSocketChannel channel, ServerConnectionChannelContext context) {
 
-        Message message = MessageFactory.join(context.getCores());
-
-        AsynchronousSocketChannel channel = context.getChannel();
+        context.getServerChannel().accept(context, this);
 
         ReaderChannelContext readerChannelContext = new ReaderChannelContext(channel);
         WriterChannelContext writerChannelContext = new WriterChannelContext(channel);
@@ -36,17 +33,8 @@ public class ClientConnectionChannelHandler implements CompletionHandler<Void, C
         ReaderChannel readerChannel = new ReaderChannel(readerChannelContext);
         WriterChannel writerChannel = new WriterChannel(writerChannelContext);
 
-        Connection connection = new Connection(readerChannel, writerChannel);
-
-        MessageHandler messageHandler = new MessageHandler(connection, context.getScheduler());
-
-        WorkerContext workerContext = new WorkerContext(readerChannelContext, writerChannelContext, connection, messageHandler);
-
-        connection.send(message, workerContext);
-        //WriterChannelHandler.handle(workerContext);
-
-        connection.receive(workerContext);
-        //ReaderChannelHandler.handle(workerContext);
+        Connection connection = new Connection(readerChannel, writerChannel, context.getScheduler());
+        connection.receive();
     }
 
     /**
@@ -57,7 +45,7 @@ public class ClientConnectionChannelHandler implements CompletionHandler<Void, C
      * @param context Representa o contexto da atual operação assíncrona de I/O.
      * É o objeto associado à operação assíncrona de I/O quando esta foi iniciada.
      */
-    public void failed(Throwable throwable, ClientConnectionChannelContext context) {
+    public void failed(Throwable throwable, ServerConnectionChannelContext context) {
         throwable.printStackTrace();
     }
 }

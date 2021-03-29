@@ -2,17 +2,14 @@ package com.github.lbovolini.crowd.core.connection;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.nio.channels.AsynchronousSocketChannel;
 import java.util.Arrays;
 import java.util.concurrent.locks.Lock;
 
 public class ReaderChannel {
 
-    private final AsynchronousSocketChannel channel;
     private final ReaderChannelContext context;
 
     public ReaderChannel(ReaderChannelContext context) {
-        this.channel = context.getChannel();
         this.context = context;
     }
 
@@ -20,7 +17,7 @@ public class ReaderChannel {
         return context;
     }
 
-    public void read() {
+    public boolean read() {
 
         ByteBuffer[] byteBufferArray = new ByteBuffer[1];
         byteBufferArray[0] = ReaderChannelContext.getReaderBufferPool().poll();
@@ -29,18 +26,19 @@ public class ReaderChannel {
         readLock.lock();
 
         try {
-            if (isClosed()) { return; }
+            if (isClosed()) { return false; }
 
             final boolean wasEmpty = context.getReaderBufferQueue().isEmpty();
             context.getReaderBufferQueue().addAll(Arrays.asList(byteBufferArray));
 
-            if (!wasEmpty) { return; }
+            if (!wasEmpty) { return false; }
         }
         finally {
             readLock.unlock();
         }
 
         context.setReaderBufferArray(byteBufferArray);
+        return true;
     }
 
     public boolean isClosed() {

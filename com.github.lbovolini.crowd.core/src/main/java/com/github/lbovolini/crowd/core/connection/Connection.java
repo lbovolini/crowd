@@ -1,6 +1,7 @@
 package com.github.lbovolini.crowd.core.connection;
 
 import com.github.lbovolini.crowd.core.message.Message;
+import com.github.lbovolini.crowd.core.request.RequestQueue;
 import com.github.lbovolini.crowd.core.worker.WorkerContext;
 
 import java.io.IOException;
@@ -14,10 +15,13 @@ public class Connection {
     private final ReaderChannel readerChannel;
     private final WriterChannel writerChannel;
 
-    public Connection(ReaderChannel readerChannel, WriterChannel writerChannel) {
+    private final WorkerContext workerContext;
+
+    public Connection(ReaderChannel readerChannel, WriterChannel writerChannel, RequestQueue requestQueue) {
         this.channel = readerChannel.getContext().getChannel();
         this.readerChannel = readerChannel;
         this.writerChannel = writerChannel;
+        this.workerContext = new WorkerContext(readerChannel.getContext(), writerChannel.getContext(), new MessageHandler(this, requestQueue));
     }
 
     public long getHostId() {
@@ -52,27 +56,21 @@ public class Connection {
         return channel;
     }
 
+    // !TODO remove
     public void send(Message message) {
-        writerChannel.write(message.getType(), message.getData());
+        if (writerChannel.write(message.getType(), message.getData())) {
+            WriterChannelHandler.handle(workerContext);
+        }
     }
 
-
     public void receive() {
-        readerChannel.read();
+        if (readerChannel.read()) {
+            ReaderChannelHandler.handle(workerContext);
+        }
     }
 
     public void close() throws IOException {
         readerChannel.close();
         writerChannel.close();
-    }
-
-    public void receive(WorkerContext workerContext) {
-        receive();
-        ReaderChannelHandler.handle(workerContext);
-    }
-
-    public void send(Message message, WorkerContext workerContext) {
-        send(message);
-        WriterChannelHandler.handle(workerContext);
     }
 }

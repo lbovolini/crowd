@@ -5,7 +5,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingDeque;
 
-public class Scheduler implements Runnable {
+public class Scheduler implements Runnable, RequestQueue {
 
     private final ExecutorService pool = Executors.newSingleThreadExecutor();
 

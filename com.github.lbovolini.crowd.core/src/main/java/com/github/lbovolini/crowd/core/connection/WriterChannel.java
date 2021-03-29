@@ -4,21 +4,22 @@ import com.github.lbovolini.crowd.core.buffer.BufferUtils;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.nio.channels.AsynchronousSocketChannel;
 import java.util.Arrays;
 import java.util.concurrent.locks.Lock;
 
 public class WriterChannel {
 
-    private final AsynchronousSocketChannel channel;
     private final WriterChannelContext context;
 
     public WriterChannel(WriterChannelContext context) {
-        this.channel = context.getChannel();
         this.context = context;
     }
 
-    public void write(byte type, byte[] data) {
+    public WriterChannelContext getContext() {
+        return context;
+    }
+
+    public boolean write(byte type, byte[] data) {
 
         ByteBuffer[] byteBufferArray = BufferUtils.putRawMessage(type, data, WriterChannelContext.getWriterBufferPool());
 
@@ -26,18 +27,19 @@ public class WriterChannel {
         writeLock.lock();
 
         try {
-            if (isClosed()) { return; }
+            if (isClosed()) { return false; }
 
             boolean wasEmpty = context.getWriterBufferQueue().isEmpty();
             context.getWriterBufferQueue().addAll(Arrays.asList(byteBufferArray));
 
-            if (!wasEmpty) { return; }
+            if (!wasEmpty) { return false; }
         }
         finally {
             writeLock.unlock();
         }
 
         context.setWriterBufferArray(byteBufferArray);
+        return true;
     }
 
 

@@ -2,19 +2,19 @@ package com.github.lbovolini.crowd.core.connection;
 
 import com.github.lbovolini.crowd.core.message.Message;
 import com.github.lbovolini.crowd.core.request.Request;
-import com.github.lbovolini.crowd.core.request.Scheduler;
+import com.github.lbovolini.crowd.core.request.RequestQueue;
 
 public class MessageHandler {
 
     private final Connection connection;
-    private final Scheduler scheduler;
+    private final RequestQueue requestQueue;
 
-    public MessageHandler(Connection connection, Scheduler scheduler) {
+    public MessageHandler(Connection connection, RequestQueue requestQueue) {
         this.connection = connection;
-        this.scheduler = scheduler;
+        this.requestQueue = requestQueue;
     }
 
     void handle(Message message) {
-        scheduler.enqueue(new Request(connection, message));
+        requestQueue.enqueue(new Request(connection, message));
     }
 }

@@ -123,9 +123,8 @@ public class ReaderChannelCompletionHandler implements CompletionHandler<Long, W
                     if (readDataFromBuffer(buffer, partialMessage)) {
                         Message message = Message.create(partialMessage.getType(), partialMessage.getData());
 
-                        // !todo
+                        // !TODO
                         context.getMessageHandler().handle(message);
-
 
                         partialMessage.setPosition(TYPE);
                         position = TYPE;
