@@ -60,7 +60,6 @@ public class Connection {
         return channel;
     }
 
-    // !TODO remove
     public void send(Message message) {
         if (writerChannel.write(message.getType(), message.getData())) {
             WriterChannelHandler.handle(workerContext);
