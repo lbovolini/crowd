@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.net.InetSocketAddress;
 import java.nio.channels.AsynchronousSocketChannel;
+import java.util.Objects;
 
 public class Connection {
 
@@ -27,9 +28,12 @@ public class Connection {
     public long getHostId() {
         try {
             InetSocketAddress address = (InetSocketAddress) channel.getRemoteAddress();
-            String host = address.getAddress().getHostAddress().replace(".", "");
-            String port = Integer.toString(address.getPort());
+            String host = Objects.requireNonNull(address.getAddress().getHostAddress().replace(".", ""));
+            String port = Objects.requireNonNull(Integer.toString(address.getPort()));
 
+            if (host.isBlank() || port.isBlank() || port.trim().equals("0")) {
+                throw new RuntimeException("Invalid remote address");
+            }
             return Long.parseLong(host + port);
         } catch (IOException e) {
             throw new UncheckedIOException(e);
