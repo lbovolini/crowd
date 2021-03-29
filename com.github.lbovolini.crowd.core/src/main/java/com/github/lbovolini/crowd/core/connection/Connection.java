@@ -4,12 +4,11 @@ import com.github.lbovolini.crowd.core.message.Message;
 import com.github.lbovolini.crowd.core.worker.WorkerContext;
 
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.net.InetSocketAddress;
 import java.nio.channels.AsynchronousSocketChannel;
 
 public class Connection {
-
-    private long hostId;
 
     private final AsynchronousSocketChannel channel;
     private final ReaderChannel readerChannel;
@@ -21,29 +20,32 @@ public class Connection {
         this.writerChannel = writerChannel;
     }
 
-
     public long getHostId() {
         try {
             InetSocketAddress address = (InetSocketAddress) channel.getRemoteAddress();
             String host = address.getAddress().getHostAddress().replace(".", "");
             String port = Integer.toString(address.getPort());
-            hostId = Long.parseLong(host + port);
-        } catch (IOException e) { e.printStackTrace(); }
-        return hostId;
+
+            return Long.parseLong(host + port);
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
     }
 
     public String getRemoteAddress() {
         try {
             return ((InetSocketAddress) channel.getRemoteAddress()).getAddress().getHostAddress();
-        } catch (IOException e) { e.printStackTrace(); }
-        return "";
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
     }
 
     public int getRemotePort() {
         try {
             return ((InetSocketAddress) channel.getRemoteAddress()).getPort();
-        } catch (IOException e) { e.printStackTrace(); }
-        return 0;
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
     }
 
     public AsynchronousSocketChannel getChannel() {
