@@ -1,7 +1,7 @@
 package com.github.lbovolini.crowd.server.worker;
 
 import com.github.lbovolini.crowd.core.connection.ServerConnectionChannelContext;
-import com.github.lbovolini.crowd.core.connection.ServerConnectionChannelHandler;
+import com.github.lbovolini.crowd.core.connection.ServerConnectionChannelCompletionHandler;
 
 import java.nio.channels.AsynchronousServerSocketChannel;
 
@@ -16,6 +16,6 @@ public class ServerWorker {
     }
 
     public void start() {
-        serverChannel.accept(connectionChannelContext, new ServerConnectionChannelHandler());
+        serverChannel.accept(connectionChannelContext, new ServerConnectionChannelCompletionHandler());
     }
 }

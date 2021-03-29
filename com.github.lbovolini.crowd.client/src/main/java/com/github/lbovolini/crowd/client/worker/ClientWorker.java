@@ -1,7 +1,7 @@
 package com.github.lbovolini.crowd.client.worker;
 
 import com.github.lbovolini.crowd.core.connection.ClientConnectionChannelContext;
-import com.github.lbovolini.crowd.core.connection.ClientConnectionChannelHandler;
+import com.github.lbovolini.crowd.core.connection.ClientConnectionChannelCompletionHandler;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -18,7 +18,7 @@ public class ClientWorker {
     }
 
     public void connect(InetSocketAddress serverAddress) {
-        ClientConnectionChannelHandler connectionChannelHandler = new ClientConnectionChannelHandler();
+        ClientConnectionChannelCompletionHandler connectionChannelHandler = new ClientConnectionChannelCompletionHandler();
         channel.connect(serverAddress, clientInfo, connectionChannelHandler);
     }
 
