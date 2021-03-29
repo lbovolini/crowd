@@ -1,11 +1,10 @@
-package com.github.lbovolini.crowd.core.connection;
+package com.github.lbovolini.crowd.core.buffer;
 
-import com.github.lbovolini.crowd.core.buffer.ByteBufferPool;
 import org.junit.jupiter.api.Test;
 
 import java.nio.ByteBuffer;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class ByteBufferPoolTest {
 
