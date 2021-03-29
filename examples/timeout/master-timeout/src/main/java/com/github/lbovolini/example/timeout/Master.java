@@ -1,7 +1,6 @@
 package com.github.lbovolini.example.timeout;
 
 import com.github.lbovolini.crowd.node.Crowd;
-import com.github.lbovolini.crowd.node.NodeGroup;
 
 import java.io.IOException;
 import java.util.concurrent.CompletableFuture;
