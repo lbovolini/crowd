@@ -1,5 +1,7 @@
 package com.github.lbovolini.crowd.discovery.message;
 
+import com.github.lbovolini.crowd.discovery.util.CodebaseUtils;
+
 import java.nio.charset.StandardCharsets;
 
 public class ResponseFactory {

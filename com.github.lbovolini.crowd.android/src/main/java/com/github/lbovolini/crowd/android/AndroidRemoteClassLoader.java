@@ -37,8 +37,8 @@ public class AndroidRemoteClassLoader extends DexClassLoader {
     private ClassLoader parent;
 
     private static Field pathListField;
-    private static Class dexPathListClass;
-    private static Constructor dexPathListConstructor;
+    private static Class<?> dexPathListClass;
+    private static Constructor<?> dexPathListConstructor;
 
     private static final DexOptions dexOptions = new DexOptions();
     private static final CfOptions cfOptions = new CfOptions();
@@ -69,7 +69,7 @@ public class AndroidRemoteClassLoader extends DexClassLoader {
     @Override
     protected Class<?> loadClass(String name, boolean resolve) throws ClassNotFoundException {
 
-        Class loadedClass = findLoadedClass(name);
+        Class<?> loadedClass = findLoadedClass(name);
 
         if (loadedClass == null) {
             try {
@@ -97,13 +97,13 @@ public class AndroidRemoteClassLoader extends DexClassLoader {
 
     public void addURLs(URL[] urls) {
 
-        Set<URL> urlsSet = new HashSet(Arrays.asList(this.classURLs));
+        Set<URL> urlsSet = new HashSet<>(Arrays.asList(this.classURLs));
 
         urlsSet.addAll(Arrays.asList(urls));
         this.classURLs = (URL[]) urlsSet.toArray();
     }
 
-    public Class downloadClass(String name) throws ClassNotFoundException {
+    public Class<?> downloadClass(String name) throws ClassNotFoundException {
 
         String urlName = name.replace('.', '/');
         File classFile = new File(String.format("%s/%s.class", classPathRoot, urlName));
@@ -139,7 +139,7 @@ public class AndroidRemoteClassLoader extends DexClassLoader {
         }
     }
 
-    public Class defineClass(String name, byte[] bytes) {
+    public Class<?> defineClass(String name, byte[] bytes) {
         try {
             String path = convert(name, bytes);
             classPath = classPath + ":" + path;

@@ -1,5 +1,7 @@
 package com.github.lbovolini.crowd.discovery.message;
 
+import com.github.lbovolini.crowd.discovery.util.URLUtils;
+
 import java.net.InetSocketAddress;
 import java.net.MalformedURLException;
 import java.net.URL;

@@ -1,4 +1,4 @@
-package com.github.lbovolini.crowd.discovery.message;
+package com.github.lbovolini.crowd.discovery.util;
 
 import java.net.MalformedURLException;
 import java.net.URL;
