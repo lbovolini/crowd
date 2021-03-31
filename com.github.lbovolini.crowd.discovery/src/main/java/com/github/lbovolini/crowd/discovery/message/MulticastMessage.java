@@ -1,7 +1,6 @@
 package com.github.lbovolini.crowd.discovery.message;
 
 import java.net.InetSocketAddress;
-import java.net.SocketAddress;
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 
@@ -15,10 +14,6 @@ public class MulticastMessage {
         this.data = data;
         this.dataLength = dataLength;
         this.address = address;
-    }
-
-    public MulticastMessage(byte[] data, int dataLength, SocketAddress address) {
-        this(data, dataLength, (InetSocketAddress) address);
     }
 
     public byte getType() {
