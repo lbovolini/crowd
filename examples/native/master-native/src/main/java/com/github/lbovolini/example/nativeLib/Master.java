@@ -1,7 +1,6 @@
 package com.github.lbovolini.example.nativeLib;
 
-import com.github.lbovolini.crowd.node.Crowd;
-import com.github.lbovolini.crowd.node.NodeGroup;
+import com.github.lbovolini.crowd.core.node.Crowd;
 
 import java.io.IOException;
 

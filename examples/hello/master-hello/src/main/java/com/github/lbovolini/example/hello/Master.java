@@ -1,6 +1,6 @@
 package com.github.lbovolini.example.hello;
 
-import com.github.lbovolini.crowd.node.Crowd;
+import com.github.lbovolini.crowd.server.Crowd;
 
 import java.util.concurrent.CompletableFuture;
 

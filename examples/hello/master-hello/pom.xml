@@ -6,77 +6,46 @@
 
     <groupId>com.github.lbovolini.crowd</groupId>
     <artifactId>master-hello</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>0.0.1-SNAPSHOT</version>
+
+    <properties>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
+    </properties>
 
     <build>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.7.0</version>
-                <configuration>
-                    <source>9</source>
-                    <target>9</target>
-                </configuration>
+                <version>3.8.1</version>
             </plugin>
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <version>3.1.0</version>
-                <configuration>
-                    <archive>
-                        <manifest>
-                            <mainClass>com.github.lbovolini.example.hello.Master</mainClass>
-                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-                            <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
-                            <addClasspath>true</addClasspath>
-                        </manifest>
-                        <manifestEntries>
-                            <Class-Path>crowd-1.0-SNAPSHOT.jar</Class-Path>
-                        </manifestEntries>
-                    </archive>
-                </configuration>
-            </plugin>
-
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>exec-maven-plugin</artifactId>
-                <version>1.6.0</version>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>3.3.0</version>
                 <executions>
                     <execution>
+                        <phase>package</phase>
                         <goals>
-                            <goal>java</goal>
+                            <goal>single</goal>
                         </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <executable>java</executable>
-                    <mainClass>com.github.lbovolini.example.hello.Master</mainClass>
-                </configuration>
-            </plugin>
-
-            <!-- https://stackoverflow.com/questions/10935135/maven-and-adding-jars-to-system-scope -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-install-plugin</artifactId>
-                <version>2.5.2</version>
-                <executions>
-                    <execution>
-                        <id>crowd</id>
-                        <phase>clean</phase>
                         <configuration>
-                            <file>${user.home}/app/crowd-1.0-SNAPSHOT.jar</file>
-                            <repositoryLayout>default</repositoryLayout>
-                            <groupId>com.github.lbovolini.crowd</groupId>
-                            <artifactId>crowd</artifactId>
-                            <version>1.0-SNAPSHOT</version>
-                            <packaging>jar</packaging>
-                            <generatePom>true</generatePom>
+                            <archive>
+                                <manifest>
+                                    <mainClass>com.github.lbovolini.example.hello.Master</mainClass>
+                                    <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                                    <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+                                    <addClasspath>true</addClasspath>
+                                </manifest>
+                            </archive>
+                            <descriptorRefs>
+                                <descriptorRef>jar-with-dependencies</descriptorRef>
+                            </descriptorRefs>
+                            <finalName>${project.artifactId}-${project.version}</finalName>
+                            <appendAssemblyId>false</appendAssemblyId>
                         </configuration>
-                        <goals>
-                            <goal>install-file</goal>
-                        </goals>
                     </execution>
                 </executions>
             </plugin>
@@ -97,7 +66,7 @@
                                 <artifactItem>
                                     <groupId>com.github.lbovolini.crowd</groupId>
                                     <artifactId>master-hello</artifactId>
-                                    <version>1.0-SNAPSHOT</version>
+                                    <version>0.0.1-SNAPSHOT</version>
                                 </artifactItem>
                             </artifactItems>
                             <outputDirectory>${user.home}/app</outputDirectory>
@@ -114,13 +83,13 @@
     <dependencies>
         <dependency>
             <groupId>com.github.lbovolini.crowd</groupId>
-            <artifactId>crowd</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <artifactId>crowd-server</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>com.github.lbovolini.crowd</groupId>
             <artifactId>hello</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>0.0.1-SNAPSHOT</version>
         </dependency>
     </dependencies>
 
