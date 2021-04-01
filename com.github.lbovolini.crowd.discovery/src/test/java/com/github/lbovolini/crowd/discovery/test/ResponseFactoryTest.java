@@ -1,4 +1,4 @@
-package com.github.lbovolini.crowd.discovery;
+package com.github.lbovolini.crowd.discovery.test;
 
 import com.github.lbovolini.crowd.discovery.message.MulticastMessageType;
 import com.github.lbovolini.crowd.discovery.message.ResponseFactory;

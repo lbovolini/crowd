@@ -1,5 +1,6 @@
-package com.github.lbovolini.crowd.discovery.connection;
+package com.github.lbovolini.crowd.discovery.test.connection;
 
+import com.github.lbovolini.crowd.discovery.connection.MulticastChannelFactory;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;

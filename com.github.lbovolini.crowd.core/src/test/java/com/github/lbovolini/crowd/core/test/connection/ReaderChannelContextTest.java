@@ -1,6 +1,8 @@
-package com.github.lbovolini.crowd.core.connection;
+package com.github.lbovolini.crowd.core.test.connection;
 
 import com.github.lbovolini.crowd.core.buffer.ByteBufferPool;
+import com.github.lbovolini.crowd.core.connection.ReaderChannelCompletionHandler;
+import com.github.lbovolini.crowd.core.connection.ReaderChannelContext;
 import com.github.lbovolini.crowd.core.message.PartialMessage;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
