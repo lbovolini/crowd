@@ -1,5 +1,8 @@
-package com.github.lbovolini.crowd.core.connection;
+package com.github.lbovolini.crowd.core.test.connection;
 
+import com.github.lbovolini.crowd.core.connection.Connection;
+import com.github.lbovolini.crowd.core.connection.ReaderChannel;
+import com.github.lbovolini.crowd.core.connection.WriterChannel;
 import com.github.lbovolini.crowd.core.message.Message;
 import com.github.lbovolini.crowd.core.request.RequestQueue;
 import org.junit.jupiter.api.Test;

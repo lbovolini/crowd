@@ -1,5 +1,6 @@
-package com.github.lbovolini.crowd.core.buffer;
+package com.github.lbovolini.crowd.core.test.buffer;
 
+import com.github.lbovolini.crowd.core.buffer.ByteBufferPool;
 import org.junit.jupiter.api.Test;
 
 import java.nio.ByteBuffer;

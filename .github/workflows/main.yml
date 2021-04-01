@@ -25,4 +25,4 @@ jobs:
       - name: Build with Maven
         env:
           COVERALLS_TOKEN: ${{ secrets.COVERALLS_TOKEN }}
-        run: mvn -B package jacoco:report coveralls:report
+        run: mvn -B verify jacoco:report-aggregate coveralls:report

@@ -1,5 +1,6 @@
-package com.github.lbovolini.crowd.core.util;
+package com.github.lbovolini.crowd.core.test.util;
 
+import com.github.lbovolini.crowd.core.util.HostUtils;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;

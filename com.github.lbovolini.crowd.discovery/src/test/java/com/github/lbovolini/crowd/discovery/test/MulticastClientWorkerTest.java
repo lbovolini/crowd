@@ -1,4 +1,4 @@
-package com.github.lbovolini.crowd.discovery;
+package com.github.lbovolini.crowd.discovery.test;
 
 
 import org.junit.jupiter.api.Test;

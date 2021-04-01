@@ -1,4 +1,4 @@
-package com.github.lbovolini.crowd.discovery.worker;
+package com.github.lbovolini.crowd.discovery.test.worker;
 
 import com.github.lbovolini.crowd.discovery.service.CodebaseService;
 import org.junit.jupiter.api.Test;

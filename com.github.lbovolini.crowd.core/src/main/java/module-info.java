@@ -6,4 +6,5 @@ module com.github.lbovolini.crowd.core {
     exports com.github.lbovolini.crowd.core.node;
     exports com.github.lbovolini.crowd.core.util;
     exports com.github.lbovolini.crowd.core.worker;
+    exports com.github.lbovolini.crowd.core.buffer;
 }

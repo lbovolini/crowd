@@ -1,4 +1,4 @@
-package com.github.lbovolini.crowd.discovery;
+package com.github.lbovolini.crowd.discovery.test.connection;
 
 import com.github.lbovolini.crowd.discovery.connection.MulticastConnection;
 import com.github.lbovolini.crowd.discovery.connection.MulticastReaderChannel;

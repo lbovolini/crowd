@@ -1,6 +1,8 @@
-package com.github.lbovolini.crowd.discovery.message;
+package com.github.lbovolini.crowd.discovery.test.message;
 
 import com.github.lbovolini.crowd.discovery.connection.MulticastConnection;
+import com.github.lbovolini.crowd.discovery.message.MulticastMessage;
+import com.github.lbovolini.crowd.discovery.message.MulticastMessageHandler;
 import com.github.lbovolini.crowd.discovery.request.MulticastRequest;
 import com.github.lbovolini.crowd.discovery.request.MulticastScheduler;
 import org.junit.jupiter.api.Test;
