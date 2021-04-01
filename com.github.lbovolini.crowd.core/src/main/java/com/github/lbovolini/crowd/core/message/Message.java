@@ -7,9 +7,6 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.util.Collections;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class Message {
 
@@ -19,47 +16,6 @@ public class Message {
     private final int size;
     private final byte[] data;
     private final short dataLength;
-
-    public enum Type {
-        JOIN((byte)1),
-        LEAVE((byte)2),
-        REPLY((byte)3),
-        INVOKE((byte)4),
-        CREATE((byte)5),
-        SERVICE((byte)6),
-        SERVER((byte)7),
-        INFO((byte)8),
-        UPDATE((byte)9),
-        RELOAD((byte)10),
-        DISCOVER((byte)11),
-        BEAT((byte)127);
-
-        byte type;
-
-        private static final Map<Byte,Type> ENUM_MAP;
-
-        Type(byte type) {
-            this.type = type;
-        }
-
-        public byte getType() {
-            return type;
-        }
-
-        static {
-            Map<Byte, Type> map = new ConcurrentHashMap<>();
-
-            for (Type message : Type.values()) {
-                map.put(message.getType(), message);
-            }
-
-            ENUM_MAP = Collections.unmodifiableMap(map);
-        }
-
-        public static Type get(Byte type) {
-            return ENUM_MAP.get(type);
-        }
-    }
 
     public static byte getType(ByteBuffer buffer) {
         return buffer.get();
@@ -93,12 +49,12 @@ public class Message {
         return new Message(type, size, data, (short)data.length);
     }
 
-    public static Message create(Type type, byte[] data) {
+    public static Message create(MessageType type, byte[] data) {
         int size = HEADER_SIZE + data.length;
         return new Message(type.getType(), size, data, (short)data.length);
     }
 
-    public static Message create(Type type, Object object) throws IOException {
+    public static Message create(MessageType type, Object object) throws IOException {
         byte[] data = serialize(object);
         return create(type, data);
     }
