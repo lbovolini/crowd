@@ -9,17 +9,14 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.invocation.InvocationOnMock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.mockito.stubbing.Answer;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.channels.AsynchronousSocketChannel;
 
+import static com.github.lbovolini.crowd.core.message.MessageType.HEARTBEAT;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyByte;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -95,7 +92,7 @@ class ConnectionTest {
     void shouldSendMessage() {
         // Input
         byte[] data = new byte[] {};
-        Message message = Message.create(Message.Type.BEAT, data);
+        Message message = Message.create(HEARTBEAT, data);
 
         // Mock behavior
         when(writerChannel.write(message.getType(), message.getData())).thenReturn(false);

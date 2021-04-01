@@ -3,6 +3,7 @@ package com.github.lbovolini.crowd.client.request;
 import com.github.lbovolini.crowd.client.runner.Servant;
 import com.github.lbovolini.crowd.classloader.ClassLoaderContext;
 import com.github.lbovolini.crowd.core.message.Message;
+import com.github.lbovolini.crowd.core.message.MessageType;
 import com.github.lbovolini.crowd.core.message.messages.CreateObject;
 import com.github.lbovolini.crowd.core.message.messages.InvokeMethod;
 import com.github.lbovolini.crowd.core.request.Request;
@@ -59,7 +60,7 @@ public class ClientRequestHandler implements RequestHandler {
 
         executor.submit(() -> {
             Message message = request.getMessage();
-            Message.Type type = Message.Type.get(message.getType());
+            MessageType type = MessageType.get(message.getType());
 
             switch (type) {
                 case CREATE: {
@@ -73,9 +74,7 @@ public class ClientRequestHandler implements RequestHandler {
                 case INVOKE: {
                     try {
                         invoke(request);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    } catch (ClassNotFoundException e) {
+                    } catch (IOException | ClassNotFoundException e) {
                         e.printStackTrace();
                     }
                     break;
@@ -92,8 +91,8 @@ public class ClientRequestHandler implements RequestHandler {
     }
 
     public Object newObject(String className, Class<?>[] parameterTypes, Object[] args) throws Exception {
-        Class classDefinition = Thread.currentThread().getContextClassLoader().loadClass(className);
-        Constructor constructor = classDefinition.getConstructor(parameterTypes);
+        Class<?> classDefinition = Thread.currentThread().getContextClassLoader().loadClass(className);
+        Constructor<?> constructor = classDefinition.getConstructor(parameterTypes);
         return constructor.newInstance(args);
     }
 

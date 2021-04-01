@@ -1,6 +1,7 @@
 package com.github.lbovolini.crowd.core.request;
 
 import com.github.lbovolini.crowd.core.message.Message;
+import com.github.lbovolini.crowd.core.message.MessageType;
 import com.github.lbovolini.crowd.core.message.messages.JoinGroup;
 import com.github.lbovolini.crowd.core.message.messages.Response;
 import com.github.lbovolini.crowd.core.node.NodeGroup;
@@ -26,7 +27,7 @@ public class ServerRequestHandler implements RequestHandler {
     public void handle(Request request) throws Exception {
 
         Message message = request.getMessage();
-        Message.Type type = Message.Type.get(message.getType());
+        MessageType type = MessageType.get(message.getType());
 
         switch (type) {
             case JOIN: {

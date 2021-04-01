@@ -8,18 +8,20 @@ import com.github.lbovolini.crowd.core.message.messages.Response;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 
+import static com.github.lbovolini.crowd.core.message.MessageType.*;
+
 public class MessageFactory {
 
     public static Message create(String className, Class<?>[] types, Object[] args) throws IOException {
         CreateObject createObject = new CreateObject(className, types, args);
-        return Message.create(Message.Type.CREATE, createObject);
+        return Message.create(CREATE, createObject);
     }
 
     public static Message invoke(int requestId, String method, Class<?>[] types, Object[] args) {
         InvokeMethod invokeMethod = new InvokeMethod(requestId, method, types, args);
 
         try {
-            return Message.create(Message.Type.INVOKE, invokeMethod);
+            return Message.create(INVOKE, invokeMethod);
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
@@ -29,7 +31,7 @@ public class MessageFactory {
         JoinGroup joinGroup = new JoinGroup(cores);
 
         try {
-            return Message.create(Message.Type.JOIN, joinGroup);
+            return Message.create(JOIN, joinGroup);
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
@@ -39,7 +41,7 @@ public class MessageFactory {
         Response response = new Response(requestId, result, exception);
 
         try {
-            return Message.create(Message.Type.REPLY, response);
+            return Message.create(REPLY, response);
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
