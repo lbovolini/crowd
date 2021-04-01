@@ -10,6 +10,8 @@ public class BufferUtils {
     public static final int HEADER_SIZE = Byte.BYTES + Short.BYTES;
     public static final int BUFFER_ARRAY_SIZE = 16;
 
+    private BufferUtils() {}
+
     public static ByteBuffer[] putRawMessage(byte type, byte[] data, ByteBufferPool writerBufferPool) {
 
         Objects.requireNonNull(data);
