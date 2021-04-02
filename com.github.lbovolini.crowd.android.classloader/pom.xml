@@ -10,7 +10,7 @@
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 
-    <artifactId>crowd-android</artifactId>
+    <artifactId>crowd-android-classloader</artifactId>
     <version>0.0.1-SNAPSHOT</version>
 
     <properties>

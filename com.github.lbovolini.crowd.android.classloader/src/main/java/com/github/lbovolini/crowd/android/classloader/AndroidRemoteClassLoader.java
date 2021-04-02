@@ -1,4 +1,4 @@
-package com.github.lbovolini.crowd.android;
+package com.github.lbovolini.crowd.android.classloader;
 
 import com.android.dx.cf.direct.DirectClassFile;
 import com.android.dx.cf.direct.StdAttributeFactory;
