@@ -20,6 +20,10 @@ public interface HostUtils {
 
         Enumeration<NetworkInterface> nets = NetworkInterface.getNetworkInterfaces();
 
+        if (nets == null) {
+            throw new RuntimeException("No network interface found. Maybe you are using a virtual device");
+        }
+
         List<NetworkInterface> netInterfaces = Collections.list(nets);
         netInterfaces.sort(Comparator.comparingInt(NetworkInterface::getIndex));
 
