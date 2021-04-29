@@ -1,0 +1,2 @@
+include ':com.github.lbovolini.crowd.android.classloader'
+rootProject.name = "Crowd Android Client"
