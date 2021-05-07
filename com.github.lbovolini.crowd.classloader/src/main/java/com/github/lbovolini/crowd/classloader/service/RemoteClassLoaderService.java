@@ -8,7 +8,7 @@ import java.net.URL;
 public class RemoteClassLoaderService<T extends ClassLoader & RemoteClassLoader> {
 
     public static final String VENDOR = System.getProperty("java.vendor");
-    public static final String CLASSLOADER = System.getProperty("classloader", "com.github.lbovolini.crowd.android.AndroidRemoteClassLoader");
+    public static final String CLASSLOADER = System.getProperty("classloader", "com.github.lbovolini.crowd.android.classloader.AndroidRemoteClassLoader");
 
     private final String classPath;
     private final String libPath;
