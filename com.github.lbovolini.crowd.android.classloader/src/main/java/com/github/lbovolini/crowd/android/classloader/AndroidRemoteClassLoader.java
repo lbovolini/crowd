@@ -19,14 +19,16 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 import com.github.lbovolini.crowd.classloader.RemoteNativeLibrary;
+import com.github.lbovolini.crowd.classloader.service.RemoteClassLoader;
 import com.github.lbovolini.crowd.classloader.util.FileDownloader;
 import dalvik.system.BaseDexClassLoader;
 import dalvik.system.DexClassLoader;
 
-public class AndroidRemoteClassLoader extends DexClassLoader {
+public class AndroidRemoteClassLoader extends DexClassLoader implements RemoteClassLoader {
 
     public static final int DEX_MIN_SDK_VERSION = Integer.parseInt(System.getProperty("dex.version", "26"));
     public static final boolean DEX_OPTIMIZE = Boolean.parseBoolean(System.getProperty("dex.optimize", "true"));
@@ -59,9 +61,9 @@ public class AndroidRemoteClassLoader extends DexClassLoader {
 
     public AndroidRemoteClassLoader(URL[] classURLs, URL libURL, String classPath, String libPath, ClassLoader parent){
         super(classPath, null, libPath, parent);
-        this.classURLs = classURLs;
-        this.classPath = classPath;
-        this.classPathRoot = classPath;
+        this.classURLs = Objects.requireNonNull(classURLs);
+        this.classPath = getPathWithEndingDash(classPath);
+        this.classPathRoot = getPathWithEndingDash(classPath);
         this.parent = parent;
         this.remoteNativeLibrary = new RemoteNativeLibrary(libURL, libPath);
     }
@@ -95,12 +97,28 @@ public class AndroidRemoteClassLoader extends DexClassLoader {
         }
     }
 
+    @Override
     public void addURLs(URL[] urls) {
 
-        Set<URL> urlsSet = new HashSet<>(Arrays.asList(this.classURLs));
+        if (Objects.isNull(urls) || urls.length == 0) {
+            return;
+        }
+
+        Set<URL> urlsSet = new HashSet<>();
+
+        if (Objects.nonNull(this.classURLs)) {
+            urlsSet.addAll(Arrays.asList(this.classURLs));
+        }
 
         urlsSet.addAll(Arrays.asList(urls));
-        this.classURLs = (URL[]) urlsSet.toArray();
+
+        Object[] objArray = urlsSet.toArray();
+        this.classURLs = Arrays.copyOf(objArray, objArray.length, URL[].class);
+    }
+
+    @Override
+    public void addLibURL(URL url) {
+        // !TODO
     }
 
     public Class<?> downloadClass(String name) throws ClassNotFoundException {
@@ -147,7 +165,7 @@ public class AndroidRemoteClassLoader extends DexClassLoader {
 
             return findClass(name);
         } catch (Exception e) {
-            throw new RuntimeException(e.getMessage());
+            throw new RuntimeException(e);
         }
     }
 
@@ -180,6 +198,16 @@ public class AndroidRemoteClassLoader extends DexClassLoader {
         }
 
         return new URL(baseURL.toString() + relativeClassPath);
+    }
+
+    private String getPathWithEndingDash(String path) {
+        Objects.requireNonNull(path);
+
+        if (path.endsWith("/")) {
+            return path;
+        }
+
+        return path + "/";
     }
 }
 
