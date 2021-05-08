@@ -3,6 +3,8 @@ package com.github.lbovolini.crowd.server.worker;
 import com.github.lbovolini.crowd.core.util.HostUtils;
 import com.github.lbovolini.crowd.discovery.connection.*;
 import com.github.lbovolini.crowd.discovery.message.MulticastMessageHandler;
+import com.github.lbovolini.crowd.discovery.message.ResponseFactory;
+import com.github.lbovolini.crowd.discovery.message.ServerResponseFactory;
 import com.github.lbovolini.crowd.discovery.request.MulticastRequestHandler;
 import com.github.lbovolini.crowd.discovery.request.MulticastScheduler;
 import com.github.lbovolini.crowd.discovery.request.MulticastServerRequestHandler;
@@ -20,12 +22,12 @@ import java.util.Objects;
 public class MulticastServerWorkerFactory {
 
     public static final String MULTICAST_IP = System.getProperty("multicast.ip", "225.4.5.6");
-    public static final int MULTICAST_PORT = Integer.parseInt(System.getProperty("multicast.port", String.valueOf(8000)));
+    public static final int MULTICAST_SERVER_PORT = Integer.parseInt(System.getProperty("multicast.server.port", String.valueOf(8000)));
     public static final String MULTICAST_INTERFACE_NAME = System.getProperty("multicast.interface", HostUtils.getNetworkInterfaceName());
 
     private MulticastServerWorkerFactory() {}
 
-    public static MulticastServerWorker defaultWorker() {
+    public static MulticastServerWorker defaultWorker(String hostname, int port) {
         Selector selector = null;
         DatagramChannel channel = null;
 
@@ -33,11 +35,12 @@ public class MulticastServerWorkerFactory {
             selector = Selector.open();
             NetworkInterface networkInterface = NetworkInterface.getByName(MULTICAST_INTERFACE_NAME);
             InetAddress group = InetAddress.getByName(MULTICAST_IP);
-            InetSocketAddress localAddress = new InetSocketAddress("0.0.0.0", MULTICAST_PORT);
+            InetSocketAddress localAddress = new InetSocketAddress("0.0.0.0", MULTICAST_SERVER_PORT);
 
             channel = MulticastChannelFactory.initializedChannel(selector, networkInterface, group, localAddress);
 
-            MulticastChannelContext channelContext = new MulticastChannelContext(channel, selector, networkInterface, group, localAddress, true);
+            ResponseFactory responseFactory = new ServerResponseFactory(hostname, port);
+            MulticastChannelContext channelContext = new MulticastChannelContext(channel, selector, networkInterface, group, localAddress, responseFactory, MULTICAST_SERVER_PORT, true);
 
             MulticastRequestHandler requestHandler = new MulticastServerRequestHandler();
             MulticastScheduler scheduler = new MulticastScheduler(requestHandler);

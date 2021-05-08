@@ -20,7 +20,10 @@ public class MulticastWriterChannel {
     }
 
     public void write(byte type, InetSocketAddress address) {
-        MulticastMessage message = MulticastMessage.ofType(MulticastMessageType.get(type), address);
+
+        byte[] data = context.getResponseFactory().get(MulticastMessageType.get(type));
+        MulticastMessage message = new MulticastMessage(data, data.length, address);
+
         try {
             context.getChannel().register(context.getSelector(), SelectionKey.OP_WRITE, message);
             context.getSelector().wakeup();
@@ -29,8 +32,7 @@ public class MulticastWriterChannel {
         }
     }
 
-    // !TODO
     public void writeGroup(byte type) {
-        write(type, new InetSocketAddress(context.getGroup().getHostName(), 8000));
+        write(type, new InetSocketAddress(context.getGroup().getHostName(), context.getMulticastServerPort()));
     }
 }

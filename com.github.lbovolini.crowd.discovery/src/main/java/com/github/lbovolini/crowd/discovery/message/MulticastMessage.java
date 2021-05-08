@@ -36,8 +36,4 @@ public class MulticastMessage {
         return dataLength;
     }
 
-    public static MulticastMessage ofType(MulticastMessageType type, InetSocketAddress address) {
-        byte[] data = ResponseFactory.get(type);
-        return new MulticastMessage(data, data.length, address);
-    }
 }
