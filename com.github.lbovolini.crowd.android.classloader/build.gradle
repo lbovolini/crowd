@@ -50,7 +50,7 @@ android {
                     // You can then customize attributes of the publication as shown below.
                     groupId = 'com.github.lbovolini.crowd'
                     artifactId = 'crowd-android'
-                    version = '0.0.1'
+                    version = '0.0.1-SNAPSHOT'
                 }
             }
         }
