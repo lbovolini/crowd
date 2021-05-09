@@ -126,6 +126,9 @@ public class RemoteNativeLibrary {
     }
 
     private void setPath(String path) {
+
+        Objects.requireNonNull(path);
+
         if (!path.endsWith(File.separator)) {
             path = path + File.separator;
         }

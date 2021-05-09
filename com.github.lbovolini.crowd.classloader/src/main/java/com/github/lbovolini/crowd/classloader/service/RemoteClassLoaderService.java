@@ -4,11 +4,12 @@ import com.github.lbovolini.crowd.classloader.DefaultRemoteClassLoader;
 
 import java.lang.reflect.Constructor;
 import java.net.URL;
+import java.util.Objects;
 
 public class RemoteClassLoaderService<T extends ClassLoader & RemoteClassLoader> {
 
     public static final String VENDOR = System.getProperty("java.vendor");
-    public static final String CLASSLOADER = System.getProperty("classloader", "com.github.lbovolini.crowd.android.AndroidRemoteClassLoader");
+    public static final String CLASSLOADER = System.getProperty("classloader", "com.github.lbovolini.crowd.android.classloader.AndroidRemoteClassLoader");
 
     private final String classPath;
     private final String libPath;
@@ -17,8 +18,8 @@ public class RemoteClassLoaderService<T extends ClassLoader & RemoteClassLoader>
     private final T customClassLoader;
 
     public RemoteClassLoaderService(String classPath, String libPath) {
-        this.classPath = classPath;
-        this.libPath = libPath;
+        this.classPath = Objects.requireNonNull(classPath);
+        this.libPath = Objects.requireNonNull(libPath);
         this.parent = RemoteClassLoaderService.class.getClassLoader();
         this.customClassLoader = create();
     }

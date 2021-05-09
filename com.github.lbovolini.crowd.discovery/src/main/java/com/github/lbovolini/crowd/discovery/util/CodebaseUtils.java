@@ -24,7 +24,7 @@ public class CodebaseUtils {
                 public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
                     if (file.toString().endsWith(".jar")) {
                         if (!file.toAbsolutePath().toString().contains("/.")) {
-                            list.add(file.toString());
+                            list.add(file.toString().replaceFirst(CODEBASE_ROOT, "/"));
                         }
                     }
                     return super.visitFile(file, attrs);
@@ -36,12 +36,15 @@ public class CodebaseUtils {
                         if (!path.equals("")) {
                             path = path + "/";
                         }
-                        list.add(path);
+                        list.add(path.replaceFirst(CODEBASE_ROOT, "/"));
                     }
                     return super.preVisitDirectory(dir, attrs);
                 }
-            } );
-        } catch (IOException e) { e.printStackTrace(); }
+            });
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         return list;
     }
 

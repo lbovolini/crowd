@@ -12,14 +12,9 @@ import java.nio.channels.AsynchronousServerSocketChannel;
 
 public class ServerWorkerFactory {
 
-    public static final String HOSTNAME = System.getProperty("hostname", "");
-    public static final int PORT = Integer.parseInt(System.getProperty("port", String.valueOf(8081)));
-
     private ServerWorkerFactory() {}
 
-    public static ServerWorker defaultWorker(final NodeGroup<?> nodeGroup) {
-
-        InetSocketAddress localAddress = new InetSocketAddress(HOSTNAME, PORT);
+    public static ServerWorker defaultWorker(final NodeGroup<?> nodeGroup, InetSocketAddress localAddress) {
 
         AsynchronousServerSocketChannel serverChannel = ChannelFactory.initializedServerChannel(localAddress, 1);
 

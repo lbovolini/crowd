@@ -31,7 +31,7 @@ public class Connection {
             String host = Objects.requireNonNull(address.getAddress().getHostAddress().replace(".", ""));
             String port = Objects.requireNonNull(Integer.toString(address.getPort()));
 
-            if (host.isBlank() || port.isBlank() || port.trim().equals("0")) {
+            if (host.trim().isEmpty() || port.trim().isEmpty() || port.trim().equals("0")) {
                 throw new RuntimeException("Invalid remote address");
             }
             return Long.parseLong(host + port);

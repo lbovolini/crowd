@@ -1,5 +1,7 @@
 package com.github.lbovolini.crowd.discovery.connection;
 
+import com.github.lbovolini.crowd.discovery.message.ResponseFactory;
+
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.NetworkInterface;
@@ -20,15 +22,19 @@ public class MulticastChannelContext {
 
     private InetSocketAddress serverAddress;
 
+    private final ResponseFactory responseFactory;
+    private final int multicastServerPort;
     private final boolean isServer;
     private final int bufferSize;
 
-    public MulticastChannelContext(DatagramChannel channel, Selector selector, NetworkInterface networkInterface, InetAddress group, SocketAddress localAddress, boolean isServer) {
+    public MulticastChannelContext(DatagramChannel channel, Selector selector, NetworkInterface networkInterface, InetAddress group, SocketAddress localAddress, ResponseFactory responseFactory, int multicastServerPort, boolean isServer) {
         this.channel = channel;
         this.selector = selector;
         this.networkInterface = networkInterface;
         this.group = group;
         this.localAddress = localAddress;
+        this.responseFactory = responseFactory;
+        this.multicastServerPort = multicastServerPort;
         this.isServer = isServer;
         this.bufferSize = bufferSize();
     }
@@ -51,6 +57,14 @@ public class MulticastChannelContext {
 
     public SocketAddress getLocalAddress() {
         return localAddress;
+    }
+
+    public ResponseFactory getResponseFactory() {
+        return responseFactory;
+    }
+
+    public int getMulticastServerPort() {
+        return multicastServerPort;
     }
 
     public InetSocketAddress getServerAddress() {

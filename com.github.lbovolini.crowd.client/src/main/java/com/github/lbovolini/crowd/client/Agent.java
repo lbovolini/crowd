@@ -10,7 +10,7 @@ import com.github.lbovolini.crowd.client.worker.MulticastClientWorkerFactory;
 
 public final class Agent {
 
-    public static final String CLASS_PATH = System.getProperty("class.path", null);
+    public static final String CLASS_PATH = System.getProperty("class.path", System.getProperty("java.io.tmpdir"));
     public static final String LIB_PATH = System.getProperty("lib.path", System.getProperty("java.io.tmpdir"));
 
     public void start()  {

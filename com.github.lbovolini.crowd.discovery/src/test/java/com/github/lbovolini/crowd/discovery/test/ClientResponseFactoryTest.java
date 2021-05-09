@@ -1,13 +1,17 @@
 package com.github.lbovolini.crowd.discovery.test;
 
+import com.github.lbovolini.crowd.discovery.message.ClientResponseFactory;
 import com.github.lbovolini.crowd.discovery.message.MulticastMessageType;
 import com.github.lbovolini.crowd.discovery.message.ResponseFactory;
+import com.github.lbovolini.crowd.discovery.message.ServerResponseFactory;
 import org.junit.jupiter.api.Test;
 
 import static com.github.lbovolini.crowd.discovery.message.MulticastMessageType.*;
 import static org.junit.jupiter.api.Assertions.*;
 
-class ResponseFactoryTest {
+class ClientResponseFactoryTest {
+
+    private final ResponseFactory responseFactory = new ClientResponseFactory();
 
     @Test
     void shouldCreateHeartbeatMessage() {
@@ -18,7 +22,7 @@ class ResponseFactoryTest {
         byte[] expectedOutput = new byte[] { messageType.getType() };
 
         // Should test ONLY this method
-        byte[] data = ResponseFactory.get(messageType);
+        byte[] data = responseFactory.get(messageType);
 
         // Assertions
         assertArrayEquals(expectedOutput, data);
@@ -33,7 +37,7 @@ class ResponseFactoryTest {
         byte[] expectedOutput = new byte[] { messageType.getType() };
 
         // Should test ONLY this method
-        byte[] data = ResponseFactory.get(messageType);
+        byte[] data = responseFactory.get(messageType);
 
         // Assertions
         assertArrayEquals(expectedOutput, data);
