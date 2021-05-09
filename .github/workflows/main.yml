@@ -27,4 +27,4 @@ jobs:
           COVERALLS_TOKEN: ${{ secrets.COVERALLS_TOKEN }}
         run: mvn -B verify jacoco:report-aggregate coveralls:report
       - name: Build Crowd Android Classloder Library
-        run: ./gradlew -Dorg.gradle.java.home=/lib/jvm/java-11-openjdk clean build
+        run: ./gradlew -Dorg.gradle.java.home=${JAVA_HOME} clean build
