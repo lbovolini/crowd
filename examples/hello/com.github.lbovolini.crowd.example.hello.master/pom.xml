@@ -48,7 +48,6 @@
                             <descriptorRefs>
                                 <descriptorRef>jar-with-dependencies</descriptorRef>
                             </descriptorRefs>
-                            <finalName>${project.artifactId}-${project.version}</finalName>
                             <appendAssemblyId>false</appendAssemblyId>
                         </configuration>
                     </execution>
@@ -70,12 +69,14 @@
                             <artifactItems>
                                 <artifactItem>
                                     <groupId>com.github.lbovolini.crowd</groupId>
-                                    <artifactId>master-hello</artifactId>
+                                    <artifactId>crowd-example-master-hello</artifactId>
                                     <version>0.0.1-SNAPSHOT</version>
+                                    <type>jar</type>
+                                    <classifier>jar-with-dependencies</classifier>
                                 </artifactItem>
                             </artifactItems>
-                            <outputDirectory>${user.home}/app</outputDirectory>
-                            <overWriteReleases>false</overWriteReleases>
+                            <outputDirectory>${user.home}/crowd</outputDirectory>
+                            <overWriteReleases>true</overWriteReleases>
                             <overWriteSnapshots>true</overWriteSnapshots>
                         </configuration>
                     </execution>
