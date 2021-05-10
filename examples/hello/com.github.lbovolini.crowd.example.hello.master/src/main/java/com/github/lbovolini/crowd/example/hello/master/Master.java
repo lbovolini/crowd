@@ -1,5 +1,7 @@
-package com.github.lbovolini.example.hello;
+package com.github.lbovolini.crowd.example.hello.master;
 
+import com.github.lbovolini.crowd.example.hello.Hello;
+import com.github.lbovolini.crowd.example.hello.IHello;
 import com.github.lbovolini.crowd.server.Crowd;
 
 import java.util.concurrent.CompletableFuture;

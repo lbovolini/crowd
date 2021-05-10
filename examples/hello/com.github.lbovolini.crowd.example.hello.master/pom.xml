@@ -4,8 +4,13 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.github.lbovolini.crowd</groupId>
-    <artifactId>master-hello</artifactId>
+    <parent>
+        <groupId>com.github.lbovolini.crowd</groupId>
+        <artifactId>crowd-hello</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>crowd-example-master-hello</artifactId>
     <version>0.0.1-SNAPSHOT</version>
 
     <properties>
@@ -34,7 +39,7 @@
                         <configuration>
                             <archive>
                                 <manifest>
-                                    <mainClass>com.github.lbovolini.example.hello.Master</mainClass>
+                                    <mainClass>com.github.lbovolini.crowd.example.hello.master.Master</mainClass>
                                     <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
                                     <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
                                     <addClasspath>true</addClasspath>
@@ -88,7 +93,7 @@
         </dependency>
         <dependency>
             <groupId>com.github.lbovolini.crowd</groupId>
-            <artifactId>hello</artifactId>
+            <artifactId>crowd-example-hello</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
     </dependencies>

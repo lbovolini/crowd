@@ -1,4 +1,4 @@
-package com.github.lbovolini.example.hello;
+package com.github.lbovolini.crowd.example.hello;
 
 public class Hello implements IHello<String> {
     int x;
