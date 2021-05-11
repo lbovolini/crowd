@@ -1,4 +1,4 @@
-package com.github.lbovolini.example.nativeLib;
+package com.github.lbovolini.crowd.example.nativelib;
 
 import com.github.lbovolini.crowd.core.node.Crowd;
 
