@@ -3,6 +3,7 @@ package com.github.lbovolini.crowd.classloader;
 import com.github.lbovolini.crowd.classloader.service.RemoteClassLoader;
 
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.net.URL;
 import java.net.URLClassLoader;
 
@@ -22,7 +23,8 @@ public class DefaultRemoteClassLoader extends URLClassLoader implements RemoteCl
     protected String findLibrary(String libraryName) {
         try {
             return remoteNativeLibrary.download(libraryName);
-        } catch (IOException e) {
+        } catch (Exception e) {
+            e.printStackTrace();
             return null;
         }
     }
@@ -36,6 +38,6 @@ public class DefaultRemoteClassLoader extends URLClassLoader implements RemoteCl
 
     @Override
     public void addLibURL(URL url) {
-
+        remoteNativeLibrary.setUrl(url);
     }
 }
