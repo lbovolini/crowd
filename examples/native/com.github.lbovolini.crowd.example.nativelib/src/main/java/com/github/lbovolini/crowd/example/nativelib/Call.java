@@ -1,4 +1,4 @@
-package com.github.lbovolini.example.nativeLib;
+package com.github.lbovolini.crowd.example.nativelib;
 
 public class Call implements RemoteNative {
     public void say(String str) {
