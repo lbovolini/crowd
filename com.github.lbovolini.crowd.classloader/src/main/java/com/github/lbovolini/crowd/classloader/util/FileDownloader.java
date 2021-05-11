@@ -12,6 +12,7 @@ import java.nio.channels.ReadableByteChannel;
 public class FileDownloader {
 
     public static final boolean CACHE = Boolean.parseBoolean(System.getProperty("cache", "false"));
+    public static final int READ_TIMEOUT = 1000;
 
     private FileDownloader() {}
 
@@ -24,7 +25,13 @@ public class FileDownloader {
 
         URLConnection connection = from.openConnection();
         connection.setUseCaches(CACHE);
-        long fileSize = connection.getContentLength();
+        connection.setReadTimeout(READ_TIMEOUT);
+
+        long fileSize = connection.getContentLengthLong();
+
+        if (fileSize == -1) {
+            throw new RuntimeException("Unknown file size");
+        }
 
         try (InputStream source = connection.getInputStream();
              ReadableByteChannel channel = Channels.newChannel(source);
@@ -32,12 +39,14 @@ public class FileDownloader {
              FileChannel fileChannel = fileOutputStream.getChannel())
         {
             long transferredSize = 0L;
-            while(transferredSize < fileSize) {
+            while (transferredSize < fileSize) {
                 transferredSize += fileChannel.transferFrom(channel, transferredSize, 1 << 24);
             }
 
             return true;
-        } catch (Exception e) {
+        } catch (IOException e) {
+            throw e;
+        } catch (Exception ex) {
             return false;
         }
     }
