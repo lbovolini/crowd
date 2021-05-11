@@ -10,7 +10,7 @@
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 
-    <artifactId>crowd-example-nativelib</artifactId>
+    <artifactId>crowd-example-nativelib-master</artifactId>
     <version>0.0.1-SNAPSHOT</version>
 
     <properties>
@@ -23,60 +23,45 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
-                <version>3.1.0</version>
                 <configuration>
                     <archive>
+                        <manifestEntries>
+                            <Automatic-Module-Name>com.github.lbovolini.crowd.example.nativelib.master</Automatic-Module-Name>
+                        </manifestEntries>
                         <manifest>
-                            <mainClass>com.github.lbovolini.crowd.example.nativelib.Master</mainClass>
+                            <mainClass>com.github.lbovolini.crowd.example.nativelib.master.Master</mainClass>
                             <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
                             <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
                             <addClasspath>true</addClasspath>
                         </manifest>
-                        <manifestEntries>
-                            <Class-Path>crowd-1.0-SNAPSHOT.jar</Class-Path>
-                        </manifestEntries>
                     </archive>
                 </configuration>
             </plugin>
 
             <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>exec-maven-plugin</artifactId>
-                <version>1.6.0</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>java</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <executable>java</executable>
-                    <mainClass>com.github.lbovolini.crowd.example.nativelib.Master</mainClass>
-                </configuration>
-            </plugin>
-
-            <!-- https://stackoverflow.com/questions/10935135/maven-and-adding-jars-to-system-scope -->
-            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-install-plugin</artifactId>
-                <version>2.5.2</version>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>3.3.0</version>
                 <executions>
                     <execution>
-                        <id>crowd</id>
-                        <phase>clean</phase>
-                        <configuration>
-                            <file>${user.home}/app/crowd-1.0-SNAPSHOT.jar</file>
-                            <repositoryLayout>default</repositoryLayout>
-                            <groupId>com.github.lbovolini.crowd</groupId>
-                            <artifactId>crowd</artifactId>
-                            <version>1.0-SNAPSHOT</version>
-                            <packaging>jar</packaging>
-                            <generatePom>true</generatePom>
-                        </configuration>
+                        <phase>package</phase>
                         <goals>
-                            <goal>install-file</goal>
+                            <goal>single</goal>
                         </goals>
+                        <configuration>
+                            <archive>
+                                <manifest>
+                                    <mainClass>com.github.lbovolini.crowd.example.nativelib.master.Master</mainClass>
+                                    <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                                    <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+                                    <addClasspath>true</addClasspath>
+                                </manifest>
+                            </archive>
+                            <descriptorRefs>
+                                <descriptorRef>jar-with-dependencies</descriptorRef>
+                            </descriptorRefs>
+                            <appendAssemblyId>true</appendAssemblyId>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
@@ -96,12 +81,14 @@
                             <artifactItems>
                                 <artifactItem>
                                     <groupId>com.github.lbovolini.crowd</groupId>
-                                    <artifactId>master-nativeLib</artifactId>
-                                    <version>1.0-SNAPSHOT</version>
+                                    <artifactId>crowd-example-nativelib-master</artifactId>
+                                    <type>jar</type>
+                                    <classifier>jar-with-dependencies</classifier>
+                                    <version>0.0.1-SNAPSHOT</version>
                                 </artifactItem>
                             </artifactItems>
-                            <outputDirectory>${user.home}/app</outputDirectory>
-                            <overWriteReleases>false</overWriteReleases>
+                            <outputDirectory>${user.home}/crowd</outputDirectory>
+                            <overWriteReleases>true</overWriteReleases>
                             <overWriteSnapshots>true</overWriteSnapshots>
                         </configuration>
                     </execution>
