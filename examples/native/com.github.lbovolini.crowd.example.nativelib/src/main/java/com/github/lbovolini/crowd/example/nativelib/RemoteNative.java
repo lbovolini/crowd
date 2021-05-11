@@ -1,6 +1,6 @@
-package com.github.lbovolini.example.nativeLib;
+package com.github.lbovolini.crowd.example.nativelib;
 
-interface RemoteNative {
+public interface RemoteNative {
 
     void say(String str);
 }
