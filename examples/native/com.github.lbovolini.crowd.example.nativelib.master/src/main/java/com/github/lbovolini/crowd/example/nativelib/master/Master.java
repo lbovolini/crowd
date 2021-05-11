@@ -1,6 +1,9 @@
-package com.github.lbovolini.crowd.example.nativelib;
+package com.github.lbovolini.crowd.example.nativelib.master;
 
-import com.github.lbovolini.crowd.core.node.Crowd;
+import com.github.lbovolini.crowd.example.nativelib.Call;
+import com.github.lbovolini.crowd.example.nativelib.RemoteNative;
+
+import com.github.lbovolini.crowd.server.Crowd;
 
 import java.io.IOException;
 
