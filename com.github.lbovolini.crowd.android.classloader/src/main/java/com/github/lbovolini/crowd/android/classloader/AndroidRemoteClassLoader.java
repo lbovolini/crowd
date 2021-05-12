@@ -10,6 +10,7 @@ import com.android.dx.dex.file.ClassDefItem;
 import com.android.dx.dex.file.DexFile;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
@@ -143,7 +144,12 @@ public class AndroidRemoteClassLoader extends DexClassLoader implements RemoteCl
                     success = true;
                     break;
                 }
-            } catch (Exception e) {e.printStackTrace();}
+            } catch (FileNotFoundException e) {
+                // !IMPORTANT
+                // Ignores file not found exception
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
         }
 
         if (!success) {
