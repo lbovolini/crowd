@@ -119,7 +119,7 @@ public class AndroidRemoteClassLoader extends DexClassLoader implements RemoteCl
 
     @Override
     public void addLibURL(URL url) {
-        // !TODO
+        remoteNativeLibrary.setUrl(url);
     }
 
     public Class<?> downloadClass(String name) throws ClassNotFoundException {
