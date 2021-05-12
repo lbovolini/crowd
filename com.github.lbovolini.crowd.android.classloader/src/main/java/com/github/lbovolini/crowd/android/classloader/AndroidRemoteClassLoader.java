@@ -92,7 +92,8 @@ public class AndroidRemoteClassLoader extends DexClassLoader implements RemoteCl
     public String findLibrary(String libName) {
         try {
             return remoteNativeLibrary.download(libName);
-        } catch (IOException e) {
+        } catch (Exception e) {
+            e.printStackTrace();
             return super.findLibrary(libName);
         }
     }
