@@ -66,6 +66,35 @@
                     </execution>
                 </executions>
             </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>2.10</version>
+                <executions>
+                    <execution>
+                        <id>copy</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>com.github.lbovolini.crowd</groupId>
+                                    <artifactId>crowd-client</artifactId>
+                                    <version>0.0.1-SNAPSHOT</version>
+                                    <type>jar</type>
+                                    <classifier>jar-with-dependencies</classifier>
+                                </artifactItem>
+                            </artifactItems>
+                            <outputDirectory>${user.home}/crowd</outputDirectory>
+                            <overWriteReleases>true</overWriteReleases>
+                            <overWriteSnapshots>true</overWriteSnapshots>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 
