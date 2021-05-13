@@ -30,7 +30,7 @@ public class FileDownloader {
         long fileSize = connection.getContentLengthLong();
 
         if (fileSize == -1) {
-            throw new RuntimeException("Unknown file size");
+            return false;
         }
 
         try (InputStream source = connection.getInputStream();
