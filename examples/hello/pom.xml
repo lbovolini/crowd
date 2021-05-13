@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.github.lbovolini.crowd</groupId>
-    <artifactId>crowd-hello</artifactId>
+    <artifactId>crowd-example-hello-pom</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <packaging>pom</packaging>
 
