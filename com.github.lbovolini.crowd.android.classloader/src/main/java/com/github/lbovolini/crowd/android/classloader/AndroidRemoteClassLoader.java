@@ -153,7 +153,7 @@ public class AndroidRemoteClassLoader extends DexClassLoader implements RemoteCl
         }
 
         if (!success) {
-            return null;
+            throw new ClassNotFoundException(name);
         }
 
         try {
