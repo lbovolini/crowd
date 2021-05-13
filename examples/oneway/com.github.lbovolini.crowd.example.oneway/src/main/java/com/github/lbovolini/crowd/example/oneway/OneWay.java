@@ -1,4 +1,4 @@
-package com.github.lbovolini.example.oneway;
+package com.github.lbovolini.crowd.example.oneway;
 
 public class OneWay implements RemoteOneWay {
 

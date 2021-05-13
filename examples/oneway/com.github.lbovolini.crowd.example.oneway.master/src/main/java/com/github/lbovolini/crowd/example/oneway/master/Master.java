@@ -2,7 +2,7 @@ package com.github.lbovolini.crowd.example.oneway.master;
 
 import com.github.lbovolini.crowd.example.oneway.OneWay;
 import com.github.lbovolini.crowd.example.oneway.RemoteOneWay;
-import com.github.lbovolini.crowd.node.Crowd;
+import com.github.lbovolini.crowd.server.Crowd;
 
 import java.io.IOException;
 
