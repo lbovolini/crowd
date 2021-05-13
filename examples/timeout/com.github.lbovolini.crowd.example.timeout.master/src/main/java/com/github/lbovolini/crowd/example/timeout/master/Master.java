@@ -1,6 +1,8 @@
-package com.github.lbovolini.example.timeout;
+package com.github.lbovolini.crowd.example.timeout.master;
 
-import com.github.lbovolini.crowd.node.Crowd;
+import com.github.lbovolini.crowd.server.Crowd;
+import com.github.lbovolini.crowd.example.timeout.RemoteTimeout;
+import com.github.lbovolini.crowd.example.timeout.Timeout;
 
 import java.io.IOException;
 import java.util.concurrent.CompletableFuture;

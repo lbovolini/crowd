@@ -1,4 +1,4 @@
-package com.github.lbovolini.example.timeout;
+package com.github.lbovolini.crowd.example.timeout;
 
 public interface RemoteTimeout<T> {
 
