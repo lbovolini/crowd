@@ -6,7 +6,7 @@ import java.util.Objects;
 
 public class URLUtils {
 
-    public static final String URL_SEPARATOR = System.getProperty("codebase.url", " ");
+    public static final String URL_SEPARATOR = System.getProperty("codebase.url.separator", " ");
 
     private URLUtils() {}
 
