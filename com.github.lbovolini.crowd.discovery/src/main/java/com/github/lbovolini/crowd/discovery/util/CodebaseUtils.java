@@ -14,7 +14,7 @@ public class CodebaseUtils {
 
     public static final String LIB_URL = System.getProperty("lib.url", "file:");
     public static final String EXTENSIONS[] = {".class", ".jar", ".so", ".dll"};
-    public static final String CODEBASE_ROOT = System.getProperty("codebase.root", "");
+    public static final String CODEBASE_ROOT = System.getProperty("codebase.root", getTempDirPath());
     public static final String CODEBASE_URL = System.getProperty("codebase.url", "file:");
 
     private CodebaseUtils() {}
@@ -111,5 +111,13 @@ public class CodebaseUtils {
         }
 
         return stringBuilder.toString();
+    }
+
+    private static String getTempDirPath() {
+        try {
+            return Files.createTempDirectory(null).toString();
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
     }
 }
