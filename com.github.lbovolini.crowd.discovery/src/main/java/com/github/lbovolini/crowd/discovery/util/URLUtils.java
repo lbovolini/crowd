@@ -15,7 +15,7 @@ public class URLUtils {
         StringBuilder urlsString = new StringBuilder();
 
         for (URL url : urls) {
-            urlsString = urlsString.append(url.toString()).append(URL_SEPARATOR);
+            urlsString.append(url.toString()).append(URL_SEPARATOR);
         }
 
         return urlsString.toString();
