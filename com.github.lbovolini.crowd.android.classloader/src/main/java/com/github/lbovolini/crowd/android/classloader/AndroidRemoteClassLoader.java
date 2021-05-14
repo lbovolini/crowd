@@ -10,6 +10,7 @@ import com.android.dx.dex.file.ClassDefItem;
 import com.android.dx.dex.file.DexFile;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
@@ -92,7 +93,8 @@ public class AndroidRemoteClassLoader extends DexClassLoader implements RemoteCl
     public String findLibrary(String libName) {
         try {
             return remoteNativeLibrary.download(libName);
-        } catch (IOException e) {
+        } catch (Exception e) {
+            e.printStackTrace();
             return super.findLibrary(libName);
         }
     }
@@ -118,7 +120,7 @@ public class AndroidRemoteClassLoader extends DexClassLoader implements RemoteCl
 
     @Override
     public void addLibURL(URL url) {
-        // !TODO
+        remoteNativeLibrary.setUrl(url);
     }
 
     public Class<?> downloadClass(String name) throws ClassNotFoundException {
@@ -142,11 +144,16 @@ public class AndroidRemoteClassLoader extends DexClassLoader implements RemoteCl
                     success = true;
                     break;
                 }
-            } catch (Exception e) {e.printStackTrace();}
+            } catch (FileNotFoundException e) {
+                // !IMPORTANT
+                // Ignores file not found exception
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
         }
 
         if (!success) {
-            return null;
+            throw new ClassNotFoundException(name);
         }
 
         try {

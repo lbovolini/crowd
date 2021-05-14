@@ -6,13 +6,12 @@
 
     <parent>
         <groupId>com.github.lbovolini.crowd</groupId>
-        <artifactId>crowd</artifactId>
+        <artifactId>crowd-example-nativelib-pom</artifactId>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 
-    <artifactId>crowd-client</artifactId>
+    <artifactId>crowd-example-nativelib-master</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <packaging>jar</packaging>
 
     <properties>
         <maven.compiler.source>11</maven.compiler.source>
@@ -23,14 +22,19 @@
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
                 <configuration>
                     <archive>
                         <manifestEntries>
-                            <Automatic-Module-Name>com.github.lbovolini.crowd.client</Automatic-Module-Name>
+                            <Automatic-Module-Name>com.github.lbovolini.crowd.example.nativelib.master</Automatic-Module-Name>
                         </manifestEntries>
                         <manifest>
-                            <mainClass>com.github.lbovolini.crowd.client.Agent</mainClass>
+                            <mainClass>com.github.lbovolini.crowd.example.nativelib.master.Master</mainClass>
                             <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
                             <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
                             <addClasspath>true</addClasspath>
@@ -52,7 +56,7 @@
                         <configuration>
                             <archive>
                                 <manifest>
-                                    <mainClass>com.github.lbovolini.crowd.client.Agent</mainClass>
+                                    <mainClass>com.github.lbovolini.crowd.example.nativelib.master.Master</mainClass>
                                     <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
                                     <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
                                     <addClasspath>true</addClasspath>
@@ -82,10 +86,10 @@
                             <artifactItems>
                                 <artifactItem>
                                     <groupId>com.github.lbovolini.crowd</groupId>
-                                    <artifactId>crowd-client</artifactId>
-                                    <version>0.0.1-SNAPSHOT</version>
+                                    <artifactId>crowd-example-nativelib-master</artifactId>
                                     <type>jar</type>
                                     <classifier>jar-with-dependencies</classifier>
+                                    <version>0.0.1-SNAPSHOT</version>
                                 </artifactItem>
                             </artifactItems>
                             <outputDirectory>${user.home}/crowd</outputDirectory>
@@ -95,23 +99,19 @@
                     </execution>
                 </executions>
             </plugin>
+
         </plugins>
     </build>
 
     <dependencies>
         <dependency>
             <groupId>com.github.lbovolini.crowd</groupId>
-            <artifactId>crowd-core</artifactId>
+            <artifactId>crowd-server</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>com.github.lbovolini.crowd</groupId>
-            <artifactId>crowd-discovery</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>com.github.lbovolini.crowd</groupId>
-            <artifactId>crowd-classloader</artifactId>
+            <artifactId>crowd-example-nativelib</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
     </dependencies>
