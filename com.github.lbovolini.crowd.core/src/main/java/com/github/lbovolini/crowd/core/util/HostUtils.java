@@ -38,7 +38,8 @@ public interface HostUtils {
                 }
             }
         }
-        return "";
+
+        throw new RuntimeException("Host address not found");
     }
 
     static String getHostAddressName() {
@@ -76,7 +77,7 @@ public interface HostUtils {
             }
         }
 
-        return "";
+        throw new RuntimeException("Network interface not found");
     }
 
     static String getNetworkInterfaceName() {
