@@ -1,5 +1,6 @@
 package com.github.lbovolini.crowd.core.util;
 
+import java.io.UncheckedIOException;
 import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
@@ -41,14 +42,11 @@ public interface HostUtils {
     }
 
     static String getHostAddressName() {
-
-        String address = "";
-
         try {
-            address = getHostAddress();
-        } catch (SocketException ignored) { }
-
-        return address;
+            return getHostAddress();
+        } catch (SocketException e) {
+            throw new UncheckedIOException(e);
+        }
     }
 
     /**
@@ -82,12 +80,10 @@ public interface HostUtils {
     }
 
     static String getNetworkInterfaceName() {
-        String netInt = "";
-
         try {
-            netInt = getNetworkInterface();
-        } catch (SocketException ignored) {  }
-
-        return netInt;
+            return getNetworkInterface();
+        } catch (SocketException e) {
+            throw new UncheckedIOException(e);
+        }
     }
 }
