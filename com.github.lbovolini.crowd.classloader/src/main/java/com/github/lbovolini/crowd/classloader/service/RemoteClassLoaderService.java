@@ -8,7 +8,7 @@ import java.util.Objects;
 
 public class RemoteClassLoaderService<T extends ClassLoader & RemoteClassLoader> {
 
-    public static final String VENDOR = System.getProperty("java.vendor");
+    public static final boolean CLASSLOADER_CUSTOM = Boolean.parseBoolean(System.getProperty("classloader.custom", "false"));
     public static final String CLASSLOADER = System.getProperty("classloader", "com.github.lbovolini.crowd.android.classloader.AndroidRemoteClassLoader");
 
     private final String classPath;
@@ -27,7 +27,7 @@ public class RemoteClassLoaderService<T extends ClassLoader & RemoteClassLoader>
     @SuppressWarnings("unchecked")
     private <T extends ClassLoader & RemoteClassLoader> T create() {
 
-        if (VENDOR.contains("Oracle") || VENDOR.equals("N/A")) {
+        if (!CLASSLOADER_CUSTOM) {
             return (T) new DefaultRemoteClassLoader(new URL[] {}, null, this.classPath, this.libPath, this.parent);
         }
 
