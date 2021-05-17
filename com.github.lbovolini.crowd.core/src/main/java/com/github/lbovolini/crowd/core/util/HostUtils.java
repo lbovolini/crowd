@@ -1,5 +1,6 @@
 package com.github.lbovolini.crowd.core.util;
 
+import java.io.UncheckedIOException;
 import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
@@ -37,18 +38,16 @@ public interface HostUtils {
                 }
             }
         }
-        return "";
+
+        throw new RuntimeException("Host address not found");
     }
 
     static String getHostAddressName() {
-
-        String address = "";
-
         try {
-            address = getHostAddress();
-        } catch (SocketException ignored) { }
-
-        return address;
+            return getHostAddress();
+        } catch (SocketException e) {
+            throw new UncheckedIOException(e);
+        }
     }
 
     /**
@@ -59,6 +58,10 @@ public interface HostUtils {
     static String getNetworkInterface() throws SocketException {
 
         Enumeration<NetworkInterface> nets = NetworkInterface.getNetworkInterfaces();
+
+        if (nets == null) {
+            throw new RuntimeException("No network interface found. Maybe you are using a virtual device");
+        }
 
         List<NetworkInterface> netInterfaces = Collections.list(nets);
         netInterfaces.sort(Comparator.comparingInt(NetworkInterface::getIndex));
@@ -74,16 +77,14 @@ public interface HostUtils {
             }
         }
 
-        return "";
+        throw new RuntimeException("Network interface not found");
     }
 
     static String getNetworkInterfaceName() {
-        String netInt = "";
-
         try {
-            netInt = getNetworkInterface();
-        } catch (SocketException ignored) {  }
-
-        return netInt;
+            return getNetworkInterface();
+        } catch (SocketException e) {
+            throw new UncheckedIOException(e);
+        }
     }
 }

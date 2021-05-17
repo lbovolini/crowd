@@ -31,8 +31,10 @@ public class DefaultRemoteClassLoader extends URLClassLoader implements RemoteCl
 
     @Override
     public void addURLs(URL[] urls) {
-        for (URL url : urls) {
-            super.addURL(url);
+        if (urls != null) {
+            for (URL url : urls) {
+                super.addURL(url);
+            }
         }
     }
 
