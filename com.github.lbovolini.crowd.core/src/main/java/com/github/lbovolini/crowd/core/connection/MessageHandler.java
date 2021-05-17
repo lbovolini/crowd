@@ -14,7 +14,7 @@ public class MessageHandler {
         this.requestQueue = requestQueue;
     }
 
-    void handle(Message message) {
+    public void handle(Message message) {
         requestQueue.enqueue(new Request(connection, message));
     }
 }
