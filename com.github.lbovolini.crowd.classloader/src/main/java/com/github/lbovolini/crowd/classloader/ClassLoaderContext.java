@@ -63,4 +63,8 @@ public class ClassLoaderContext {
         return defaultClassLoader;
     }
 
+    public ClassLoader getCustomClassLoader() {
+        return remoteClassLoaderService.getCustomClassLoader();
+    }
+
 }
