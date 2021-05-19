@@ -10,7 +10,7 @@ import java.nio.ByteBuffer;
 
 public class Message {
 
-    private static final int HEADER_SIZE = Byte.BYTES + Short.BYTES;
+    public static final int HEADER_SIZE = Byte.BYTES + Short.BYTES;
 
     private final byte type;
     private final int size;
