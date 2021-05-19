@@ -17,31 +17,11 @@ public class Message {
     private final byte[] data;
     private final short dataLength;
 
-    public static byte getType(ByteBuffer buffer) {
-        return buffer.get();
-    }
-
     private Message(byte type, int size, byte[] data, short dataLength) {
         this.type = type;
         this.size = size;
         this.data = data;
         this.dataLength = dataLength;
-    }
-
-    public byte getType() {
-        return type;
-    }
-
-    public int getSize() {
-        return size;
-    }
-
-    public byte[] getData() {
-        return data;
-    }
-
-    public short getDataLength() {
-        return dataLength;
     }
 
     public static Message create(byte type, byte[] data) {
@@ -87,5 +67,23 @@ public class Message {
         return remoteObjectInputStream.readObject();
     }
 
+    public static byte getType(ByteBuffer buffer) {
+        return buffer.get();
+    }
 
+    public byte getType() {
+        return type;
+    }
+
+    public int getSize() {
+        return size;
+    }
+
+    public byte[] getData() {
+        return data;
+    }
+
+    public short getDataLength() {
+        return dataLength;
+    }
 }
