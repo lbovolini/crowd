@@ -67,7 +67,7 @@ public class RemoteObject implements InvocationHandler {
      * @param args
      * @throws IOException
      */
-    private void create(String className, Class<?>[] parameterTypes, Object[] args) throws IOException {
+    private void create(String className, Class<?>[] parameterTypes, Object[] args) {
         Message message = MessageFactory.create(className, parameterTypes, args);
         this.node.setRemoteObject(this);
         this.node.send(message);

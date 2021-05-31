@@ -10,4 +10,7 @@ public class MyObject implements Serializable {
         this.a = a;
     }
 
+    public void say() {
+        System.out.println("Hello");
+    }
 }
