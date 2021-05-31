@@ -10,38 +10,18 @@ import java.nio.ByteBuffer;
 
 public class Message {
 
-    private static final int HEADER_SIZE = Byte.BYTES + Short.BYTES;
+    public static final int HEADER_SIZE = Byte.BYTES + Short.BYTES;
 
     private final byte type;
     private final int size;
     private final byte[] data;
     private final short dataLength;
 
-    public static byte getType(ByteBuffer buffer) {
-        return buffer.get();
-    }
-
     private Message(byte type, int size, byte[] data, short dataLength) {
         this.type = type;
         this.size = size;
         this.data = data;
         this.dataLength = dataLength;
-    }
-
-    public byte getType() {
-        return type;
-    }
-
-    public int getSize() {
-        return size;
-    }
-
-    public byte[] getData() {
-        return data;
-    }
-
-    public short getDataLength() {
-        return dataLength;
     }
 
     public static Message create(byte type, byte[] data) {
@@ -87,5 +67,23 @@ public class Message {
         return remoteObjectInputStream.readObject();
     }
 
+    public static byte getType(ByteBuffer buffer) {
+        return buffer.get();
+    }
 
+    public byte getType() {
+        return type;
+    }
+
+    public int getSize() {
+        return size;
+    }
+
+    public byte[] getData() {
+        return data;
+    }
+
+    public short getDataLength() {
+        return dataLength;
+    }
 }

@@ -79,17 +79,23 @@ Default value is: " "
 
 [//]: # (Module: ...crowd.discovery Class: URLUtils)
 
+```
+classloader.custom
+```
 
+Tells application to use a custom classloader defined in "classloader" property below.
+
+Default value is: "False"
 
 ```
 classloader
 ```
 
-This property defines the canonical class name of alternative classloader to be used if java.vendor property does not contains "Oracle" or is equal to "N/A".  
+This property defines the canonical class name of alternative classloader to be used if "classloader.custom" property is true.  
 
 Default value is "com.github.lbovolini.crowd.android.classloader.AndroidRemoteClassLoader"
 
-Optional, use only if alternative classloader is required.
+Optional, use only if alternative classloader, that is not AndroidRemoteClassLoader, is required.
 
 Client only
 
