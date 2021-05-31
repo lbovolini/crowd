@@ -12,9 +12,14 @@ import static com.github.lbovolini.crowd.core.message.MessageType.*;
 
 public class MessageFactory {
 
-    public static Message create(String className, Class<?>[] types, Object[] args) throws IOException {
+    public static Message create(String className, Class<?>[] types, Object[] args) {
         CreateObject createObject = new CreateObject(className, types, args);
-        return Message.create(CREATE, createObject);
+
+        try {
+            return Message.create(CREATE, createObject);
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
     }
 
     public static Message invoke(int requestId, String method, Class<?>[] types, Object[] args) {
