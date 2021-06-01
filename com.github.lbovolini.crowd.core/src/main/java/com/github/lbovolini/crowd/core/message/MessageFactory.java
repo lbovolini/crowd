@@ -12,6 +12,8 @@ import static com.github.lbovolini.crowd.core.message.MessageType.*;
 
 public class MessageFactory {
 
+    private MessageFactory() {}
+
     public static Message create(String className, Class<?>[] types, Object[] args) {
         CreateObject createObject = new CreateObject(className, types, args);
 

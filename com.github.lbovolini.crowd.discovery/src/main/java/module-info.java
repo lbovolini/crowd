@@ -22,4 +22,10 @@ module com.github.lbovolini.crowd.discovery {
             org.mockito;
 
     exports com.github.lbovolini.crowd.discovery.request;
+
+    exports com.github.lbovolini.crowd.discovery.exception;
+
+    exports com.github.lbovolini.crowd.discovery.util to
+            com.github.lbovolini.crowd.discovery.test,
+            org.mockito;
 }

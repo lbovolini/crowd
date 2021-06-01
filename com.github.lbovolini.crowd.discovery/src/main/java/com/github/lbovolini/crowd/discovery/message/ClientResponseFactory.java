@@ -1,5 +1,7 @@
 package com.github.lbovolini.crowd.discovery.message;
 
+import com.github.lbovolini.crowd.discovery.exception.InvalidMulticastMessageException;
+
 public class ClientResponseFactory extends ResponseFactory {
 
     public byte[] get(MulticastMessageType type) {
@@ -10,7 +12,8 @@ public class ClientResponseFactory extends ResponseFactory {
         if (type.equals(MulticastMessageType.DISCOVER)) {
             return new byte[] { MulticastMessageType.DISCOVER.getType() };
         }
-        return new byte[] {};
+
+        throw new InvalidMulticastMessageException("Invalid multicast message type exception");
     }
 
 }
