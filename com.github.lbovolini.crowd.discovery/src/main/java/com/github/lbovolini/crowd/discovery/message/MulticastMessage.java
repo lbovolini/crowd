@@ -28,6 +28,12 @@ public class MulticastMessage {
         return new String(data, 0, dataLength, StandardCharsets.UTF_8);
     }
 
+    /**
+     * Retorna o endereço do host remoto.
+     * Se utilizado durante a leitura, representa o endereço do host remoto que está enviando a mensagem para o host local.
+     * Se utilizado durante a escrita, representa o endereço do host remoto de destina da mensagem.
+     * @return Endereço do host remoto.
+     */
     public InetSocketAddress getAddress() {
         return address;
     }
