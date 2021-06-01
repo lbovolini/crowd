@@ -5,7 +5,6 @@ import com.github.lbovolini.crowd.discovery.message.ClientResponseFactory;
 import com.github.lbovolini.crowd.discovery.message.MulticastMessageType;
 import com.github.lbovolini.crowd.discovery.message.ResponseFactory;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.function.Executable;
 
 import static com.github.lbovolini.crowd.discovery.message.MulticastMessageType.*;
 import static org.junit.jupiter.api.Assertions.*;
