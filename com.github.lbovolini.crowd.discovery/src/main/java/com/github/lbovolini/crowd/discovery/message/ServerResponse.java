@@ -1,5 +1,6 @@
 package com.github.lbovolini.crowd.discovery.message;
 
+import com.github.lbovolini.crowd.discovery.exception.MalformedMulticastServerResponseException;
 import com.github.lbovolini.crowd.discovery.util.URLUtils;
 
 import java.net.InetSocketAddress;
@@ -28,7 +29,7 @@ public class ServerResponse {
         String[] info = response.toString().split(SEPARATOR);
 
         if (info.length < 5) {
-            throw new RuntimeException("Server response error");
+            throw new MalformedMulticastServerResponseException("Malformed multicast server response");
         }
 
         URL[] codebase = URLUtils.split(info[0]);
