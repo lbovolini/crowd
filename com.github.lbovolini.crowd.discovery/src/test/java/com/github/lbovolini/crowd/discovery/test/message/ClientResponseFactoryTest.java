@@ -1,9 +1,8 @@
-package com.github.lbovolini.crowd.discovery.test;
+package com.github.lbovolini.crowd.discovery.test.message;
 
 import com.github.lbovolini.crowd.discovery.message.ClientResponseFactory;
 import com.github.lbovolini.crowd.discovery.message.MulticastMessageType;
 import com.github.lbovolini.crowd.discovery.message.ResponseFactory;
-import com.github.lbovolini.crowd.discovery.message.ServerResponseFactory;
 import org.junit.jupiter.api.Test;
 
 import static com.github.lbovolini.crowd.discovery.message.MulticastMessageType.*;
