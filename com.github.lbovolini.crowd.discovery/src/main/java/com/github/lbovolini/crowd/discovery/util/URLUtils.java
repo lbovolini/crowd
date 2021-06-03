@@ -21,19 +21,20 @@ public class URLUtils {
         return urlsString.toString();
     }
 
-    public static URL[] split(String urlsString) {
+    public static URL[] split(String urlsString) throws MalformedURLException {
 
-        if (Objects.isNull(urlsString) || urlsString.equals("")) {
-            return null;
+        if (Objects.isNull(urlsString) || urlsString.trim().equals("")) {
+            throw new IllegalArgumentException("Argument cannot be null");
         }
 
         String[] strURL = urlsString.split(URL_SEPARATOR);
         URL[] urls = new URL[strURL.length];
 
         for (int i = 0; i < strURL.length; i++) {
-            try {
-                urls[i] = new URL(strURL[i]);
-            } catch (MalformedURLException e) { e.printStackTrace(); }
+            if (Objects.isNull(strURL[i])) {
+                throw new IllegalArgumentException("URL cannot be null");
+            }
+            urls[i] = new URL(strURL[i]);
         }
 
         return urls;
