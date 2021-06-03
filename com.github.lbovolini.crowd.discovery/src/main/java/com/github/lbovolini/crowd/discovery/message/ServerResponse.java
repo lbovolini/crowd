@@ -1,5 +1,6 @@
 package com.github.lbovolini.crowd.discovery.message;
 
+import com.github.lbovolini.crowd.discovery.exception.InvalidMulticastMessageException;
 import com.github.lbovolini.crowd.discovery.exception.MalformedMulticastServerResponseException;
 import com.github.lbovolini.crowd.discovery.util.URLUtils;
 
@@ -11,40 +12,34 @@ import java.util.Objects;
 public class ServerResponse {
 
     public static final String SEPARATOR = ";";
+    public static final int PARAMETERS = 5;
 
     private final URL[] codebase;
     private final InetSocketAddress serverAddress;
     private final URL libURL;
-    private final String type;
+    private final byte type;
 
-    public ServerResponse(URL[] codebase, InetSocketAddress serverAddress, URL libURL, String type) {
+    public ServerResponse(URL[] codebase, InetSocketAddress serverAddress, URL libURL, byte type) {
         this.codebase = Objects.requireNonNull(codebase);
         this.serverAddress = Objects.requireNonNull(serverAddress);
         this.libURL = Objects.requireNonNull(libURL);
-        this.type = Objects.requireNonNull(type);
+        this.type = type;
     }
 
-    public static ServerResponse fromObject(Object response) {
+    public static ServerResponse fromObject(String response) {
 
-        String[] info = response.toString().split(SEPARATOR);
-
-        if (info.length < 5) {
-            throw new MalformedMulticastServerResponseException("Malformed multicast server response");
-        }
-
-        URL[] codebase = URLUtils.split(info[0]);
-        String address = info[1];
-        int port = Integer.parseInt(info[2]);
-        InetSocketAddress serverAddress = new InetSocketAddress(address, port);
-        URL nativeLibURL = null;
+        String[] info = splitResponse(response);
 
         try {
-            nativeLibURL = new URL(info[3]);
-        } catch (MalformedURLException e) { e.printStackTrace(); }
+            URL[] codebase = URLUtils.split(info[0]);
+            InetSocketAddress serverAddress = getServerAddress(info[1], info[2]);
+            URL nativeLibURL = getNativeLibURL(info[3]);
+            byte type = getType(info[4]);
 
-        String type = info[4];
-
-        return new ServerResponse(codebase, serverAddress, nativeLibURL, type);
+            return new ServerResponse(codebase, serverAddress, nativeLibURL, type);
+        } catch (MalformedURLException e) {
+            throw new MalformedMulticastServerResponseException(e);
+        }
     }
 
     public URL[] getCodebase() {
@@ -59,7 +54,7 @@ public class ServerResponse {
         return libURL;
     }
 
-    public String getType() {
+    public byte getType() {
         return type;
     }
 
@@ -70,5 +65,63 @@ public class ServerResponse {
                 + SEPARATOR + serverAddress.getPort()
                 + SEPARATOR + libURL
                 + SEPARATOR + type;
+    }
+
+    private static String[] splitResponse(String response) {
+
+        if (response == null) {
+            throw new MalformedMulticastServerResponseException("Malformed multicast server response");
+        }
+
+        String[] info = response.split(SEPARATOR);
+
+        if (info.length < PARAMETERS) {
+            throw new MalformedMulticastServerResponseException("Malformed multicast server response");
+        }
+
+        for (String data : info) {
+            if (data.trim().isEmpty()) {
+                throw new MalformedMulticastServerResponseException("Malformed multicast server response");
+            }
+        }
+
+        return info;
+    }
+
+    private static byte getType(String stringType) {
+
+        if (stringType == null) {
+            throw new InvalidMulticastMessageException("Unknown multicast message type of type: null");
+        }
+
+        byte type = Byte.parseByte(stringType);
+
+        MulticastMessageType messageType = MulticastMessageType.get(type);
+
+        if (messageType == null) {
+            throw new InvalidMulticastMessageException(String.format("Unknown multicast message type of type: %s ", stringType));
+        }
+
+        return type;
+    }
+
+    private static InetSocketAddress getServerAddress(String address, String port) {
+        try {
+            int portNumber = Integer.parseInt(port);
+
+            Objects.requireNonNull(portNumber == 0 ? null : portNumber);
+
+            return new InetSocketAddress(address, portNumber);
+        } catch (RuntimeException e) {
+            throw new InvalidMulticastMessageException("Invalid server address or port number", e);
+        }
+    }
+
+    private static URL getNativeLibURL(String nativeLibURLString) {
+        try {
+            return new URL(nativeLibURLString);
+        } catch (MalformedURLException e) {
+            throw new MalformedMulticastServerResponseException("Invalid native lib URL", e);
+        }
     }
 }

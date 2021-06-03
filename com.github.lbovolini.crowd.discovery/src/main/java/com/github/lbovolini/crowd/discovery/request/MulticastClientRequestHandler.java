@@ -28,7 +28,7 @@ public class MulticastClientRequestHandler implements MulticastRequestHandler {
 
         ServerResponse response = ServerResponse.fromObject(request.getMessage().getDataAsString());
 
-        byte type = Byte.parseByte(response.getType());
+        byte type = response.getType();
         URL[] codebase = response.getCodebase();
         URL libURL = response.getLibURL();
 
