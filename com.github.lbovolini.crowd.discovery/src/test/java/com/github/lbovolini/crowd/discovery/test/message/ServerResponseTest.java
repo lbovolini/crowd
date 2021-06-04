@@ -55,6 +55,38 @@ class ServerResponseTest {
     }
 
     @Test
+    void shouldReturnServerResponseAsString() {
+        // Input
+        String codebase = "file:";
+        String serverAddress = "127.0.0.1";
+        String serverPort = "8888";
+        String nativeLib = "file:";
+        String type = "9"; // UPDATE
+
+        StringBuilder builder = new StringBuilder();
+        builder.append(codebase);
+        builder.append(";");
+        builder.append(serverAddress);
+        builder.append(";");
+        builder.append(serverPort);
+        builder.append(";");
+        builder.append(nativeLib);
+        builder.append(";");
+        builder.append(type);
+
+        String response = builder.toString();
+
+        ServerResponse serverResponse = ServerResponse.fromObject(response);
+
+        // Should test ONLY this method
+        String serverResponseString = serverResponse.toString();
+
+        // Assertion
+        assertEquals(response, serverResponseString);
+    }
+
+
+    @Test
     void shouldThrowsMalformedMulticastServerResponseExceptionWhenResponseStringIsMissingSomeOfExpectedFiveArguments() {
         // Expected exception message
         String expectedExceptionMessage = String.format("Malformed multicast server response. Response message must have exactly %d parameters", ServerResponse.PARAMETERS);
