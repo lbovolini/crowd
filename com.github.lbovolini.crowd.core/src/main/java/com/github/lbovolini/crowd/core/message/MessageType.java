@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public enum MessageType {
+
+    // Type 0 is reserved to test case, its always an invalid type
     JOIN     ((byte) 1),
     LEAVE    ((byte) 2),
     REPLY    ((byte) 3),

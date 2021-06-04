@@ -3,9 +3,11 @@ package com.github.lbovolini.crowd.discovery.connection;
 import com.github.lbovolini.crowd.discovery.message.MulticastMessage;
 import com.github.lbovolini.crowd.discovery.message.MulticastMessageType;
 
+import java.io.UncheckedIOException;
 import java.net.InetSocketAddress;
 import java.nio.channels.ClosedChannelException;
 import java.nio.channels.SelectionKey;
+import java.util.Objects;
 
 public class MulticastWriterChannel {
 
@@ -21,6 +23,10 @@ public class MulticastWriterChannel {
 
     public void write(byte type, InetSocketAddress address) {
 
+        if (Objects.isNull(address)) {
+            throw new IllegalArgumentException("Receiver host address cannot be null");
+        }
+
         byte[] data = context.getResponseFactory().get(MulticastMessageType.get(type));
         MulticastMessage message = new MulticastMessage(data, data.length, address);
 
@@ -28,7 +34,7 @@ public class MulticastWriterChannel {
             context.getChannel().register(context.getSelector(), SelectionKey.OP_WRITE, message);
             context.getSelector().wakeup();
         } catch (ClosedChannelException e) {
-            e.printStackTrace();
+            throw new UncheckedIOException(e);
         }
     }
 
