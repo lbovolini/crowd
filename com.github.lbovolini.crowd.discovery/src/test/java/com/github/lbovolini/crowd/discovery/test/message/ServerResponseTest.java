@@ -119,4 +119,49 @@ class ServerResponseTest {
             ServerResponse.fromObject(response);
         });
     }
+
+    @Test
+    void shouldThrowMalformedMulticastServerResponseExceptionWhenSomeURLOfCodebaseIsMalformed() {
+        // Input
+        String response = "file: malformedURL?/;localhost;8888;file:;9"; // 5
+
+        // Should test ONLY this method
+        assertThrows(MalformedMulticastServerResponseException.class, () -> {
+            ServerResponse.fromObject(response);
+        });
+    }
+
+    @Test
+    void shouldThrowMalformedMulticastServerResponseExceptionWhenURLOfNativeLibraryIsMalformed() {
+        // Input
+        String response = "file:;localhost;8888;malformedURL?/;9"; // 5
+
+        // Should test ONLY this method
+        assertThrows(MalformedMulticastServerResponseException.class, () -> {
+            ServerResponse.fromObject(response);
+        });
+    }
+
+    @Test
+    void shouldThrowMalformedMulticastServerResponseExceptionWhenResponseIsNull() {
+        // Input
+        String response = null;
+
+        // Should test ONLY this method
+        assertThrows(MalformedMulticastServerResponseException.class, () -> {
+            ServerResponse.fromObject(response);
+        });
+    }
+
+    @Test
+    void shouldThrowMalformedMulticastServerResponseExceptionWhenMessageTypeIsNotANumber() {
+        // Input
+        String response = "file:;localhost;8888;file:;abc"; // 5
+
+        // Should test ONLY this method
+        assertThrows(MalformedMulticastServerResponseException.class, () -> {
+            ServerResponse.fromObject(response);
+        });
+    }
+    
 }
