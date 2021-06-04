@@ -1,5 +1,6 @@
 package com.github.lbovolini.crowd.discovery.connection;
 
+import java.io.UncheckedIOException;
 import java.nio.channels.ClosedChannelException;
 import java.nio.channels.SelectionKey;
 
@@ -15,7 +16,7 @@ public class MulticastReaderChannel {
         try {
             context.getChannel().register(context.getSelector(), SelectionKey.OP_READ);
         } catch (ClosedChannelException e) {
-            e.printStackTrace();
+            throw new UncheckedIOException(e);
         }
     }
 }
