@@ -7,6 +7,7 @@ import java.io.UncheckedIOException;
 import java.net.InetSocketAddress;
 import java.nio.channels.ClosedChannelException;
 import java.nio.channels.SelectionKey;
+import java.util.Objects;
 
 public class MulticastWriterChannel {
 
@@ -21,6 +22,10 @@ public class MulticastWriterChannel {
     }
 
     public void write(byte type, InetSocketAddress address) {
+
+        if (Objects.isNull(address)) {
+            throw new IllegalArgumentException("Receiver host address cannot be null");
+        }
 
         byte[] data = context.getResponseFactory().get(MulticastMessageType.get(type));
         MulticastMessage message = new MulticastMessage(data, data.length, address);
