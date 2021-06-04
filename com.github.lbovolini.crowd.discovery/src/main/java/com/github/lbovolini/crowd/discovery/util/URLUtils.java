@@ -12,10 +12,18 @@ public class URLUtils {
 
     public static String join(URL[] urls) {
 
+        if (Objects.isNull(urls)) {
+            throw new IllegalArgumentException("Argument cannot be null");
+        }
+
         StringBuilder urlsString = new StringBuilder();
 
-        for (URL url : urls) {
-            urlsString.append(url.toString()).append(URL_SEPARATOR);
+        for (int i = 0; i < urls.length; i++) {
+            urlsString.append(urls[i].toString());
+
+            if (i + 1 != urls.length) {
+                urlsString.append(URL_SEPARATOR);
+            }
         }
 
         return urlsString.toString();
