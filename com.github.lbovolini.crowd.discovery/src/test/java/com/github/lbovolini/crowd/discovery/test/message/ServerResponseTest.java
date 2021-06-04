@@ -2,9 +2,7 @@ package com.github.lbovolini.crowd.discovery.test.message;
 
 import com.github.lbovolini.crowd.discovery.exception.InvalidMulticastMessageException;
 import com.github.lbovolini.crowd.discovery.exception.MalformedMulticastServerResponseException;
-import com.github.lbovolini.crowd.discovery.message.ResponseFactory;
 import com.github.lbovolini.crowd.discovery.message.ServerResponse;
-import com.github.lbovolini.crowd.discovery.message.ServerResponseFactory;
 import org.junit.jupiter.api.Test;
 
 import java.net.InetSocketAddress;
@@ -14,8 +12,6 @@ import java.net.URL;
 import static org.junit.jupiter.api.Assertions.*;
 
 class ServerResponseTest {
-
-    private static final ResponseFactory responseFactory = new ServerResponseFactory("localhost", 8888);
 
     @Test
     void shouldReturnObjectResponseFromResponseAsString() {
