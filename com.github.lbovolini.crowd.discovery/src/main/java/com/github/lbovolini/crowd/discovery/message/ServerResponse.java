@@ -37,7 +37,7 @@ public class ServerResponse {
             byte type = getType(info[4]);
 
             return new ServerResponse(codebase, serverAddress, nativeLibURL, type);
-        } catch (MalformedURLException e) {
+        } catch (MalformedURLException | NumberFormatException e) {
             throw new MalformedMulticastServerResponseException(e);
         }
     }
@@ -70,18 +70,18 @@ public class ServerResponse {
     private static String[] splitResponse(String response) {
 
         if (response == null) {
-            throw new MalformedMulticastServerResponseException("Malformed multicast server response");
+            throw new MalformedMulticastServerResponseException("Malformed multicast server response. Response message is null");
         }
 
         String[] info = response.split(SEPARATOR);
 
-        if (info.length < PARAMETERS) {
-            throw new MalformedMulticastServerResponseException("Malformed multicast server response");
+        if (info.length != PARAMETERS) {
+            throw new MalformedMulticastServerResponseException(String.format("Malformed multicast server response. Response message must have exactly %d parameters", PARAMETERS));
         }
 
         for (String data : info) {
             if (data.trim().isEmpty()) {
-                throw new MalformedMulticastServerResponseException("Malformed multicast server response");
+                throw new MalformedMulticastServerResponseException("Malformed multicast server response. Some parameter is invalid");
             }
         }
 
@@ -89,10 +89,6 @@ public class ServerResponse {
     }
 
     private static byte getType(String stringType) {
-
-        if (stringType == null) {
-            throw new InvalidMulticastMessageException("Unknown multicast message type of type: null");
-        }
 
         byte type = Byte.parseByte(stringType);
 
@@ -117,11 +113,7 @@ public class ServerResponse {
         }
     }
 
-    private static URL getNativeLibURL(String nativeLibURLString) {
-        try {
-            return new URL(nativeLibURLString);
-        } catch (MalformedURLException e) {
-            throw new MalformedMulticastServerResponseException("Invalid native lib URL", e);
-        }
+    private static URL getNativeLibURL(String nativeLibURLString) throws MalformedURLException {
+        return new URL(nativeLibURLString);
     }
 }
