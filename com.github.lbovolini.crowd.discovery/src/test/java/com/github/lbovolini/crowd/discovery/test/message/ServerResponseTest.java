@@ -56,112 +56,172 @@ class ServerResponseTest {
 
     @Test
     void shouldThrowsMalformedMulticastServerResponseExceptionWhenResponseStringIsMissingSomeOfExpectedFiveArguments() {
+        // Expected exception message
+        String expectedExceptionMessage = String.format("Malformed multicast server response. Response message must have exactly %d parameters", ServerResponse.PARAMETERS);
+
         // Input
         String response = "file:;localhost;8888;"; // 3
 
         // Should test ONLY this method
-        assertThrows(MalformedMulticastServerResponseException.class, () -> {
+        Throwable throwable = assertThrows(MalformedMulticastServerResponseException.class, () -> {
             ServerResponse.fromObject(response);
         });
+
+        // Assert exception message
+        assertEquals(expectedExceptionMessage, throwable.getMessage());
     }
 
     @Test
     void shouldThrowsMalformedMulticastServerResponseExceptionWhenResponseStringIsMissingSomeOfExpectedParameter() {
+        // Expected exception message
+        String expectedExceptionMessage = String.format("Malformed multicast server response. Response message must have exactly %d parameters", ServerResponse.PARAMETERS);
+
         // Input
         String response = "file:;localhost;8888;file:;"; // 4
 
         // Should test ONLY this method
-        assertThrows(MalformedMulticastServerResponseException.class, () -> {
+        Throwable throwable = assertThrows(MalformedMulticastServerResponseException.class, () -> {
             ServerResponse.fromObject(response);
         });
+
+        // Assert exception message
+        assertEquals(expectedExceptionMessage, throwable.getMessage());
     }
 
     @Test
     void shouldThrowsMalformedMulticastServerResponseExceptionWhenResponseStringHasSomeBlankParameter() {
+        // Expected exception message
+        String expectedExceptionMessage = "Malformed multicast server response. Some parameter is invalid";
+
         // Input
         String response = "file:;localhost;8888; ;9"; // 5, one blank
 
         // Should test ONLY this method
-        assertThrows(MalformedMulticastServerResponseException.class, () -> {
+        Throwable throwable = assertThrows(MalformedMulticastServerResponseException.class, () -> {
             ServerResponse.fromObject(response);
         });
+
+        // Assert exception message
+        assertEquals(expectedExceptionMessage, throwable.getMessage());
     }
 
     @Test
     void shouldThrowsInvalidMulticastMessageExceptionWhenResponseStringHasInvalidType() {
+        // Expected exception message
+        String expectedExceptionMessage = "Unknown multicast message type of type: 0 ";
+
         // Input
         String response = "file:;localhost;8888;file:;0"; // 5, 0 is an invalid type
 
         // Should test ONLY this method
-        assertThrows(InvalidMulticastMessageException.class, () -> {
+        Throwable throwable = assertThrows(InvalidMulticastMessageException.class, () -> {
             ServerResponse.fromObject(response);
         });
+
+        // Assert exception message
+        assertEquals(expectedExceptionMessage, throwable.getMessage());
     }
 
     @Test
     void shouldThrowsInvalidMulticastMessageExceptionWhenResponseStringHasInvalidPortNumber() {
+        // Expected exception message
+        String expectedExceptionMessage = "Invalid server address or port number";
+
         // Input
         String response = "file:;localhost;1111111111;file:;9"; // 5
 
         // Should test ONLY this method
-        assertThrows(InvalidMulticastMessageException.class, () -> {
+        Throwable throwable = assertThrows(InvalidMulticastMessageException.class, () -> {
             ServerResponse.fromObject(response);
         });
+
+        // Assert exception message
+        assertEquals(expectedExceptionMessage, throwable.getMessage());
     }
 
     @Test
     void shouldThrowsInvalidMulticastMessageExceptionWhenResponseStringHasInvalidPortNumberIsZero() {
+        // Expected exception message
+        String expectedExceptionMessage = "Invalid server address or port number";
+
         // Input
         String response = "file:;localhost;0;file:;9"; // 5
 
         // Should test ONLY this method
-        assertThrows(InvalidMulticastMessageException.class, () -> {
+        Throwable throwable = assertThrows(InvalidMulticastMessageException.class, () -> {
             ServerResponse.fromObject(response);
         });
+
+        // Assert exception message
+        assertEquals(expectedExceptionMessage, throwable.getMessage());
     }
 
     @Test
     void shouldThrowMalformedMulticastServerResponseExceptionWhenSomeURLOfCodebaseIsMalformed() {
+        // Expected exception message
+        String expectedExceptionMessage = "java.net.MalformedURLException: no protocol: malformedCodebaseURL?/";
+
         // Input
-        String response = "file: malformedURL?/;localhost;8888;file:;9"; // 5
+        String response = "file: malformedCodebaseURL?/;localhost;8888;file:;9"; // 5
 
         // Should test ONLY this method
-        assertThrows(MalformedMulticastServerResponseException.class, () -> {
+        Throwable throwable = assertThrows(MalformedMulticastServerResponseException.class, () -> {
             ServerResponse.fromObject(response);
         });
+
+        // Assert exception message
+        assertEquals(expectedExceptionMessage, throwable.getMessage());
     }
 
     @Test
     void shouldThrowMalformedMulticastServerResponseExceptionWhenURLOfNativeLibraryIsMalformed() {
+        // Expected exception message
+        String expectedExceptionMessage = "java.net.MalformedURLException: no protocol: malformedURL?/";
+
         // Input
         String response = "file:;localhost;8888;malformedURL?/;9"; // 5
 
         // Should test ONLY this method
-        assertThrows(MalformedMulticastServerResponseException.class, () -> {
+        Throwable throwable =assertThrows(MalformedMulticastServerResponseException.class, () -> {
             ServerResponse.fromObject(response);
         });
+
+        // Assert exception message
+        assertEquals(expectedExceptionMessage, throwable.getMessage());
     }
 
     @Test
     void shouldThrowMalformedMulticastServerResponseExceptionWhenResponseIsNull() {
+        // Expected exception message
+        String expectedExceptionMessage = "Malformed multicast server response. Response message is null";
+
         // Input
         String response = null;
 
         // Should test ONLY this method
-        assertThrows(MalformedMulticastServerResponseException.class, () -> {
+        Throwable throwable = assertThrows(MalformedMulticastServerResponseException.class, () -> {
             ServerResponse.fromObject(response);
         });
+
+        // Assert exception message
+        assertEquals(expectedExceptionMessage, throwable.getMessage());
     }
 
     @Test
     void shouldThrowMalformedMulticastServerResponseExceptionWhenMessageTypeIsNotANumber() {
+        // Expected exception message
+        String expectedExceptionMessage = "java.lang.NumberFormatException: For input string: \"abc\"";
+
         // Input
         String response = "file:;localhost;8888;file:;abc"; // 5
 
         // Should test ONLY this method
-        assertThrows(MalformedMulticastServerResponseException.class, () -> {
+        Throwable throwable = assertThrows(MalformedMulticastServerResponseException.class, () -> {
             ServerResponse.fromObject(response);
         });
+
+        // Assert exception message
+        assertEquals(expectedExceptionMessage, throwable.getMessage());
     }
     
 }
