@@ -70,18 +70,18 @@ public class ServerResponse {
     private static String[] splitResponse(String response) {
 
         if (response == null) {
-            throw new MalformedMulticastServerResponseException("Malformed multicast server response");
+            throw new MalformedMulticastServerResponseException("Malformed multicast server response. Response message is null");
         }
 
         String[] info = response.split(SEPARATOR);
 
-        if (info.length < PARAMETERS) {
-            throw new MalformedMulticastServerResponseException("Malformed multicast server response");
+        if (info.length != PARAMETERS) {
+            throw new MalformedMulticastServerResponseException(String.format("Malformed multicast server response. Response message must have exactly %d parameters", PARAMETERS));
         }
 
         for (String data : info) {
             if (data.trim().isEmpty()) {
-                throw new MalformedMulticastServerResponseException("Malformed multicast server response");
+                throw new MalformedMulticastServerResponseException("Malformed multicast server response. Some parameter is invalid");
             }
         }
 
