@@ -67,10 +67,6 @@ public class Message {
         return remoteObjectInputStream.readObject();
     }
 
-    public static byte getType(ByteBuffer buffer) {
-        return buffer.get();
-    }
-
     public byte getType() {
         return type;
     }
