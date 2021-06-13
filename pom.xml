@@ -52,6 +52,12 @@
 
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-jar-plugin</artifactId>
+                    <version>3.2.0</version>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-javadoc-plugin</artifactId>
                     <version>3.2.0</version>
                     <configuration>
@@ -65,26 +71,6 @@
                     <artifactId>maven-surefire-plugin</artifactId>
                     <version>3.0.0-M5</version>
                     <configuration>
-                        <argLine>
-                            @{argLine}
-                            --add-opens
-                                com.github.lbovolini.crowd.core/com.github.lbovolini.crowd.core.connection=ALL-UNNAMED\
-                                com.github.lbovolini.crowd.core/com.github.lbovolini.crowd.core.buffer=ALL-UNNAMED\
-                                com.github.lbovolini.crowd.core/com.github.lbovolini.crowd.core.message=ALL-UNNAMED\
-                                com.github.lbovolini.crowd.core/com.github.lbovolini.crowd.core.message.messages=ALL-UNNAMED\
-                                com.github.lbovolini.crowd.core/com.github.lbovolini.crowd.core.node=ALL-UNNAMED\
-                                com.github.lbovolini.crowd.core/com.github.lbovolini.crowd.core.object=ALL-UNNAMED\
-                                com.github.lbovolini.crowd.core/com.github.lbovolini.crowd.core.request=ALL-UNNAMED\
-                                com.github.lbovolini.crowd.core/com.github.lbovolini.crowd.core.util=ALL-UNNAMED\
-                                com.github.lbovolini.crowd.core/com.github.lbovolini.crowd.core.worker=ALL-UNNAMED\
-                                com.github.lbovolini.crowd.discovery/com.github.lbovolini.crowd.discovery.connection=ALL-UNNAMED\
-                                com.github.lbovolini.crowd.discovery/com.github.lbovolini.crowd.discovery.message=ALL-UNNAMED\
-                                com.github.lbovolini.crowd.discovery/com.github.lbovolini.crowd.discovery.monitor=ALL-UNNAMED\
-                                com.github.lbovolini.crowd.discovery/com.github.lbovolini.crowd.discovery.request=ALL-UNNAMED\
-                                com.github.lbovolini.crowd.discovery/com.github.lbovolini.crowd.discovery.service=ALL-UNNAMED\
-                                com.github.lbovolini.crowd.discovery/com.github.lbovolini.crowd.discovery.util=ALL-UNNAMED\
-                                com.github.lbovolini.crowd.discovery/com.github.lbovolini.crowd.discovery.worker=ALL-UNNAMED
-                        </argLine>
                         <systemPropertyVariables>
                             <jacoco-agent.destfile>**/jacoco.exec</jacoco-agent.destfile>
                         </systemPropertyVariables>
