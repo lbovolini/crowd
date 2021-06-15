@@ -1,6 +1,7 @@
 package com.github.lbovolini.crowd.core.connection;
 
 import com.github.lbovolini.crowd.core.buffer.ByteBufferPool;
+import com.github.lbovolini.crowd.core.worker.WorkerContext;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -22,6 +23,8 @@ public class WriterChannelContext {
 
     private static final ByteBufferPool WRITER_BUFFER_POOL = new ByteBufferPool();
     private static final WriterChannelCompletionHandler WRITER_CHANNEL_COMPLETION_HANDLER = new WriterChannelCompletionHandler();
+
+    private static final IOChannelScheduler ioChannelScheduler = new IOChannelScheduler(new WriterChannelHandler());
 
     public WriterChannelContext(AsynchronousSocketChannel channel) {
         this.channel = channel;
@@ -64,5 +67,9 @@ public class WriterChannelContext {
     public void close() throws IOException {
         this.closed = true;
         this.channel.close();
+    }
+
+    public boolean requestChannelWrite(WorkerContext workerContext) {
+        return ioChannelScheduler.enqueue(workerContext);
     }
 }
