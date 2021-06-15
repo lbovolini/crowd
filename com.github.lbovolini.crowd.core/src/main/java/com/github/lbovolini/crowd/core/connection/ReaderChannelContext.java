@@ -2,6 +2,7 @@ package com.github.lbovolini.crowd.core.connection;
 
 import com.github.lbovolini.crowd.core.buffer.ByteBufferPool;
 import com.github.lbovolini.crowd.core.message.PartialMessage;
+import com.github.lbovolini.crowd.core.worker.WorkerContext;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -25,6 +26,8 @@ public class ReaderChannelContext {
 
     private static final ByteBufferPool readerBufferPool = new ByteBufferPool();
     private static final ReaderChannelCompletionHandler READER_CHANNEL_COMPLETION_HANDLER = new ReaderChannelCompletionHandler();
+
+    private static final IOChannelScheduler ioChannelScheduler = new IOChannelScheduler(new ReaderChannelHandler());
 
     public ReaderChannelContext(AsynchronousSocketChannel channel) {
         this.channel = channel;
@@ -73,5 +76,9 @@ public class ReaderChannelContext {
 
     public static ReaderChannelCompletionHandler getReaderChannelCompletionHandler() {
         return READER_CHANNEL_COMPLETION_HANDLER;
+    }
+
+    public boolean requestChannelRead(WorkerContext workerContext) {
+        return ioChannelScheduler.enqueue(workerContext);
     }
 }

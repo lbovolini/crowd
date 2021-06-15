@@ -1,8 +1,6 @@
 package com.github.lbovolini.crowd.core.worker;
 
-import com.github.lbovolini.crowd.core.connection.MessageHandler;
-import com.github.lbovolini.crowd.core.connection.ReaderChannelContext;
-import com.github.lbovolini.crowd.core.connection.WriterChannelContext;
+import com.github.lbovolini.crowd.core.connection.*;
 
 import java.nio.channels.AsynchronousSocketChannel;
 
@@ -16,6 +14,14 @@ public class WorkerContext {
         this.readerChannelContext = readerChannelContext;
         this.writerChannelContext = writerChannelContext;
         this.messageHandler = messageHandler;
+    }
+
+    public void requestRead() {
+        readerChannelContext.requestChannelRead(this);
+    }
+
+    public void requestWrite() {
+        writerChannelContext.requestChannelWrite(this);
     }
 
     public ReaderChannelContext getReaderChannelContext() {

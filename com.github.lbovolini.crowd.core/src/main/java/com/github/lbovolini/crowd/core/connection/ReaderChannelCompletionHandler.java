@@ -10,7 +10,6 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.CompletionHandler;
 import java.util.Queue;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
@@ -77,8 +76,7 @@ public class ReaderChannelCompletionHandler implements CompletionHandler<Long, W
             readLock.unlock();
         }
 
-        // !TODO
-        readerContext.getChannel().read(readerBufferArray, 0, length, 0, TimeUnit.SECONDS, context, this );
+        context.requestRead();
     }
 
     public void failed(Throwable exc, WorkerContext context) {

@@ -5,11 +5,9 @@ import com.github.lbovolini.crowd.core.worker.WorkerContext;
 import java.nio.ByteBuffer;
 import java.util.concurrent.TimeUnit;
 
-public class ReaderChannelHandler {
+public class ReaderChannelHandler implements IOChannelHandler {
 
-    private ReaderChannelHandler() {}
-
-    public static void handle(WorkerContext context) {
+    public void handle(WorkerContext context) {
         ByteBuffer[] byteBufferArray = context.getReaderChannelContext().getReaderBufferArray();
         context.getChannel().read(byteBufferArray,
                     0,
