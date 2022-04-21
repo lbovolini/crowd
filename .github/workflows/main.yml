@@ -31,5 +31,3 @@ jobs:
         run: mvn -B verify jacoco:report-aggregate coveralls:report
       - name: Install dependencies to maven repo
         run: mvn install
-      - name: Build Crowd Android Classloder Library
-        run: ./gradlew -Dorg.gradle.java.home=${JAVA_HOME} clean build
