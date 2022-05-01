@@ -1,5 +1,8 @@
 package com.github.lbovolini.crowd.discovery.util;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -11,6 +14,8 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class CodebaseUtils {
+
+    private static final Logger log = LoggerFactory.getLogger(CodebaseUtils.class);
 
     public static final String LIB_URL = System.getProperty("lib.url", "file:");
     public static final String EXTENSIONS[] = {".class", ".jar", ".so", ".dll"};
@@ -49,6 +54,7 @@ public class CodebaseUtils {
                 }
             });
         } catch (IOException e) {
+            log.error("Error while getting list of codebase paths", e);
             throw new UncheckedIOException(e);
         }
 
@@ -117,6 +123,7 @@ public class CodebaseUtils {
         try {
             return Files.createTempDirectory(null).toString();
         } catch (IOException e) {
+            log.error("Error while getting temporary directory path");
             throw new UncheckedIOException(e);
         }
     }

@@ -14,8 +14,6 @@ public class MulticastServerDispatcher implements MulticastDispatcher {
     @Override
     public void dispatch(MulticastRequest request) {
 
-        System.out.println("SERVIDOR RECEBEU " + request.getMessage().getDataAsString());
-
         if (request.getMessage().getDataLength() > 1) {
             return;
         }
