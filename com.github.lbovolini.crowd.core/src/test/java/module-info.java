@@ -5,4 +5,5 @@ open module com.github.lbovolini.crowd.core.test {
     requires transitive org.junit.jupiter.engine;
     requires transitive org.junit.jupiter.api;
     requires com.github.lbovolini.crowd.core;
+    requires org.mockito.junit.jupiter;
 }

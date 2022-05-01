@@ -1,14 +1,11 @@
 package com.github.lbovolini.crowd.server.worker;
 
 import com.github.lbovolini.crowd.core.util.HostUtils;
-import com.github.lbovolini.crowd.discovery.connection.*;
-import com.github.lbovolini.crowd.discovery.message.MulticastMessageHandler;
-import com.github.lbovolini.crowd.discovery.message.ResponseFactory;
+import com.github.lbovolini.crowd.discovery.connection.MulticastChannelContext;
+import com.github.lbovolini.crowd.discovery.connection.MulticastChannelFactory;
+import com.github.lbovolini.crowd.discovery.connection.MulticastConnection;
 import com.github.lbovolini.crowd.discovery.message.ServerResponseFactory;
-import com.github.lbovolini.crowd.discovery.request.MulticastRequestHandler;
-import com.github.lbovolini.crowd.discovery.request.MulticastScheduler;
-import com.github.lbovolini.crowd.discovery.request.MulticastServerRequestHandler;
-import com.github.lbovolini.crowd.discovery.worker.MulticastWorkerContext;
+import com.github.lbovolini.crowd.discovery.request.MulticastServerDispatcher;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -33,28 +30,18 @@ public class MulticastServerWorkerFactory {
 
         try {
             selector = Selector.open();
-            NetworkInterface networkInterface = NetworkInterface.getByName(MULTICAST_INTERFACE_NAME);
-            InetAddress group = InetAddress.getByName(MULTICAST_IP);
-            InetSocketAddress localAddress = new InetSocketAddress("0.0.0.0", MULTICAST_SERVER_PORT);
+            var networkInterface = NetworkInterface.getByName(MULTICAST_INTERFACE_NAME);
+            var group = InetAddress.getByName(MULTICAST_IP);
+            var localAddress = new InetSocketAddress("0.0.0.0", MULTICAST_SERVER_PORT);
 
             channel = MulticastChannelFactory.initializedChannel(selector, networkInterface, group, localAddress);
 
-            ResponseFactory responseFactory = new ServerResponseFactory(hostname, port);
-            MulticastChannelContext channelContext = new MulticastChannelContext(channel, selector, networkInterface, group, localAddress, responseFactory, MULTICAST_SERVER_PORT, true);
+            var responseFactory = new ServerResponseFactory(hostname, port);
+            var channelContext = new MulticastChannelContext(channel, selector, networkInterface, group, localAddress, responseFactory, MULTICAST_SERVER_PORT, true);
 
-            MulticastRequestHandler requestHandler = new MulticastServerRequestHandler();
-            MulticastScheduler scheduler = new MulticastScheduler(requestHandler);
+            var connection = new MulticastConnection(channelContext, new MulticastServerDispatcher());
 
-            MulticastReaderChannel readerChannel = new MulticastReaderChannel(channelContext);
-            MulticastWriterChannel writerChannel = new MulticastWriterChannel(channelContext);
-
-            MulticastConnection connection = new MulticastConnection(readerChannel, writerChannel);
-
-            MulticastMessageHandler messageHandler = new MulticastMessageHandler(connection, scheduler);
-
-            MulticastWorkerContext workerContext = new MulticastWorkerContext(channelContext, connection, messageHandler);
-
-            return new MulticastServerWorker(workerContext);
+            return new MulticastServerWorker(connection);
         } catch (IOException e) {
             onIOException(selector, channel);
             throw new UncheckedIOException(e);

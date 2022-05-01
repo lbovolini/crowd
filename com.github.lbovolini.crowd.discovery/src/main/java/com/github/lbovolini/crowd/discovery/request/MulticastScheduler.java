@@ -5,16 +5,19 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingDeque;
 
+/**
+ * Apenas seleciona a requisicao da fila
+ */
 public class MulticastScheduler implements Runnable {
 
     private final BlockingDeque<MulticastRequest> requests;
-    private final MulticastRequestHandler multicastRequestHandler;
+    private final MulticastDispatcher multicastDispatcher;
 
     private final ExecutorService pool = Executors.newSingleThreadExecutor();
 
-    public MulticastScheduler(MulticastRequestHandler multicastRequestHandler) {
+    public MulticastScheduler(MulticastDispatcher multicastDispatcher) {
         this.requests = new LinkedBlockingDeque<>();
-        this.multicastRequestHandler = multicastRequestHandler;
+        this.multicastDispatcher = multicastDispatcher;
         this.pool.submit(this);
     }
 
@@ -23,7 +26,7 @@ public class MulticastScheduler implements Runnable {
         while (true) {
             try {
                 MulticastRequest request = requests.take();
-                multicastRequestHandler.handle(request);
+                multicastDispatcher.dispatch(request);
             } catch (InterruptedException e) { e.printStackTrace(); }
         }
     }

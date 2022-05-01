@@ -11,6 +11,7 @@ import java.nio.channels.Selector;
 
 public class MulticastChannelContext {
 
+    // !TODO cannot read/write message bigger than this size
     // !important Should NOT be bigger than datagram packet max size
     public static final int MULTICAST_BUFFER_SIZE = 1024;
 
