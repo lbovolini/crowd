@@ -1,16 +1,16 @@
 package com.github.lbovolini.crowd.client.worker;
 
 import com.github.lbovolini.crowd.client.heartbeat.HeartbeatScheduler;
+import com.github.lbovolini.crowd.discovery.connection.MulticastConnection;
 import com.github.lbovolini.crowd.discovery.worker.MulticastWorker;
-import com.github.lbovolini.crowd.discovery.worker.MulticastWorkerContext;
 
 public class MulticastClientWorker extends MulticastWorker {
 
     private final HeartbeatScheduler heartbeatScheduler;
 
-    public MulticastClientWorker(MulticastWorkerContext context) {
-        super(context);
-        heartbeatScheduler = new HeartbeatScheduler(context.getConnection());
+    public MulticastClientWorker(MulticastConnection connection) {
+        super(connection);
+        heartbeatScheduler = new HeartbeatScheduler(connection);
     }
 
     @Override

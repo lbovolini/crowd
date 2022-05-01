@@ -7,12 +7,14 @@ import java.net.InetSocketAddress;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class MulticastServerRequestHandler implements MulticastRequestHandler {
+public class MulticastServerDispatcher implements MulticastDispatcher {
 
     private static final Set<String> hosts = ConcurrentHashMap.newKeySet();
 
     @Override
-    public void handle(MulticastRequest request) {
+    public void dispatch(MulticastRequest request) {
+
+        System.out.println("SERVIDOR RECEBEU " + request.getMessage().getDataAsString());
 
         if (request.getMessage().getDataLength() > 1) {
             return;

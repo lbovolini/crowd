@@ -1,19 +1,19 @@
 package com.github.lbovolini.crowd.client.worker;
 
 import com.github.lbovolini.crowd.core.util.HostUtils;
+import com.github.lbovolini.crowd.discovery.connection.MulticastChannelContext;
+import com.github.lbovolini.crowd.discovery.connection.MulticastChannelFactory;
+import com.github.lbovolini.crowd.discovery.connection.MulticastConnection;
 import com.github.lbovolini.crowd.discovery.message.ClientResponseFactory;
 import com.github.lbovolini.crowd.discovery.message.ResponseFactory;
+import com.github.lbovolini.crowd.discovery.request.MulticastClientDispatcher;
 import com.github.lbovolini.crowd.discovery.service.CodebaseService;
-import com.github.lbovolini.crowd.discovery.connection.*;
-import com.github.lbovolini.crowd.discovery.message.MulticastMessageHandler;
-import com.github.lbovolini.crowd.discovery.request.MulticastClientRequestHandler;
-import com.github.lbovolini.crowd.discovery.request.MulticastRequestHandler;
-import com.github.lbovolini.crowd.discovery.request.MulticastScheduler;
-import com.github.lbovolini.crowd.discovery.worker.MulticastWorkerContext;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
-import java.net.*;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.NetworkInterface;
 import java.nio.channels.DatagramChannel;
 import java.nio.channels.Selector;
 import java.util.Objects;
@@ -43,19 +43,9 @@ public class MulticastClientWorkerFactory {
             ResponseFactory responseFactory = new ClientResponseFactory();
             MulticastChannelContext channelContext = new MulticastChannelContext(channel, selector, networkInterface, group, localAddress, responseFactory, MULTICAST_SERVER_PORT, false);
 
-            MulticastRequestHandler requestHandler = new MulticastClientRequestHandler(codebaseService);
-            MulticastScheduler scheduler = new MulticastScheduler(requestHandler);
+            MulticastConnection connection = new MulticastConnection(channelContext, new MulticastClientDispatcher(codebaseService));
 
-            MulticastReaderChannel readerChannel = new MulticastReaderChannel(channelContext);
-            MulticastWriterChannel writerChannel = new MulticastWriterChannel(channelContext);
-
-            MulticastConnection connection = new MulticastConnection(readerChannel, writerChannel);
-
-            MulticastMessageHandler messageHandler = new MulticastMessageHandler(connection, scheduler);
-
-            MulticastWorkerContext workerContext = new MulticastWorkerContext(channelContext, connection, messageHandler);
-
-            return new MulticastClientWorker(workerContext);
+            return new MulticastClientWorker(connection);
         } catch (IOException e) {
             onIOException(selector, channel);
             throw new UncheckedIOException(e);

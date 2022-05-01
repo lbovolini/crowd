@@ -1,10 +1,9 @@
 package com.github.lbovolini.crowd.discovery.test;
 
-import com.github.lbovolini.crowd.discovery.message.ClientResponseFactory;
 import com.github.lbovolini.crowd.discovery.message.MulticastMessage;
 import com.github.lbovolini.crowd.discovery.message.ResponseFactory;
 import com.github.lbovolini.crowd.discovery.message.ServerResponseFactory;
-import com.github.lbovolini.crowd.discovery.request.MulticastClientRequestHandler;
+import com.github.lbovolini.crowd.discovery.request.MulticastClientDispatcher;
 import com.github.lbovolini.crowd.discovery.request.MulticastRequest;
 import com.github.lbovolini.crowd.discovery.service.CodebaseService;
 import org.junit.jupiter.api.Test;
@@ -23,7 +22,7 @@ class MulticastClientRequestHandlerTest {
     private CodebaseService codebaseService;
 
     @InjectMocks
-    private MulticastClientRequestHandler requestHandler;
+    private MulticastClientDispatcher requestHandler;
 
     private final ResponseFactory responseFactory = new ServerResponseFactory("localhost", 8080);
 
@@ -34,7 +33,7 @@ class MulticastClientRequestHandlerTest {
         MulticastRequest request = new MulticastRequest(null, new MulticastMessage(data, data.length, null));
 
         // Should test ONLY this method
-        requestHandler.handle(request);
+        requestHandler.dispatch(request);
 
         verify(codebaseService, only()).onConnect(any(), any(), any());
     }
@@ -46,7 +45,7 @@ class MulticastClientRequestHandlerTest {
         MulticastRequest request = new MulticastRequest(null, new MulticastMessage(data, data.length, null));
 
         // Should test ONLY this method
-        requestHandler.handle(request);
+        requestHandler.dispatch(request);
 
         verify(codebaseService, only()).onUpdate(any(), any());
     }
@@ -58,7 +57,7 @@ class MulticastClientRequestHandlerTest {
         MulticastRequest request = new MulticastRequest(null, new MulticastMessage(data, data.length, null));
 
         // Should test ONLY this method
-        requestHandler.handle(request);
+        requestHandler.dispatch(request);
 
         verify(codebaseService, only()).onReload(any(), any());
     }

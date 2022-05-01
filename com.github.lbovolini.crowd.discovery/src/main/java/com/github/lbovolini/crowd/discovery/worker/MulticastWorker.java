@@ -1,21 +1,20 @@
 package com.github.lbovolini.crowd.discovery.worker;
 
-import com.github.lbovolini.crowd.discovery.connection.MulticastReaderChannelHandler;
-import com.github.lbovolini.crowd.discovery.connection.MulticastWriterChannelHandler;
+import com.github.lbovolini.crowd.discovery.connection.MulticastConnection;
+import com.github.lbovolini.crowd.discovery.message.MulticastMessage;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
+import java.nio.channels.DatagramChannel;
 import java.nio.channels.SelectionKey;
-import java.nio.channels.Selector;
-import java.util.Iterator;
 import java.util.Set;
 
 public abstract class MulticastWorker extends Thread implements MulticastService {
 
-    protected final MulticastWorkerContext context;
+    protected final MulticastConnection connection;
 
-    public MulticastWorker(MulticastWorkerContext context) {
-        this.context = context;
+    public MulticastWorker(MulticastConnection connection) {
+        this.connection = connection;
     }
 
     /**
@@ -26,7 +25,7 @@ public abstract class MulticastWorker extends Thread implements MulticastService
         try {
             onInit();
 
-            Selector selector = context.getChannelContext().getSelector();
+            var selector = connection.getSelector();
 
             while (true) {
                 if (!selector.isOpen()) {
@@ -40,18 +39,18 @@ public abstract class MulticastWorker extends Thread implements MulticastService
 
     private void handle(final Set<SelectionKey> selectedKeys) throws IOException {
 
-        Iterator<SelectionKey> keyIterator = selectedKeys.iterator();
+        var keyIterator = selectedKeys.iterator();
 
         while (keyIterator.hasNext()) {
-            SelectionKey selectionKey = keyIterator.next();
+            var selectionKey = keyIterator.next();
             keyIterator.remove();
 
             if (!selectionKey.isValid()) { continue; }
 
             if (selectionKey.isReadable()) {
-                MulticastReaderChannelHandler.handle(selectionKey, context);
+                connection.read((DatagramChannel) selectionKey.channel());
             } else if (selectionKey.isWritable()) {
-                MulticastWriterChannelHandler.handle(selectionKey, context);
+                connection.write((DatagramChannel) selectionKey.channel(), (MulticastMessage) selectionKey.attachment());
             }
         }
     }
