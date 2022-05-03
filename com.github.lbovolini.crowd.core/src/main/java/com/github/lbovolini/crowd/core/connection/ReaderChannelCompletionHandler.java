@@ -5,6 +5,8 @@ import com.github.lbovolini.crowd.core.message.Message;
 import com.github.lbovolini.crowd.core.message.PartialMessage;
 import com.github.lbovolini.crowd.core.message.Flags;
 import com.github.lbovolini.crowd.core.worker.WorkerContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -17,6 +19,8 @@ import java.util.concurrent.locks.ReentrantLock;
  * Responsável pela leitura assíncrona e não bloqueante das mensagens através dos canais de comunicação.
  */
 public class ReaderChannelCompletionHandler implements CompletionHandler<Long, WorkerContext> {
+
+    private static final Logger log = LoggerFactory.getLogger(ReaderChannelCompletionHandler.class);
 
     static final int TYPE = 1;
     static final int SIZE = 2;
@@ -72,7 +76,7 @@ public class ReaderChannelCompletionHandler implements CompletionHandler<Long, W
                 }
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error("Error while reading from asynchronous channel");
         } finally {
             readLock.unlock();
         }
@@ -91,7 +95,7 @@ public class ReaderChannelCompletionHandler implements CompletionHandler<Long, W
             readerContext.getChannel().close();
             readerContext.getReaderBufferQueue().clear();
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error("Error while closing asynchronous channel");
         } finally {
             readLock.unlock();
         }

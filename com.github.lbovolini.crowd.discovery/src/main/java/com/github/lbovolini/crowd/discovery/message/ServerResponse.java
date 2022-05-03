@@ -3,6 +3,8 @@ package com.github.lbovolini.crowd.discovery.message;
 import com.github.lbovolini.crowd.discovery.exception.InvalidMulticastMessageException;
 import com.github.lbovolini.crowd.discovery.exception.MalformedMulticastServerResponseException;
 import com.github.lbovolini.crowd.discovery.util.URLUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.net.InetSocketAddress;
 import java.net.MalformedURLException;
@@ -10,6 +12,8 @@ import java.net.URL;
 import java.util.Objects;
 
 public class ServerResponse {
+
+    private static final Logger log = LoggerFactory.getLogger(ServerResponse.class);
 
     public static final String SEPARATOR = ";";
     public static final int PARAMETERS = 5;
@@ -38,6 +42,7 @@ public class ServerResponse {
 
             return new ServerResponse(codebase, serverAddress, nativeLibURL, type);
         } catch (MalformedURLException | NumberFormatException e) {
+            log.error("Invalid server response", e);
             throw new MalformedMulticastServerResponseException(e);
         }
     }

@@ -5,6 +5,8 @@ import com.github.lbovolini.crowd.discovery.message.MulticastMessageType;
 import com.github.lbovolini.crowd.discovery.request.MulticastRequest;
 import com.github.lbovolini.crowd.discovery.request.MulticastDispatcher;
 import com.github.lbovolini.crowd.discovery.request.MulticastScheduler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -21,12 +23,14 @@ import java.util.Objects;
 // !TODO use nonblocking read and write
 public class MulticastConnection {
 
+    private static final Logger log = LoggerFactory.getLogger(MulticastConnection.class);
+
     private final MulticastChannelContext context;
     private final MulticastScheduler scheduler;
 
     public MulticastConnection(MulticastChannelContext context, MulticastDispatcher requestHandler) {
         this.context = context;
-        scheduler = new MulticastScheduler(requestHandler);
+        this.scheduler = new MulticastScheduler(requestHandler);
     }
 
     public void send(MulticastMessageType type) {
@@ -53,6 +57,7 @@ public class MulticastConnection {
             context.getChannel().register(context.getSelector(), SelectionKey.OP_WRITE, message);
             context.getSelector().wakeup();
         } catch (ClosedChannelException e) {
+            log.error("Cannot listen for 'write ready' event in the channel because selector is closed", e);
             throw new UncheckedIOException(e);
         }
     }
@@ -61,6 +66,7 @@ public class MulticastConnection {
         try {
             context.getChannel().register(context.getSelector(), SelectionKey.OP_READ);
         } catch (ClosedChannelException e) {
+            log.error("Cannot listen for 'read ready' event in the channel because selector is closed", e);
             throw new UncheckedIOException(e);
         }
     }

@@ -3,6 +3,8 @@ package com.github.lbovolini.crowd.core.node;
 import com.github.lbovolini.crowd.core.connection.Connection;
 import com.github.lbovolini.crowd.core.message.messages.Response;
 import com.github.lbovolini.crowd.core.object.RemoteObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
@@ -14,6 +16,8 @@ import java.util.function.Consumer;
  * @param <T>
  */
 public class NodeGroup<T> {
+
+    private static final Logger log = LoggerFactory.getLogger(NodeGroup.class);
 
     private final String className;
     private Consumer<T> consumer;
@@ -56,7 +60,9 @@ public class NodeGroup<T> {
                 return;
             }
             future.complete(response.getResult());
-        } catch (Exception e) { e.printStackTrace(); }
+        } catch (Exception e) {
+            log.error("Error while setting method invocation response", e);
+        }
     }
 
 
@@ -78,7 +84,7 @@ public class NodeGroup<T> {
                 consumer.accept(worker);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("Error while creating remote object", e);
         }
     }
 

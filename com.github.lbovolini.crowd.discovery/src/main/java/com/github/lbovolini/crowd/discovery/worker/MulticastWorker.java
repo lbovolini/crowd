@@ -2,14 +2,18 @@ package com.github.lbovolini.crowd.discovery.worker;
 
 import com.github.lbovolini.crowd.discovery.connection.MulticastConnection;
 import com.github.lbovolini.crowd.discovery.message.MulticastMessage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.io.UncheckedIOException;
+import java.nio.channels.ClosedSelectorException;
 import java.nio.channels.DatagramChannel;
 import java.nio.channels.SelectionKey;
 import java.util.Set;
 
 public abstract class MulticastWorker extends Thread implements MulticastService {
+
+    private static final Logger log = LoggerFactory.getLogger(MulticastWorker.class);
 
     protected final MulticastConnection connection;
 
@@ -22,19 +26,23 @@ public abstract class MulticastWorker extends Thread implements MulticastService
      */
     @Override
     public void run() {
+
+        log.info("Multicast worker starting");
+
         try {
             onInit();
 
             var selector = connection.getSelector();
 
             while (true) {
-                if (!selector.isOpen()) {
-                    throw new RuntimeException("Selector is not open");
-                }
                 if (selector.select() == 0) { continue; }
                 handle(selector.selectedKeys());
             }
-        } catch (IOException e) { throw new UncheckedIOException(e); }
+        } catch (ClosedSelectorException cse) {
+            log.error("Selector is closed", cse);
+        } catch (IOException ioe){
+            log.error("Selector I/O error", ioe);
+        }
     }
 
     private void handle(final Set<SelectionKey> selectedKeys) throws IOException {

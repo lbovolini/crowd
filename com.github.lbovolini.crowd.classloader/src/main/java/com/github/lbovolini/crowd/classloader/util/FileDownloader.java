@@ -1,5 +1,8 @@
 package com.github.lbovolini.crowd.classloader.util;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -10,6 +13,8 @@ import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
 
 public class FileDownloader {
+
+    private static final Logger log = LoggerFactory.getLogger(FileDownloader.class);
 
     public static final boolean CACHE = Boolean.parseBoolean(System.getProperty("cache", "false"));
     public static final int READ_TIMEOUT = 1000;
@@ -45,6 +50,7 @@ public class FileDownloader {
 
             return true;
         } catch (IOException e) {
+            log.error("Error while downloading file", e);
             throw e;
         } catch (Exception ex) {
             return false;

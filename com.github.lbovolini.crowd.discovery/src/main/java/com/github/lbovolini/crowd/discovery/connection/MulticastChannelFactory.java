@@ -1,5 +1,8 @@
 package com.github.lbovolini.crowd.discovery.connection;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.net.*;
@@ -9,6 +12,8 @@ import java.nio.channels.Selector;
 import java.util.Objects;
 
 public class MulticastChannelFactory {
+
+    private static final Logger log = LoggerFactory.getLogger(MulticastChannelFactory.class);
 
     private MulticastChannelFactory() {}
 
@@ -22,6 +27,7 @@ public class MulticastChannelFactory {
             return channel;
         } catch (IOException e) {
             closeChannel(channel);
+            log.error("Error while creating datagram channel", e);
             throw new UncheckedIOException(e);
         }
     }
@@ -40,6 +46,7 @@ public class MulticastChannelFactory {
             try {
                 channel.close();
             } catch (IOException e) {
+                log.error("Error while closing datagram channel", e);
                 throw new UncheckedIOException(e);
             }
         }

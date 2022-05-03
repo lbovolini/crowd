@@ -4,6 +4,8 @@ import com.github.lbovolini.crowd.core.message.messages.CreateObject;
 import com.github.lbovolini.crowd.core.message.messages.InvokeMethod;
 import com.github.lbovolini.crowd.core.message.messages.JoinGroup;
 import com.github.lbovolini.crowd.core.message.messages.Response;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -11,6 +13,8 @@ import java.io.UncheckedIOException;
 import static com.github.lbovolini.crowd.core.message.MessageType.*;
 
 public class MessageFactory {
+
+    private static final Logger log = LoggerFactory.getLogger(MessageFactory.class);
 
     private MessageFactory() {}
 
@@ -20,6 +24,7 @@ public class MessageFactory {
         try {
             return Message.create(CREATE, createObject);
         } catch (IOException e) {
+            log.error("Error while creating message of type={}", CREATE);
             throw new UncheckedIOException(e);
         }
     }
@@ -30,6 +35,7 @@ public class MessageFactory {
         try {
             return Message.create(INVOKE, invokeMethod);
         } catch (IOException e) {
+            log.error("Error while creating message of type={}", INVOKE);
             throw new UncheckedIOException(e);
         }
     }
@@ -40,6 +46,7 @@ public class MessageFactory {
         try {
             return Message.create(JOIN, joinGroup);
         } catch (IOException e) {
+            log.error("Error while creating message of type={}", JOIN);
             throw new UncheckedIOException(e);
         }
     }
@@ -50,6 +57,7 @@ public class MessageFactory {
         try {
             return Message.create(REPLY, response);
         } catch (IOException e) {
+            log.error("Error while creating message of type={}", REPLY);
             throw new UncheckedIOException(e);
         }
     }
