@@ -1,5 +1,8 @@
 package com.github.lbovolini.crowd.core.util;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.UncheckedIOException;
 import java.net.Inet4Address;
 import java.net.InetAddress;
@@ -11,6 +14,8 @@ import java.util.Enumeration;
 import java.util.List;
 
 public interface HostUtils {
+
+    Logger log = LoggerFactory.getLogger(HostUtils.class);
 
     /**
      * Busca e retorna o primeiro endereço IP v4 da primeira interface de rede.
@@ -46,6 +51,7 @@ public interface HostUtils {
         try {
             return getHostAddress();
         } catch (SocketException e) {
+            log.error("Error while getting host address", e);
             throw new UncheckedIOException(e);
         }
     }
@@ -84,6 +90,7 @@ public interface HostUtils {
         try {
             return getNetworkInterface();
         } catch (SocketException e) {
+            log.error("Error while getting network interface name", e);
             throw new UncheckedIOException(e);
         }
     }

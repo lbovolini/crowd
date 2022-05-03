@@ -8,6 +8,8 @@ import com.github.lbovolini.crowd.core.message.messages.CreateObject;
 import com.github.lbovolini.crowd.core.message.messages.InvokeMethod;
 import com.github.lbovolini.crowd.core.request.Request;
 import com.github.lbovolini.crowd.core.request.RequestHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.lang.reflect.Constructor;
@@ -19,6 +21,8 @@ import java.util.concurrent.TimeUnit;
  * Responsável por manipular as requisições recebidas pelo cliente.
  */
 public class ClientRequestHandler implements RequestHandler {
+
+    private static final Logger log = LoggerFactory.getLogger(ClientRequestHandler.class);
 
     public static final int POOL_SIZE = Integer.parseInt(System.getProperty("pool.size",  String.valueOf(Runtime.getRuntime().availableProcessors())));
 
@@ -103,7 +107,7 @@ public class ClientRequestHandler implements RequestHandler {
                 pool.awaitTermination(1, TimeUnit.SECONDS);
                 //pool.shutdownNow();
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                log.error("Error while stopping thread pool", e);
             }
         }
         // !todo

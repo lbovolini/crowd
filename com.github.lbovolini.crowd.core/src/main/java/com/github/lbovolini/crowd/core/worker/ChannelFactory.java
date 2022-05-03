@@ -1,5 +1,8 @@
 package com.github.lbovolini.crowd.core.worker;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.net.*;
@@ -9,6 +12,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class ChannelFactory {
+
+    private static final Logger log = LoggerFactory.getLogger(ChannelFactory.class);
 
     private ChannelFactory() {}
 
@@ -25,6 +30,7 @@ public class ChannelFactory {
 
             return serverChannel;
         } catch (IOException e) {
+            log.error("Error while creating asynchronous server socket channel", e);
             onIOException(pool, channelGroup, serverChannel);
             throw new UncheckedIOException(e);
         }
@@ -40,6 +46,7 @@ public class ChannelFactory {
 
             return channel;
         } catch (IOException e) {
+            log.error("Error while creating asynchronous socket channel", e);
             onIOException(channel);
             throw new UncheckedIOException(e);
         }
@@ -71,6 +78,7 @@ public class ChannelFactory {
             try {
                 serverSocketChannel.close();
             } catch (IOException e) {
+                log.error("Error while closing asynchronous server socket channel", e);
                 throw new UncheckedIOException(e);
             }
         }
@@ -82,6 +90,7 @@ public class ChannelFactory {
             try {
                 channel.close();
             } catch (IOException e) {
+                log.error("Error while closing asynchronous socket channel", e);
                 throw new UncheckedIOException(e);
             }
         }

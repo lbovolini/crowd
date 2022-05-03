@@ -8,6 +8,8 @@ import com.github.lbovolini.crowd.discovery.message.ClientResponseFactory;
 import com.github.lbovolini.crowd.discovery.message.ResponseFactory;
 import com.github.lbovolini.crowd.discovery.request.MulticastClientDispatcher;
 import com.github.lbovolini.crowd.discovery.service.CodebaseService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -19,6 +21,8 @@ import java.nio.channels.Selector;
 import java.util.Objects;
 
 public class MulticastClientWorkerFactory {
+
+    private static final Logger log = LoggerFactory.getLogger(MulticastClientWorkerFactory.class);
 
     public static final String MULTICAST_IP = System.getProperty("multicast.ip", "225.4.5.6");
     public static final String MULTICAST_INTERFACE_NAME = System.getProperty("multicast.interface", HostUtils.getNetworkInterfaceName());
@@ -47,6 +51,7 @@ public class MulticastClientWorkerFactory {
 
             return new MulticastClientWorker(connection);
         } catch (IOException e) {
+            log.error("Error while creating multicast client worker", e);
             onIOException(selector, channel);
             throw new UncheckedIOException(e);
         }
@@ -58,6 +63,7 @@ public class MulticastClientWorkerFactory {
             try {
                 selector.close();
             } catch (IOException e) {
+                log.error("Error while closing selector", e);
                 throw new UncheckedIOException(e);
             }
         }
@@ -66,6 +72,7 @@ public class MulticastClientWorkerFactory {
             try {
                 channel.close();
             } catch (IOException e) {
+                log.error("Error while closing datagram channel", e);
                 throw new UncheckedIOException(e);
             }
         }

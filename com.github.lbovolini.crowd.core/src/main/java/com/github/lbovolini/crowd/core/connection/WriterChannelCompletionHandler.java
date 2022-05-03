@@ -2,6 +2,8 @@ package com.github.lbovolini.crowd.core.connection;
 
 import com.github.lbovolini.crowd.core.buffer.ByteBufferPool;
 import com.github.lbovolini.crowd.core.worker.WorkerContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -16,6 +18,8 @@ import static com.github.lbovolini.crowd.core.buffer.BufferUtils.BUFFER_ARRAY_SI
  * Responsável pela escrita assíncrona e não bloqueante das mensagens através dos canais de comunicação.
  */
 public class WriterChannelCompletionHandler implements CompletionHandler<Long, WorkerContext> {
+
+    private static final Logger log = LoggerFactory.getLogger(WriterChannelCompletionHandler.class);
 
     public void completed(Long result, WorkerContext context) {
 
@@ -68,7 +72,7 @@ public class WriterChannelCompletionHandler implements CompletionHandler<Long, W
                 writerContext.setWriterBufferArray(bufferArray);
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error("Error while writing to asynchronous channel");
         } finally {
             writeLock.unlock();
         }
@@ -86,7 +90,7 @@ public class WriterChannelCompletionHandler implements CompletionHandler<Long, W
             writerContext.close();
             writerContext.getWriterBufferQueue().clear();
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error("Error while closing asynchronous channel");
         } finally {
             writeLock.unlock();
         }

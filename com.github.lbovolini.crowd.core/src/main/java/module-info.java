@@ -1,4 +1,6 @@
 module com.github.lbovolini.crowd.core {
+    requires org.slf4j;
+
     exports com.github.lbovolini.crowd.core.connection;
     exports com.github.lbovolini.crowd.core.request;
     exports com.github.lbovolini.crowd.core.message;

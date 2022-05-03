@@ -1,12 +1,16 @@
 package com.github.lbovolini.crowd.classloader.service;
 
 import com.github.lbovolini.crowd.classloader.DefaultRemoteClassLoader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Constructor;
 import java.net.URL;
 import java.util.Objects;
 
 public class RemoteClassLoaderService<T extends ClassLoader & RemoteClassLoader> {
+
+    private static final Logger log = LoggerFactory.getLogger(RemoteClassLoaderService.class);
 
     public static final boolean CLASSLOADER_CUSTOM = Boolean.parseBoolean(System.getProperty("classloader.custom", "false"));
     public static final String CLASSLOADER = System.getProperty("classloader", "com.github.lbovolini.crowd.android.classloader.AndroidRemoteClassLoader");
@@ -37,6 +41,7 @@ public class RemoteClassLoaderService<T extends ClassLoader & RemoteClassLoader>
 
             return (T) constructor.newInstance(new URL[] {}, null, this.classPath, this.libPath, this.parent);
         } catch (ReflectiveOperationException e) {
+            log.error("Error while creating classloader", e);
             throw new RuntimeException(e);
         }
     }
