@@ -9,7 +9,7 @@ Java Asynchronous Non Blocking Distributed Computing Library
 - Supports remote native library loading (.so, .dll)
 - Devices can enter or leave computation at any time
 - Fault tolerance mechanism via exceptions and timeouts
-- Provides runtime conversion of java class file to Android dex format
+- ~~Provides runtime conversion of java class file to Android dex format~~
 - Modular architecture
 - No configuration required
 
@@ -93,9 +93,9 @@ classloader
 
 This property defines the canonical class name of alternative classloader to be used if "classloader.custom" property is true.  
 
-Default value is "com.github.lbovolini.crowd.android.classloader.AndroidRemoteClassLoader"
+~~Default value is "com.github.lbovolini.crowd.android.classloader.AndroidRemoteClassLoader"~~
 
-Optional, use only if alternative classloader, that is not AndroidRemoteClassLoader, is required.
+~~Optional, use only if alternative classloader, that is not AndroidRemoteClassLoader, is required.~~
 
 Client only
 
@@ -286,11 +286,11 @@ Default value is: "8081"
 dex.version
 ```
 
-Represents the minimum SDK version of Android API used by dex bytecode converter. 
+~~Represents the minimum SDK version of Android API used by dex bytecode converter.~~
 
-Default value is: "26"
+~~Default value is: "26"~~
 
-Android only
+~~Android only~~
 
 [//]: # (Module: ...crowd.classloader.android Class: AndroidRemoteClassLoader)
 
@@ -300,11 +300,11 @@ Android only
 dex.optimize
 ```
 
-Tels if dex bytecode should be optimized. 
+~~Tels if dex bytecode should be optimized.~~
 
-Android only
+~~Android only~~
 
-Default value is: "true"
+~~Default value is: "true"~~
 
 [//]: # (Module: ...crowd.classloader.android Class: AndroidRemoteClassLoader)
 
