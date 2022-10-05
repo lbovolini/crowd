@@ -2,6 +2,9 @@
 
 Java Asynchronous Non Blocking Distributed Computing Library
 
+> **Warning**
+> This project is under development. Please, don't use it in production, it's very unsafe, it's your own risk.
+
 ## Features
 
 - Distributed and parallel master worker computing
