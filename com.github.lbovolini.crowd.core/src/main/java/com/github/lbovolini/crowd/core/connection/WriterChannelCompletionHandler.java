@@ -9,7 +9,6 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.CompletionHandler;
 import java.util.Queue;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 
 import static com.github.lbovolini.crowd.core.buffer.BufferUtils.BUFFER_ARRAY_SIZE;
@@ -77,7 +76,7 @@ public class WriterChannelCompletionHandler implements CompletionHandler<Long, W
             writeLock.unlock();
         }
 
-        context.getChannel().write(bufferArray, 0, length, 0, TimeUnit.SECONDS, context, this);
+        context.requestWrite();
     }
 
     public void failed(Throwable exc, WorkerContext context) {

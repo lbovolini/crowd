@@ -69,13 +69,13 @@ public class Connection {
 
     public void send(Message message) {
         if (writerChannel.write(message.getType(), message.getData())) {
-            WriterChannelHandler.handle(workerContext);
+            workerContext.requestWrite();
         }
     }
 
     public void receive() {
         if (readerChannel.read()) {
-            ReaderChannelHandler.handle(workerContext);
+            workerContext.requestRead();
         }
     }
 
