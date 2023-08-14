@@ -2,13 +2,18 @@ package com.github.lbovolini.crowd.core.connection;
 
 import com.github.lbovolini.crowd.core.message.Flags;
 import com.github.lbovolini.crowd.core.message.PartialMessage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.nio.ByteBuffer;
 
 public class MessageBufferUtils {
 
+    private static final Logger log = LoggerFactory.getLogger(MessageBufferUtils.class);
+
     public static void readTypeFromBuffer(ByteBuffer buffer, PartialMessage partialMessage) {
         partialMessage.setType(buffer.get());
+        partialMessage.getFlags().setHasType(true);
     }
 
     public static boolean readSizeFromBuffer(ByteBuffer byteBuffer, PartialMessage partialMessage) {
@@ -22,10 +27,12 @@ public class MessageBufferUtils {
             } else {
                 short size = byteBuffer.getShort();
                 partialMessage.setSize(size);
+                flags.setHasSize(true);
                 return true;
             }
         } else {
             partialMessage.setSizeLastByte(byteBuffer.get());
+            flags.setHasSize(true);
             return true;
         }
         return false;
