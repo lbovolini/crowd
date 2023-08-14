@@ -125,6 +125,8 @@ public class ReaderChannelCompletionHandler implements CompletionHandler<Long, W
 
                 case DATA:
                     if (MessageBufferUtils.readDataFromBuffer(buffer, partialMessage)) {
+                        Flags flags = partialMessage.getFlags();
+                        flags.resetAll();
                         Message message = Message.create(partialMessage.getType(), partialMessage.getData());
 
                         // !TODO

@@ -56,7 +56,7 @@ public class MessageBufferUtils {
 
             if (read == partialMessage.getSize()) {
                 flags.setHasMessage(true);
-                flags.resetAll();
+                //flags.resetAll();
                 return true;
             }
         } else {
@@ -75,7 +75,7 @@ public class MessageBufferUtils {
 
             partialMessage.read(buffer, partialMessage.getReadSize(), remaining);
             flags.setHasMessage(true);
-            flags.resetAll();
+            //flags.resetAll();
             return true;
         }
 
