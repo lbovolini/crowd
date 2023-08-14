@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.CompletionHandler;
 import java.util.Queue;
@@ -73,6 +74,7 @@ public class WriterChannelCompletionHandler implements CompletionHandler<Long, W
             }
         } catch (IOException e) {
             log.error("Error while writing to asynchronous channel");
+            throw new UncheckedIOException(e);
         } finally {
             writeLock.unlock();
         }
