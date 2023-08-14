@@ -6,56 +6,41 @@ import com.github.lbovolini.crowd.core.connection.ReaderChannelContext;
 import com.github.lbovolini.crowd.core.connection.WriterChannelCompletionHandler;
 import com.github.lbovolini.crowd.core.connection.WriterChannelContext;
 import com.github.lbovolini.crowd.core.message.MessageType;
-import com.github.lbovolini.crowd.core.request.RequestQueue;
-import com.github.lbovolini.crowd.core.worker.ChannelFactory;
 import com.github.lbovolini.crowd.core.worker.WorkerContext;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
-import java.nio.channels.AsynchronousServerSocketChannel;
 import java.nio.channels.AsynchronousSocketChannel;
 import java.util.Arrays;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.doAnswer;
 
 @ExtendWith(MockitoExtension.class)
 class WriterChannelCompletionHandlerTest {
 
+    @Mock
     private AsynchronousSocketChannel channel;
-    private AsynchronousServerSocketChannel serverSocketChannel;
     @Mock
     private MessageHandler messageHandler;
-    @Mock
-    private RequestQueue requestQueue;
+    @InjectMocks
+    private ReaderChannelContext readerChannelContext;
+    @InjectMocks
+    private WriterChannelContext writerChannelContext;
 
     private static final WriterChannelCompletionHandler handler = new WriterChannelCompletionHandler();
-
-    @BeforeEach
-    void setUp() throws Exception {
-        channel = ChannelFactory.initializedChannel(new InetSocketAddress(0));
-        serverSocketChannel = ChannelFactory.initializedServerChannel(new InetSocketAddress(8787), 1);
-        channel.connect(new InetSocketAddress(8787)).get();
-    }
-
-    @AfterEach
-    void tearDown() throws Exception {
-        channel.close();
-        serverSocketChannel.close();
-    }
 
     @Test
     void shouldCompleteWithSuccessWhenResultIsZero() {
 
-        ReaderChannelContext readerChannelContext = new ReaderChannelContext(channel);
-        WriterChannelContext writerChannelContext = new WriterChannelContext(channel);
         WorkerContext context = new WorkerContext(readerChannelContext, writerChannelContext, messageHandler);
 
         ByteBuffer[] byteBufferArray = BufferUtils.putRawMessage(MessageType.HEARTBEAT.getType(), new byte[] {1}, WriterChannelContext.getWriterBufferPool());
@@ -71,13 +56,27 @@ class WriterChannelCompletionHandlerTest {
     @Test
     void shouldCompleteWithSuccessWhenResultIsGreaterThanZero() {
 
-        ReaderChannelContext readerChannelContext = new ReaderChannelContext(channel);
-        WriterChannelContext writerChannelContext = new WriterChannelContext(channel);
         WorkerContext context = new WorkerContext(readerChannelContext, writerChannelContext, messageHandler);
 
         ByteBuffer[] byteBufferArray = BufferUtils.putRawMessage(MessageType.HEARTBEAT.getType(), new byte[] {1}, WriterChannelContext.getWriterBufferPool());
         writerChannelContext.getWriterBufferQueue().addAll(Arrays.asList(byteBufferArray));
         writerChannelContext.setWriterBufferArray(byteBufferArray);
+
+        doAnswer((e) -> {
+            ByteBuffer[] buffers = e.getArgument(0);
+            for(int i = 0; i < buffers.length; i++) {
+                buffers[i].flip();
+            }
+            return null;
+        }).when(channel).write(any(ByteBuffer[].class), eq(0), anyInt(), eq(0L), eq(TimeUnit.SECONDS), eq(context), any(WriterChannelCompletionHandler.class));
+
+        channel.write(byteBufferArray,
+                0,
+                byteBufferArray.length,
+                0,
+                TimeUnit.SECONDS,
+                context,
+                WriterChannelContext.getWriterChannelCompletionHandler());
 
         // Should test ONLY this method
         handler.completed(1L, context);
