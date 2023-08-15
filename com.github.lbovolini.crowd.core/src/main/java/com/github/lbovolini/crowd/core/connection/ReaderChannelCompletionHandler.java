@@ -46,6 +46,12 @@ public class ReaderChannelCompletionHandler implements CompletionHandler<Long, W
                 ByteBufferPool readerPool = ReaderChannelContext.getReaderBufferPool();
                 Queue<ByteBuffer> readerBufferQueue = readerContext.getReaderBufferQueue();
 
+                /**
+                 * Pega o primeiro elemento da fila e lê o seu conteúdo.
+                 * Remove o primeiro buffer da fila e limpa-o.
+                 * Executa para todos os buffers do array de leitura.
+                 * Os N primeiros elementos da fila correspondem aos N elementos do array de leitura.
+                 */
                 int i = 0;
                 while (i < readerBufferArray.length) {
                     if (readerBufferArray[i] == null) {
@@ -62,7 +68,9 @@ public class ReaderChannelCompletionHandler implements CompletionHandler<Long, W
                     i++;
                 }
 
-                ///
+                /**
+                 * Se a fila de buffers de leitura está vazia então adiciona um novo elemento.
+                 */
                 if (readerBufferQueue.isEmpty()) {
                     readerBufferQueue.add(readerPool.poll());
                 }
