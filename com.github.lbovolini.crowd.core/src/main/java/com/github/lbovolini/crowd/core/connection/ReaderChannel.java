@@ -17,6 +17,13 @@ public class ReaderChannel {
         return context;
     }
 
+    /**
+     * Cria buffers de leitura e adiciona-os à fila de leitura.
+     * Se a fila de leitura não está vazia então o processamento da leitura está em progresso
+     * e não é necessario dar início ao processamento novamente.
+     * Se a fila de leitura está vazia então o processamento não está em progresso e é necessario iniciá-lo.
+     * @return true se é necessário dar início ao processamento da leitura.
+     */
     public boolean read() {
 
         ByteBuffer[] byteBufferArray = new ByteBuffer[1];

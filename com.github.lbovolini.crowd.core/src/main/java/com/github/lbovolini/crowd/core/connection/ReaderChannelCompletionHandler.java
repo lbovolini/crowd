@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.CompletionHandler;
 import java.util.Queue;
@@ -66,6 +67,10 @@ public class ReaderChannelCompletionHandler implements CompletionHandler<Long, W
                     readerBufferQueue.add(readerPool.poll());
                 }
 
+                /**
+                 * Pega os buffers que estão na fila e insere-os no array de buffers de leitura até preencer
+                 * todo o array ou até pegar todos os buffers da fila.
+                 */
                 for (ByteBuffer buffer : readerBufferQueue) {
                     readerBufferArray[length] = buffer;
                     length++;
@@ -77,12 +82,13 @@ public class ReaderChannelCompletionHandler implements CompletionHandler<Long, W
             }
         } catch (IOException e) {
             log.error("Error while reading from asynchronous channel");
+            throw new UncheckedIOException(e);
         } finally {
             readLock.unlock();
         }
 
         // !TODO
-        readerContext.getChannel().read(readerBufferArray, 0, length, 0, TimeUnit.SECONDS, context, this );
+        readerContext.getChannel().read(readerBufferArray, 0, length, 0, TimeUnit.SECONDS, context, this);
     }
 
     public void failed(Throwable exc, WorkerContext context) {
