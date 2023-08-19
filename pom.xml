@@ -19,6 +19,7 @@
         <slf4j.version>1.7.36</slf4j.version>
         <pi-test.version>1.14.2</pi-test.version>
         <pi-test-junit5.version>1.2.0</pi-test-junit5.version>
+        <wiremock.version>2.35.0</wiremock.version>
     </properties>
 
     <modules>
@@ -168,6 +169,13 @@
             <groupId>org.mockito</groupId>
             <artifactId>mockito-inline</artifactId>
             <version>${mockito.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.tomakehurst</groupId>
+            <artifactId>wiremock-jre8</artifactId>
+            <version>${wiremock.version}</version>
             <scope>test</scope>
         </dependency>
 
