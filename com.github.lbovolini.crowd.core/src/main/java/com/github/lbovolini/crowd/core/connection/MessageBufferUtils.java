@@ -73,8 +73,10 @@ public class MessageBufferUtils {
                 return false;
             }
 
-            partialMessage.read(buffer, partialMessage.getReadSize(), remaining);
+            int readSize = partialMessage.getReadSize();
+            partialMessage.read(buffer, readSize, remaining);
             flags.setHasMessage(true);
+            partialMessage.setReadSize(readSize + remaining);
             //flags.resetAll();
             return true;
         }
