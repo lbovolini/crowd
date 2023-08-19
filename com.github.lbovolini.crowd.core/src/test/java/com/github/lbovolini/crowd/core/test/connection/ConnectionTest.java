@@ -12,12 +12,15 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.net.InetSocketAddress;
 import java.nio.channels.AsynchronousSocketChannel;
 
 import static com.github.lbovolini.crowd.core.message.MessageType.HEARTBEAT;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class ConnectionTest {
@@ -128,4 +131,40 @@ class ConnectionTest {
         verify(writerChannel).close();
     }
 
+    @Test
+    void shouldThrowExceptionWhenInvalidRemoteAddress() throws IOException {
+
+        when(channel.getRemoteAddress()).thenReturn(new InetSocketAddress("",0));
+
+        assertThrows(RuntimeException.class, () -> {
+            connection.getHostId();
+        }, "Invalid remote address");
+    }
+
+    @Test
+    void shouldThrowExceptionWhenFailedToGetRemoteAddressOnHostId() throws IOException {
+        when(channel.getRemoteAddress()).thenThrow(new IOException());
+
+        assertThrows(UncheckedIOException.class, () -> {
+            connection.getHostId();
+        });
+    }
+
+    @Test
+    void shouldThrowExceptionWhenFailedToGetRemoteAddressOnRemoteAddress() throws IOException {
+        when(channel.getRemoteAddress()).thenThrow(new IOException());
+
+        assertThrows(UncheckedIOException.class, () -> {
+            connection.getRemoteAddress();
+        });
+    }
+
+    @Test
+    void shouldThrowExceptionWhenFailedToGetRemoteAddressOnRemotePort() throws IOException {
+        when(channel.getRemoteAddress()).thenThrow(new IOException());
+
+        assertThrows(UncheckedIOException.class, () -> {
+            connection.getRemotePort();
+        });
+    }
 }
