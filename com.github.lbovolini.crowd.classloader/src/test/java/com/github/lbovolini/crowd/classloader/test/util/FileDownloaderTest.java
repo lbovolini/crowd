@@ -56,4 +56,27 @@ class FileDownloaderTest {
             expectedOutput.delete();
         }
     }
+
+    @Test
+    void shouldDownloadFileWithName() throws Exception {
+        var testFileName = "test.txt";
+        var testFile = new File(getClass().getClassLoader().getResource("__files/" + testFileName).toURI());
+
+        var expectedOutput = new File("/tmp/" + testFileName);
+        expectedOutput.delete();
+
+        try {
+            stubFor(get("/file").willReturn(aResponse().withHeader("Content-Length", String.valueOf(testFile.length())).withBodyFile(testFileName)));
+
+            var success = FileDownloader.download(URI.create("http://localhost:8888/").toURL(), "/tmp/test.txt", "file");
+
+            assertTrue(success);
+            assertTrue(expectedOutput.exists());
+            assertEquals(testFile.length(), expectedOutput.length());
+        } catch (Exception e) {
+            fail(e.getMessage());
+        } finally {
+            expectedOutput.delete();
+        }
+    }
 }
