@@ -28,6 +28,9 @@ class RemoteNativeLibraryTest {
         String os = OsUtils.getOs();
         String arch = OsUtils.getArch();
 
+        System.out.println("OS " + os);
+        System.out.println("ARCH " + arch);
+
         var testFile = new File(getClass().getClassLoader().getResource("__files/linux/x86_64/" + testFileName).toURI());
 
         try {
