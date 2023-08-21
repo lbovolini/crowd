@@ -28,7 +28,7 @@ class RemoteNativeLibraryTest {
         String os = OsUtils.getOs();
         String arch = OsUtils.getArch();
 
-        var testFile = new File(getClass().getClassLoader().getResource("__files/" + os + "/" + arch + "/" + testFileName).toURI());
+        var testFile = new File(getClass().getClassLoader().getResource("__files/linux/x86_64/" + testFileName).toURI());
 
         try {
             var urlPath = "/" + os + "/" + arch + "/" + testFileName;
