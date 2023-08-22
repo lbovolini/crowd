@@ -8,7 +8,7 @@ import java.util.concurrent.LinkedBlockingDeque;
 /**
  * Apenas seleciona a requisicao da fila
  */
-public class MulticastScheduler implements Runnable {
+public class MulticastScheduler implements Runnable, MulticastRequestQueue {
 
     private final BlockingDeque<MulticastRequest> requests;
     private final MulticastDispatcher multicastDispatcher;

@@ -7,7 +7,6 @@ import com.github.lbovolini.crowd.server.worker.MulticastServerWorkerFactory;
 import com.github.lbovolini.crowd.server.worker.ServerWorker;
 import com.github.lbovolini.crowd.server.worker.ServerWorkerFactory;
 
-import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -23,25 +22,25 @@ public class Crowd<T> {
     private final ExecutorService serverMulticastThread;
     private final NodeGroup<T> nodeGroup;
 
-    public Crowd(String className) throws IOException {
+    public Crowd(String className) {
         this.nodeGroup = new NodeGroup<>(className);
         this.serverWorker = ServerWorkerFactory.defaultWorker(nodeGroup, new InetSocketAddress(HOSTNAME, PORT));
         this.multicastServer = MulticastServerWorkerFactory.defaultWorker(HOSTNAME, PORT);
         this.serverMulticastThread = Executors.newSingleThreadExecutor();
     }
 
-    private void start() throws IOException {
+    private void start() {
         serverWorker.start();
         serverMulticastThread.execute(multicastServer);
     }
 
-    public void forOne(Consumer<T> consumer) throws IOException {
+    public void forOne(Consumer<T> consumer) {
         nodeGroup.setOperation(consumer);
         nodeGroup.setParallelism(1);
         start();
     }
 
-    public void forAll(Consumer<T> consumer) throws IOException {
+    public void forAll(Consumer<T> consumer) {
         nodeGroup.setOperation(consumer);
         start();
     }

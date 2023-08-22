@@ -26,6 +26,7 @@ public final class Agent {
     }
 
     public static void main(String[] args) {
+        System.setProperty("multicast.buffer.size", System.getProperty("multicast.buffer.size", "1024"));
         new Agent().start();
     }
 }

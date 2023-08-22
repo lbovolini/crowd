@@ -1,6 +1,7 @@
 package com.github.lbovolini.crowd.discovery.worker;
 
 import com.github.lbovolini.crowd.discovery.connection.MulticastConnection;
+import com.github.lbovolini.crowd.discovery.connection.MulticastIOChannelHandler;
 import com.github.lbovolini.crowd.discovery.message.MulticastMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,9 +57,19 @@ public abstract class MulticastWorker extends Thread implements MulticastService
             if (!selectionKey.isValid()) { continue; }
 
             if (selectionKey.isReadable()) {
-                connection.read((DatagramChannel) selectionKey.channel());
+                var message = MulticastIOChannelHandler.read((DatagramChannel) selectionKey.channel());
+
+                if (message == null) {
+                    continue;
+                }
+
+                connection.getContext().setServerAddress(message.getAddress());
+                connection.getMessageHandler().handle(message);
             } else if (selectionKey.isWritable()) {
-                connection.write((DatagramChannel) selectionKey.channel(), (MulticastMessage) selectionKey.attachment());
+                var shouldReceive = MulticastIOChannelHandler.write((DatagramChannel) selectionKey.channel(), (MulticastMessage) selectionKey.attachment());
+                if (shouldReceive) {
+                    connection.receive();
+                }
             }
         }
     }

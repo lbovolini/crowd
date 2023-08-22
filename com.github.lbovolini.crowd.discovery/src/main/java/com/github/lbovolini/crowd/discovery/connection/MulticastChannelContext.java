@@ -11,10 +11,6 @@ import java.nio.channels.Selector;
 
 public class MulticastChannelContext {
 
-    // !TODO cannot read/write message bigger than this size
-    // !important Should NOT be bigger than datagram packet max size
-    public static final int MULTICAST_BUFFER_SIZE = 1024;
-
     private final DatagramChannel channel;
     private final Selector selector;
     private final NetworkInterface networkInterface;
@@ -26,7 +22,6 @@ public class MulticastChannelContext {
     private final ResponseFactory responseFactory;
     private final int multicastServerPort;
     private final boolean isServer;
-    private final int bufferSize;
 
     public MulticastChannelContext(DatagramChannel channel, Selector selector, NetworkInterface networkInterface, InetAddress group, SocketAddress localAddress, ResponseFactory responseFactory, int multicastServerPort, boolean isServer) {
         this.channel = channel;
@@ -37,7 +32,6 @@ public class MulticastChannelContext {
         this.responseFactory = responseFactory;
         this.multicastServerPort = multicastServerPort;
         this.isServer = isServer;
-        this.bufferSize = bufferSize();
     }
 
     public DatagramChannel getChannel() {
@@ -78,14 +72,7 @@ public class MulticastChannelContext {
         }
     }
 
-    private int bufferSize() {
-        if (!isServer) {
-            return MULTICAST_BUFFER_SIZE;
-        }
-        return 1;
-    }
-
-    public int getBufferSize() {
-        return bufferSize;
+    public boolean isServer() {
+        return isServer;
     }
 }
