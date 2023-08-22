@@ -16,7 +16,7 @@ public class Servant {
 
         Object result = null;
         String exception = null;
-        boolean isPrimitiveVoid = true;
+        boolean isPrimitiveVoid = false;
 
         try {
             Class<?>[] parameterTypes = request.getParameterTypes();
