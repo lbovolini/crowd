@@ -1,4 +1,4 @@
-package com.github.lbovolini.crowd.core.test.request;
+package com.github.lbovolini.crowd.server.test.request;
 
 import com.github.lbovolini.crowd.core.connection.Connection;
 import com.github.lbovolini.crowd.core.message.Message;
@@ -7,7 +7,7 @@ import com.github.lbovolini.crowd.core.message.messages.JoinGroup;
 import com.github.lbovolini.crowd.core.message.messages.Response;
 import com.github.lbovolini.crowd.core.node.NodeGroup;
 import com.github.lbovolini.crowd.core.request.Request;
-import com.github.lbovolini.crowd.core.request.ServerRequestHandler;
+import com.github.lbovolini.crowd.server.request.ServerRequestHandler;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

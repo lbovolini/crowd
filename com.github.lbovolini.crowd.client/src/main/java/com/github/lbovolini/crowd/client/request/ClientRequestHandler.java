@@ -20,20 +20,16 @@ public class ClientRequestHandler implements RequestHandler {
 
     private static final Logger log = LoggerFactory.getLogger(ClientRequestHandler.class);
 
-    public static final int POOL_SIZE = Integer.parseInt(System.getProperty("pool.size",  String.valueOf(Runtime.getRuntime().availableProcessors())));
-
-    private Object object;
-    private ExecutorService pool;
-
     private final ExecutorService executor;
 
-//    private final Object lock = new Object();
-//    private Request latestCreatedObject;
     private final ClassLoaderContext classloaderContext;
+
+    private final RequestExecutor requestExecutor;
 
     public ClientRequestHandler(ClassLoaderContext classloaderContext) {
         this.classloaderContext = classloaderContext;
         this.executor = Executors.newSingleThreadExecutor(this.classloaderContext.getThreadFactory());
+        this.requestExecutor = new RequestExecutor();
     }
 
     @Override
@@ -44,22 +40,8 @@ public class ClientRequestHandler implements RequestHandler {
             MessageType type = MessageType.get(message.getType());
 
             switch (type) {
-                case CREATE -> {
-                    stop();
-                    object = HandleCreateRequest.handle(request);
-//                    if (object == null) {
-//                        return;
-//                    }
-//                    setLatestCreatedObject(request);
-                }
-                case INVOKE -> {
-                    var invokeMethod = HandleInvokeRequest.handle(request);
-                    if (invokeMethod == null) {
-                        return;
-                    }
-                    pool.execute(() -> Servant.execute(object, invokeMethod, request.getConnection()));
-                }
-
+                case CREATE -> requestExecutor.create(request);
+                case INVOKE -> requestExecutor.execute(request);
                 //case SERVICE: {
                 //    service(messageFrom);
                 //    break;
@@ -70,28 +52,4 @@ public class ClientRequestHandler implements RequestHandler {
             }
         });
     }
-
-    public void stop() {
-        if (pool != null) {
-            try {
-                pool.shutdown();
-                pool.awaitTermination(1, TimeUnit.SECONDS);
-                //pool.shutdownNow();
-            } catch (InterruptedException e) {
-                log.error("Error while stopping thread pool", e);
-            }
-        }
-        // !todo
-        pool = Executors.newFixedThreadPool(POOL_SIZE);
-    }
-
-//    private void setLatestCreatedObject(Request request) {
-//        this.latestCreatedObject = request;
-//    }
-//
-//    public Request getLatestCreatedObject() {
-//        synchronized (lock) {
-//            return latestCreatedObject;
-//        }
-//    }
 }
