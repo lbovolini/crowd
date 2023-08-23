@@ -4,7 +4,7 @@ import com.github.lbovolini.crowd.core.connection.*;
 import com.github.lbovolini.crowd.core.node.NodeGroup;
 import com.github.lbovolini.crowd.core.request.RequestHandler;
 import com.github.lbovolini.crowd.core.request.Scheduler;
-import com.github.lbovolini.crowd.core.request.ServerRequestHandler;
+import com.github.lbovolini.crowd.server.request.ServerRequestHandler;
 import com.github.lbovolini.crowd.core.worker.ChannelFactory;
 
 import java.net.InetSocketAddress;
