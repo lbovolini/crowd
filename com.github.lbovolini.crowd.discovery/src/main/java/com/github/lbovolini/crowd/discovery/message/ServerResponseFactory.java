@@ -5,7 +5,7 @@ import com.github.lbovolini.crowd.discovery.util.CodebaseUtils;
 
 import java.nio.charset.StandardCharsets;
 
-public class ServerResponseFactory extends ResponseFactory {
+public class ServerResponseFactory implements ResponseFactory {
 
     private final String hostname;
     private final int port;

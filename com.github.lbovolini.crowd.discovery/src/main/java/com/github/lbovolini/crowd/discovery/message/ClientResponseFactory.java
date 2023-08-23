@@ -2,7 +2,7 @@ package com.github.lbovolini.crowd.discovery.message;
 
 import com.github.lbovolini.crowd.discovery.exception.InvalidMulticastMessageException;
 
-public class ClientResponseFactory extends ResponseFactory {
+public class ClientResponseFactory implements ResponseFactory {
 
     public byte[] get(MulticastMessageType type) {
 
