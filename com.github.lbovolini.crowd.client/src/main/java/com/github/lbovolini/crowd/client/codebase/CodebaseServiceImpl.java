@@ -6,6 +6,7 @@ import com.github.lbovolini.crowd.discovery.service.CodebaseService;
 
 import java.net.InetSocketAddress;
 import java.net.URL;
+import java.nio.channels.ClosedChannelException;
 
 public class CodebaseServiceImpl implements CodebaseService {
 
@@ -21,7 +22,13 @@ public class CodebaseServiceImpl implements CodebaseService {
     public void onConnect(URL[] codebase, URL libURL, InetSocketAddress serverAddress) {
         context.setClassURLs(codebase);
         context.setLibURL(libURL);
-        worker.connect(serverAddress);
+
+        if (worker.isConnected()) {
+            worker.reconnect(serverAddress);
+        }
+        else {
+            worker.connect(serverAddress);
+        }
     }
 
     @Override
