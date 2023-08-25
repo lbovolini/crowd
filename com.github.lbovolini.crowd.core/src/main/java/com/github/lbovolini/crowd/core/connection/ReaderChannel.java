@@ -5,6 +5,8 @@ import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.concurrent.locks.Lock;
 
+import static com.github.lbovolini.crowd.core.buffer.BufferUtils.BUFFER_ARRAY_SIZE;
+
 public class ReaderChannel {
 
     private final ReaderChannelContext context;
@@ -26,8 +28,10 @@ public class ReaderChannel {
      */
     public boolean read() {
 
-        ByteBuffer[] byteBufferArray = new ByteBuffer[1];
-        byteBufferArray[0] = ReaderChannelContext.getReaderBufferPool().poll();
+        ByteBuffer[] byteBufferArray = new ByteBuffer[BUFFER_ARRAY_SIZE];
+        for (int i = 0; i < BUFFER_ARRAY_SIZE; i++) {
+            byteBufferArray[i] = ReaderChannelContext.getReaderBufferPool().poll();
+        }
 
         Lock readLock = context.getReadLock();
         readLock.lock();
