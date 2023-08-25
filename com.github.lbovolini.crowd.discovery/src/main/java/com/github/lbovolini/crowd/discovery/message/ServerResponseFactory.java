@@ -39,11 +39,16 @@ public class ServerResponseFactory implements ResponseFactory {
         String codebase = CodebaseUtils.getCodebaseURLs();
         String libURL = CodebaseUtils.getLibURL();
 
-        return (codebase + SEPARATOR
+        var data = (codebase + SEPARATOR
                 + hostname + SEPARATOR
                 + port + SEPARATOR
                 + libURL + SEPARATOR
                 + type.getType()).getBytes(StandardCharsets.UTF_8);
 
+        if (data.length > MAX_PACKET_SIZE) {
+            throw new RuntimeException("Message is bigger than maximum value. Try reduce size of codebase.");
+        }
+
+        return data;
     }
 }
