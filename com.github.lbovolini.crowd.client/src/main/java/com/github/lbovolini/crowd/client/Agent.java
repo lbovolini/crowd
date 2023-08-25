@@ -4,6 +4,7 @@ import com.github.lbovolini.crowd.client.codebase.CodebaseServiceImpl;
 import com.github.lbovolini.crowd.client.worker.ClientWorker;
 import com.github.lbovolini.crowd.client.worker.ClientWorkerFactory;
 import com.github.lbovolini.crowd.classloader.ClassLoaderContext;
+import com.github.lbovolini.crowd.discovery.message.ResponseFactory;
 import com.github.lbovolini.crowd.discovery.service.CodebaseService;
 import com.github.lbovolini.crowd.client.worker.MulticastClientWorker;
 import com.github.lbovolini.crowd.client.worker.MulticastClientWorkerFactory;
@@ -26,7 +27,7 @@ public final class Agent {
     }
 
     public static void main(String[] args) {
-        System.setProperty("multicast.buffer.size", System.getProperty("multicast.buffer.size", "1024"));
+        System.setProperty("multicast.buffer.size", System.getProperty("multicast.buffer.size", String.valueOf(ResponseFactory.MAX_PACKET_SIZE)));
         new Agent().start();
     }
 }
