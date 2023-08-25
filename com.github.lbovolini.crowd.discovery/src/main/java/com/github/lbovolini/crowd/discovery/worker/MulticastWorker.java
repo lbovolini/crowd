@@ -65,6 +65,7 @@ public abstract class MulticastWorker extends Thread implements MulticastService
 
                 connection.getContext().setServerAddress(message.getAddress());
                 connection.getMessageHandler().handle(message);
+                onReceive();
             } else if (selectionKey.isWritable()) {
                 var shouldReceive = MulticastIOChannelHandler.write((DatagramChannel) selectionKey.channel(), (MulticastMessage) selectionKey.attachment());
                 if (shouldReceive) {
