@@ -7,11 +7,11 @@
     <parent>
         <groupId>com.github.lbovolini.crowd</groupId>
         <artifactId>crowd</artifactId>
-        <version>0.0.1-SNAPSHOT</version>
+        <version>0.0.1</version>
     </parent>
 
     <artifactId>crowd-doc</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.1</version>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
@@ -57,32 +57,32 @@
         <dependency>
             <groupId>com.github.lbovolini.crowd</groupId>
             <artifactId>crowd-benchmark</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>0.0.1</version>
         </dependency>
         <dependency>
             <groupId>com.github.lbovolini.crowd</groupId>
             <artifactId>crowd-classloader</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>0.0.1</version>
         </dependency>
         <dependency>
             <groupId>com.github.lbovolini.crowd</groupId>
             <artifactId>crowd-client</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>0.0.1</version>
         </dependency>
         <dependency>
             <groupId>com.github.lbovolini.crowd</groupId>
             <artifactId>crowd-core</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>0.0.1</version>
         </dependency>
         <dependency>
             <groupId>com.github.lbovolini.crowd</groupId>
             <artifactId>crowd-discovery</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>0.0.1</version>
         </dependency>
         <dependency>
             <groupId>com.github.lbovolini.crowd</groupId>
             <artifactId>crowd-server</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>0.0.1</version>
         </dependency>
     </dependencies>
 
