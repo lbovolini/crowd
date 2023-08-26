@@ -13,6 +13,46 @@ Java Asynchronous Non Blocking Distributed Computing Library
 - Modular architecture
 - No configuration required
 
+## Maven
+
+```xml
+<dependency>
+  <groupId>com.github.lbovolini.crowd</groupId>
+  <artifactId>crowd-benchmark</artifactId>
+  <version>0.0.1</version>
+</dependency>
+
+<dependency>
+  <groupId>com.github.lbovolini.crowd</groupId>
+  <artifactId>crowd-classloader</artifactId>
+  <version>0.0.1</version>
+</dependency>
+
+<dependency>
+  <groupId>com.github.lbovolini.crowd</groupId>
+  <artifactId>crowd-client</artifactId>
+  <version>0.0.1</version>
+</dependency>
+
+<dependency>
+  <groupId>com.github.lbovolini.crowd</groupId>
+  <artifactId>crowd-core</artifactId>
+  <version>0.0.1</version>
+</dependency>
+
+<dependency>
+  <groupId>com.github.lbovolini.crowd</groupId>
+  <artifactId>crowd-server</artifactId>
+  <version>0.0.1</version>
+</dependency>
+
+<dependency>
+  <groupId>com.github.lbovolini.crowd</groupId>
+  <artifactId>crowd-discovery</artifactId>
+  <version>0.0.1</version>
+</dependency>
+```
+
 ## Requirements
 
 This library requires some software to provide access to resources (class files, jar packages and native libraries) if any is required by clients, like **Lighttp**.
