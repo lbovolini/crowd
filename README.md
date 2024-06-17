@@ -1,6 +1,8 @@
 ![CI](https://github.com/lbovolini/crowd/workflows/CI/badge.svg)  [![Coverage Status](https://coveralls.io/repos/github/lbovolini/crowd/badge.svg?branch=main&kill_cache=1)](https://coveralls.io/github/lbovolini/crowd?branch=main) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-Java Asynchronous Non Blocking Distributed Computing Library
+Lightweight, zero dependencies and simple Java asynchronous non blocking distributed computing
+library where devices can enter or leave at any time, does not require any extra conﬁguration on
+machines and supports remote class and native library loading
 
 ## Features
 
