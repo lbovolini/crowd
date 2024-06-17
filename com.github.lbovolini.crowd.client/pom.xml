@@ -83,7 +83,7 @@
                                 <artifactItem>
                                     <groupId>com.github.lbovolini.crowd</groupId>
                                     <artifactId>crowd-client</artifactId>
-                                    <version>0.0.1-SNAPSHOT</version>
+                                    <version>0.0.1</version>
                                     <type>jar</type>
                                     <classifier>jar-with-dependencies</classifier>
                                 </artifactItem>
