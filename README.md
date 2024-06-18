@@ -1,4 +1,4 @@
-![CI](https://github.com/lbovolini/crowd/workflows/CI/badge.svg)  [![Coverage Status](https://coveralls.io/repos/github/lbovolini/crowd/badge.svg?branch=main&kill_cache=1)](https://coveralls.io/github/lbovolini/crowd?branch=main) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+![CI](https://github.com/lbovolini/crowd/actions/workflows/main.yml/badge.svg)  [![Coverage Status](https://coveralls.io/repos/github/lbovolini/crowd/badge.svg?branch=main&kill_cache=1)](https://coveralls.io/github/lbovolini/crowd?branch=main) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 Lightweight, zero dependencies and simple Java asynchronous non blocking distributed computing
 library where devices can enter or leave at any time, does not require any extra conﬁguration on
